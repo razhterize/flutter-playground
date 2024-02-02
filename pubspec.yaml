@@ -27,8 +27,8 @@ dependencies:
   expressions: ^0.2.5+1
   
   # Database stuff
-  drift: ^2.15.0
-  sqlite3_flutter_libs: ^0.5.0
+  isar: ^3.1.0+1
+  isar_flutter_libs: ^3.1.0+1
 
   # Misc
   logger: ^2.0.2+1
@@ -39,8 +39,8 @@ dev_dependencies:
     sdk: flutter
 
   flutter_lints: ^2.0.0
-  drift_dev: ^2.15.0
   build_runner: ^2.4.8
+  isar_generator: ^3.1.0+1
 
 flutter:
 
