@@ -7,8 +7,11 @@ import 'package:isar/isar.dart';
 import '../model/struct_model.dart';
 
 class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
-  HistoryBloc(this.dataDirectory) : super(const HistoryState(structs: [], lastIndex: 0)) {
+  HistoryBloc(this.dataDirectory) : super(HistoryState(structs: const [])) {
     on<Init>(_init);
+    on<Next>(_next);
+    on<AddHistory>(_addStruct);
+    on<RemoveHistory>(_removeStruct);
 
     add(Init());
   }
@@ -16,6 +19,25 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
   Future<void> _init(event, emit) async {
     final isar = await Isar.open([StructModelSchema], directory: dataDirectory.path);
     isarCollection = isar.structModels;
+    var structs = await isarCollection.filter().idGreaterThan(state.lastIndex).findAll();
+    emit(state.copy(structs: structs, lastIndex: structs.length));
+  }
+
+  Future<void> _next(Next event, Emitter<HistoryState> emit) async {
+    var nextStructs = await isarCollection.filter().idBetween(state.lastIndex, state.lastIndex + event.count).findAll();
+    var newStructs = state.structs.toList() + nextStructs;
+    emit(state.copy(structs: newStructs));
+  }
+
+  Future<void> _addStruct(AddHistory event, Emitter<HistoryState> emit) async {
+    await isarCollection.isar.writeTxn(() async => await isarCollection.put(event.struct));
+    var newStructs = state.structs.toList()..add(event.struct);
+    emit(state.copy(structs: newStructs));
+  }
+
+  Future<void> _removeStruct(RemoveHistory event, Emitter<HistoryState> emit) async {
+    await isarCollection.delete(event.struct.id);
+    emit(state.copy(structs: state.structs.toList()..removeWhere((element) => element.id == event.struct.id)));
   }
 
   late final IsarCollection<StructModel> isarCollection;
@@ -25,16 +47,18 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
 final class HistoryState extends Equatable {
   final List<StructModel> structs;
 
-  final int lastIndex;
+  late final int lastIndex;
 
-  const HistoryState({required this.structs, required this.lastIndex});
+  HistoryState({required this.structs}) {
+    lastIndex = structs.length;
+  }
 
   HistoryState copy({List<StructModel>? structs, int? lastIndex}) {
-    return HistoryState(structs: structs ?? this.structs, lastIndex: lastIndex ?? this.lastIndex);
+    return HistoryState(structs: structs ?? this.structs);
   }
 
   @override
-  List<Object?> get props => throw UnimplementedError();
+  List<Object?> get props => [structs, lastIndex];
 }
 
 final class HistoryEvent extends Equatable {
@@ -54,8 +78,7 @@ final class RemoveHistory extends HistoryEvent {
   RemoveHistory(this.struct);
 }
 
-final class FetchHistory extends HistoryEvent {
+final class Next extends HistoryEvent {
   final int count;
-  final int offset;
-  FetchHistory(this.count, {this.offset = 0});
+  Next(this.count);
 }
