@@ -28,14 +28,31 @@ class _StructViewState extends State<StructView> {
           ],
         ),
         subtitle: expanded ? _detaileditems() : Text(idrMoney(calculateTotal(widget.struct)).symbolOnLeft),
-        onTap: () => setState(() {
-          expanded = !expanded;
-        }),
+        onTap: () => setState(() => expanded = !expanded),
       ),
     );
   }
 
   Widget _detaileditems() {
-    return const Placeholder();
+    return Card.outlined(
+      child: Wrap(
+        alignment: WrapAlignment.center,
+        children: [
+          for (var item in widget.struct.items!)
+            ListTile(
+              title: Text(item.name ?? "Unknown"),
+              subtitle: Row(
+                children: [
+                  Text("${item.price ?? 0}"),
+                  const Spacer(),
+                  Text("${item.weight ?? 0}"),
+                  const Spacer(),
+                  Text(idrMoney(item.price! * item.weight!).symbolOnLeft),
+                ],
+              ),
+            )
+        ],
+      ),
+    );
   }
 }
