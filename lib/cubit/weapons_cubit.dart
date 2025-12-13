@@ -1,7 +1,40 @@
+import 'dart:async';
+import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ww_optimizer/core/wuthering/weapon.dart';
+import 'package:ww_optimizer/cubit/saved_cubit.dart';
+import 'package:ww_optimizer/logger.dart';
 
-class WeaponCubit extends Cubit<List<Weapon>> {
-  WeaponCubit() : super(const []);
-  
+class WeaponCubit extends Cubit<WeaponState> {
+  WeaponCubit(this.savedCubit) : super(WeaponState(true)) {
+    savedCubit.stream.listen((savedState) {
+      emit(state.copyWith(true));
+      _log.debug("Received state change");
+      emit(state.copyWith(false, savedState.weapons.map((w) => Weapon.fromJson(w)).toList()));
+    });
+  }
+
+  final SavedDataCubit savedCubit;
+  final _log = Logger("WeaponCubit");
+  StreamSubscription? _subs;
+
+  @override
+  Future<void> close() {
+    _subs?.cancel();
+    return super.close();
+  }
+}
+
+class WeaponState extends Equatable {
+  final List<Weapon> weapons;
+  final Weapon? editedWeapon;
+  final bool processing;
+  const WeaponState([this.processing = false, this.weapons = const [], this.editedWeapon]);
+
+  WeaponState copyWith([bool? processing, List<Weapon>? weapons]) {
+    return WeaponState(processing ?? this.processing, weapons ?? this.weapons);
+  }
+
+  @override
+  List<Object?> get props => [processing, weapons, editedWeapon];
 }

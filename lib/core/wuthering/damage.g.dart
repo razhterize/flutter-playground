@@ -14,7 +14,7 @@ Damage _$DamageFromJson(Map<String, dynamic> json) => Damage(
       DamageType.Raw,
   isFlat: json['isFlat'] as bool? ?? false,
   source: json['source'] == null
-      ? StatName.ATK
+      ? const StatName(1)
       : StatName.fromJson(json['source'] as Map<String, dynamic>),
 );
 

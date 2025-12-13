@@ -3,15 +3,19 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ww_optimizer/assets.dart';
 import 'package:ww_optimizer/cubit/echoes_cubit.dart';
 import 'package:ww_optimizer/cubit/resonator_cubit.dart';
+import 'package:ww_optimizer/cubit/saved_cubit.dart';
 import 'package:ww_optimizer/cubit/status_cubit.dart';
 import 'package:ww_optimizer/cubit/weapons_cubit.dart';
+import 'package:ww_optimizer/paths.dart';
 import 'package:ww_optimizer/ui/screens/echo_screen.dart';
 import 'package:ww_optimizer/ui/screens/main_screen.dart';
 import 'package:ww_optimizer/ui/screens/resonator_screen.dart';
 import 'package:ww_optimizer/ui/screens/weapon_screen.dart';
 import 'package:ww_optimizer/ui/widgets/menu_bar.dart';
+import 'package:ww_optimizer/repository/saved_repository.dart';
 
-void main() {
+void main() async {
+  await initDirectories();
   runApp(WutheringOptimizer());
 }
 
@@ -35,16 +39,12 @@ class _WutheringOptimizerState extends State<WutheringOptimizer> {
     return FluentApp(
       title: "Wuthering Optimizer",
       theme: FluentThemeData(brightness: .dark),
-      home: BlocProvider(
-        create: (_) => StatusCubit(),
-        child: MultiBlocProvider(
-          providers: [
-            BlocProvider(create: (_) => ResonatorCubit()),
-            BlocProvider(create: (_) => EchoesCubit()),
-            BlocProvider(create: (_) => WeaponCubit()),
-          ],
-          child: Builder(builder: _buildLayout),
-        ),
+      home: MultiBlocProvider(
+        providers: [
+          BlocProvider(create: (ctx) => SavedDataCubit(), lazy: false),
+          BlocProvider(create: (ctx) => StatusCubit(), lazy: false),
+        ],
+        child: Builder(builder: _buildLayout),
       ),
     );
   }
@@ -60,9 +60,27 @@ class _WutheringOptimizerState extends State<WutheringOptimizer> {
         displayMode: .compact,
         items: [
           PaneItem(icon: Icon(FluentIcons.accept), body: BuildScreen()),
-          PaneItem(icon: Icon(FluentIcons.album), body: ResonatorScreen()),
-          PaneItem(icon: Icon(FluentIcons.album), body: WeaponScreen()),
-          PaneItem(icon: Icon(FluentIcons.album), body: EchoScreen()),
+          PaneItem(
+            icon: Icon(FluentIcons.album),
+            body: BlocProvider(
+              create: (context) => ResonatorCubit(context.read<SavedDataCubit>()),
+              child: ResonatorScreen(),
+            ),
+          ),
+          PaneItem(
+            icon: Icon(FluentIcons.album),
+            body: BlocProvider(
+              create: (context) => WeaponCubit(context.read<SavedDataCubit>()),
+              child: WeaponScreen(),
+            ),
+          ),
+          PaneItem(
+            icon: Icon(FluentIcons.album),
+            body: BlocProvider(
+              create: (context) => EchoesCubit(context.read<SavedDataCubit>()),
+              child: EchoScreen(),
+            ),
+          ),
         ],
       ),
     );

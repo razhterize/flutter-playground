@@ -7,23 +7,28 @@ import 'package:stack_trace/stack_trace.dart';
 final rootLogger = Logger("Root");
 
 class Logger {
-  LogLevel logLevel = LogLevel.Info;
-  LogLevel errLevel = LogLevel.Error;
+  LogLevel _logLevel = LogLevel.Info;
+  LogLevel _errLevel = LogLevel.Error;
+
+  set errLevel(LogLevel level) => _errLevel = level;
+  set logLevel(LogLevel level) => _logLevel = level;
+
   bool colors = false;
+  bool shortLevel = true;
 
   final String? name;
   IOSink? logFile;
 
   Logger(this.name, {LogLevel? logLevel, LogLevel? errLevel, String? logFile}) {
     if (logFile != null) this.logFile = File(logFile).openWrite(mode: FileMode.append);
-    this.logLevel = logLevel ?? LogLevel.Info;
-    this.errLevel = errLevel ?? LogLevel.Error;
+    _logLevel = logLevel ?? LogLevel.Info;
+    _errLevel = errLevel ?? LogLevel.Error;
   }
 
   Logger clone(String? name, {String? logFile}) {
     Logger newLogger = Logger(name ?? this.name, logFile: logFile);
-    newLogger.errLevel = errLevel;
-    newLogger.logLevel = logLevel;
+    newLogger._errLevel = _errLevel;
+    newLogger._logLevel = _logLevel;
     newLogger.colors = colors;
     return newLogger;
   }
@@ -37,14 +42,14 @@ class Logger {
 
   /// Write a log message
   void log(String message, LogLevel level, {StackTrace? stackTrace}) {
-    if (level < logLevel) return;
+    if (level < _logLevel) return;
     String msg = _buildMessage(message, level, stackTrace);
     // Write to file
     if (logFile != null) {
       logFile!.write("$msg\n");
     }
     // Write console
-    if (level > errLevel) {
+    if (level > _errLevel) {
       return stderr.write("$msg\n");
     }
     return stdout.write("$msg\n");
@@ -54,7 +59,7 @@ class Logger {
   String _buildMessage(String message, LogLevel level, StackTrace? stackTrace) {
     StringBuffer buffer = StringBuffer();
     final time = DateTime.now().toLocal();
-    final levelName = "[${LogLevel.levelNames[level]}]";
+    final levelName = shortLevel ? "[${LogLevel.shortLevelNames[level.value]}]": "[${LogLevel.levelNames[level.value]}]";
     buffer.write(DateFormat("yyyy-MM-dd HH:mm:ss").format(time));
     buffer.write(" $levelName ");
     if (name != null) {
@@ -62,8 +67,8 @@ class Logger {
     }
     buffer.write(": $message");
     if (stackTrace != null) {
-      final trace = Trace.from(stackTrace);
-      buffer.write("\n${trace.terse}");
+      final trace = Trace.from(stackTrace).terse;
+      buffer.write("\n${trace.toString()}");
     }
     return buffer.toString();
   }
@@ -96,24 +101,34 @@ class LogLevel {
   /// With stack trace
   static LogLevel get Trace => LogLevel(100);
 
-  static Map<LogLevel, String> get levelNames => {
-    Trace: 'TRACE',
-    Debug: 'DEBUG',
-    Info: 'INFO',
-    Warning: 'WARNING',
-    Error: 'ERROR',
-    Fatal: 'FATAL',
-    None: 'NONE',
+  static Map<int, String> get levelNames => {
+    100: 'TRACE',
+    200: 'DEBUG',
+    400: 'INFO',
+    600: 'WARNING',
+    800: 'ERROR',
+    1000: 'FATAL',
+    2000: 'NONE',
   };
 
-  static Map<LogLevel, String> get levelColors => {
-    Trace: '\x1B[34m',
-    Debug: '\x1B[36m',
-    Info: '\x1B[32m',
-    Warning: '\x1B[33m',
-    Error: '\x1B[31m',
-    Fatal: '\x1B[35m',
-    None: '\x1B[0m',
+  static Map<int, String> get shortLevelNames => const {
+    100: 'T',
+    200: 'D',
+    400: 'I',
+    600: 'W',
+    800: 'E',
+    1000: 'F',
+    2000: 'N',
+  };
+
+  static Map<int, String> get levelColors => {
+    100: '\x1B[34m',
+    200: '\x1B[36m',
+    400: '\x1B[32m',
+    600: '\x1B[33m',
+    800: '\x1B[31m',
+    1000: '\x1B[35m',
+    2000: '\x1B[0m',
   };
 
   bool operator >(LogLevel other) => _value > other._value;

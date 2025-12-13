@@ -8,13 +8,13 @@ class EffectiveStats {
     }
   }
 
-  final Map<int, double> _effectiveStats = {};
-  Map<int, double> get effectiveStats => _effectiveStats;
+  final Map<StatName, double> _effectiveStats = {};
+  Map<StatName, double> get effectiveStats => _effectiveStats;
 
   double addStat(StatValue stat) {
     assert(stat.name.value != 0, "Cannot update StatName.None");
     double updated = _effectiveStats.update(
-      stat.name.value,
+      stat.name,
       (value) => value + stat.value,
       ifAbsent: () => stat.value,
     );
@@ -34,7 +34,7 @@ class EffectiveStats {
   double removeStat(StatValue stat) {
     assert(stat.name.value != 0, "Cannot update StatName.None");
     double updated = _effectiveStats.update(
-      stat.name.value,
+      stat.name,
       (value) => value - stat.value,
       ifAbsent: () => -stat.value,
     );

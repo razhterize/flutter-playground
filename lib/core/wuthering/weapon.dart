@@ -22,4 +22,4 @@ class Weapon {
   JsonType toJson() => _$WeaponToJson(this);
 }
 
-enum WeaponType { None, Sword, Broadblade, Gaunlet, Rectifier, Pistol }
+enum WeaponType { None, Sword, Broadblade, Gauntlet, Rectifier, Pistol }

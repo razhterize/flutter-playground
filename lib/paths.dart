@@ -1,13 +1,19 @@
 import 'dart:io' show Directory, File, Platform;
+import 'package:path_provider/path_provider.dart';
+
 import 'logger.dart';
 
 const appIdentifier = "io.github.razhterize.wuwa_optimizer";
+late final Directory rootDir;
+late final Directory assetDir;
 
-Directory getAssetDirectory() {
-  final rootDir = File(Platform.resolvedExecutable).parent.path;
-  final assetDir = Directory("$rootDir/assets");
-  if (!assetDir.existsSync()) assetDir.createSync(recursive: true);
-  return assetDir;
+Future<void> initDirectories() async {
+  rootDir = File(Platform.resolvedExecutable).parent;
+  assetDir = Directory((await getApplicationCacheDirectory()).join("assets"));
 }
 
-String getRootDir() => File(Platform.resolvedExecutable).parent.path;
+extension DirectoryJoin on Directory {
+  String join(String other) {
+    return "$path/$other";
+  }
+}
