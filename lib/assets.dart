@@ -2,11 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io' show Directory, File;
 import 'package:dio/dio.dart';
-import 'package:ww_optimizer/core/wuthering/resonator.dart';
-import 'package:ww_optimizer/cubit/status_cubit.dart';
-import 'core/types.dart';
 import 'logger.dart';
 import 'paths.dart';
+import 'core/wuthering/resonator.dart';
+import 'cubit/status_cubit.dart';
+import 'core/types.dart';
 
 final WutheringAssets localAssets = WutheringAssets();
 
@@ -15,9 +15,11 @@ class WutheringAssets {
   final _log = Logger("AssetManager");
   StatusCubit? _statusCubit;
 
-  WutheringAssets({StatusCubit? status_cubit}) {
-    _statusCubit = status_cubit;
-    final imageDir = Directory("${getAssetDirectory().path}/images");
+  WutheringAssets({StatusCubit? statusCubit}) {
+    _log.info("Init");
+    _statusCubit = statusCubit;
+
+    final imageDir = Directory("${assetDir.path}/images");
     if (!imageDir.existsSync()) imageDir.createSync(recursive: true);
     _imageList = imageDir
         .listSync()
@@ -27,20 +29,11 @@ class WutheringAssets {
         .toList();
   }
   List<String> _imageList = [];
-  JsonType _savedData = {};
-
-  List<JsonType> get resonators =>
-      _savedData.containsKey("resonators") ? _savedData["resonators"] : [];
-  List<JsonType> get echoes => _savedData.containsKey("echoes") ? _savedData["echoes"] : [];
-  List<JsonType> get weapons => _savedData.containsKey("weapons") ? _savedData["weapons"] : [];
-
-  set resonators(List<JsonType> resonators) => _savedData["resonators"] = resonators;
-  set echoes(List<JsonType> echoes) => _savedData["echoes"] = echoes;
-  set weapons(List<JsonType> weapons) => _savedData["weapons"] = weapons;
 
   // TODO: Add something to fetch assets from API
 
   String? getImagePath(String name) {
+    _log.debug("Get image for $name");
     final valids = _imageList.where((filename) => filename.contains(name)).toList();
     if (valids.isNotEmpty) {
       return valids.first;
@@ -58,97 +51,106 @@ class WutheringAssets {
     return;
   }
 
-  void loadSavedData() {
-    String path = "$getRootDir()/data.json";
-    _savedData = jsonDecode(File(path).readAsStringSync());
-  }
-
-  void saveData() {
-    File saveFile = File("$getRootDir()/data.json");
-    saveFile.writeAsStringSync(jsonEncode(_savedData));
-  }
-
   Future<JsonType> _fetchIndexes() async {
     final indexList = ["character", "echo", "weapon"];
     JsonType indexes = {};
-    // _progressStream.add();
+    _log.debug("Fetch Indexes");
     _statusCubit?.notify(message: "Fetching Index", progress: ProgressData(current: 0, total: 3));
     int idx = 0;
     for (String index in indexList) {
       final url = "$_apiHost/data/$index.json";
       _statusCubit?.notify(progress: ProgressData(total: 3, current: idx++));
-      final res = await client.get(url);
-      if (res.statusCode == 200) {
-        _log.debug("Adding ${res.data.length} items to $index");
-        indexes.addAll({index: res.data});
+      try {
+        final res = await client.get(url);
+        if (res.statusCode == 200) {
+          _log.debug("Adding ${res.data.length} items to $index");
+          indexes.addAll({index: res.data});
+        }
+      } on DioException catch (e) {
+        _log.error("${e.message}", st: e.stackTrace);
       }
     }
     return indexes;
   }
 
   Future<void> _fetchCharacters(JsonType characters) async {
-    Directory resonatorDir = Directory("${getAssetDirectory().path}/resonators");
+    Directory resonatorDir = Directory("${assetDir.path}/resonators");
     int idx = 0;
+    _log.debug("Fetch resonators");
     _statusCubit?.notify(message: "Fetch Resonators");
     characters.forEach((key, val) async {
       final url = "$_apiHost/data/en/character/$key.json";
       _statusCubit?.notify(
         progress: ProgressData(total: characters.length, current: idx++),
       );
-      final response = await client.get(url);
-      if (response.statusCode == 200) {
-        final filePath = "${resonatorDir.path}/${val["en"]}.json";
-        JsonType parsedJson = response.data is Map
-            ? _convertResonator(response.data)
-            : _convertResonator(jsonDecode(response.data));
-        saveFile(filePath, parsedJson);
+      try {
+        final response = await client.get(url);
+        if (response.statusCode == 200) {
+          final filePath = "${resonatorDir.path}/${val["en"]}.json";
+          JsonType parsedJson = response.data is Map
+              ? _convertResonator(response.data)
+              : _convertResonator(jsonDecode(response.data));
+          _saveFile(filePath, parsedJson);
+        }
+      } on DioException catch (e) {
+        _log.error("${e.message}", st: e.stackTrace);
       }
     });
   }
 
   Future<void> _fetchEchoes(JsonType echoes) async {
-    Directory echoDir = Directory("${getAssetDirectory().path}/echoes");
+    Directory echoDir = Directory("${assetDir.path}/echoes");
     int idx = 0;
+    _log.debug("Fetch echoes");
     _statusCubit?.notify(message: "Fetch Echoes");
     echoes.forEach((key, val) async {
       final url = "$_apiHost/data/en/echo/$key.json";
       _statusCubit?.notify(
         progress: ProgressData(total: echoes.length, current: idx++),
       );
-      final response = await client.get(url);
-      if (response.statusCode == 200) {
-        final filePath = "${echoDir.path}/${val["en"]}.json";
-        JsonType parsedJson = response.data is Map
-            ? _convertEcho(response.data)
-            : _convertEcho(jsonDecode(response.data));
-        saveFile(filePath, parsedJson);
-        // await file.writeAsString(jsonEncode(response.data));
+      try {
+        final response = await client.get(url);
+        if (response.statusCode == 200) {
+          final filePath = "${echoDir.path}/${val["en"]}.json";
+          JsonType parsedJson = response.data is Map
+              ? _convertEcho(response.data)
+              : _convertEcho(jsonDecode(response.data));
+          _saveFile(filePath, parsedJson);
+          // await file.writeAsString(jsonEncode(response.data));
+        }
+      } on DioException catch (e) {
+        _log.error("${e.message}", st: e.stackTrace);
       }
     });
   }
 
   Future<void> _fetchWeapons(JsonType weapons) async {
-    Directory weaponDir = Directory("${getAssetDirectory().path}/weapons");
+    Directory weaponDir = Directory("${assetDir.path}/weapons");
     int idx = 0;
+    _log.debug("Fetch weapons");
     _statusCubit?.notify(message: "Fetching Weapons");
     weapons.forEach((key, val) async {
       final url = "$_apiHost/data/en/weapon/$key.json";
       _statusCubit?.notify(
         progress: ProgressData(total: weapons.length, current: idx++, message: "${val["en"]}"),
       );
-      final response = await client.get(url);
-      if (response.statusCode == 200) {
-        final filePath = "${weaponDir.path}/${val["en"]}.json";
-        JsonType parsedJson = response.data is Map
-            ? _convertWeapon(response.data)
-            : _convertWeapon(jsonDecode(response.data));
-        saveFile(filePath, parsedJson);
+      try {
+        final response = await client.get(url);
+        if (response.statusCode == 200) {
+          final filePath = "${weaponDir.path}/${val["en"]}.json";
+          JsonType parsedJson = response.data is Map
+              ? _convertWeapon(response.data)
+              : _convertWeapon(jsonDecode(response.data));
+          _saveFile(filePath, parsedJson);
+        }
+      } on DioException catch (e) {
+        _log.error("${e.message}", st: e.stackTrace);
       }
     });
   }
 
   Future<void> _fetchImages(Map<String, String> images) async {
-    final imageDir = Directory("${getAssetDirectory().path}/images");
+    final imageDir = Directory("${assetDir.path}/images");
     if (!imageDir.existsSync()) imageDir.createSync();
     int idx = 0;
     _statusCubit?.notify(message: "Fetch Images");
@@ -161,13 +163,13 @@ class WutheringAssets {
       final iconUrl = "$_apiHost/$iconPath.webp";
       try {
         await client.download(iconUrl, "${imageDir.path}/$name.webp");
-      } catch (e) {
-        _log.error(e.toString(), st: StackTrace.current);
+      } on DioException catch (e) {
+        _log.error("${e.message}", st: e.stackTrace);
       }
     });
   }
 
-  void saveFile(String path, JsonType json) {
+  void _saveFile(String path, JsonType json) {
     final file = File(path);
     if (!file.parent.existsSync()) file.parent.createSync(recursive: true);
     file.writeAsStringSync(jsonEncode(json));
