@@ -17,9 +17,8 @@ class ResonatorScreen extends StatefulWidget {
 
 class _ResonatorScreenState extends State<ResonatorScreen> {
   Resonator? _editedResonator = null;
-  final TextEditingController _filterController = TextEditingController();
+  final _filterController = TextEditingController();
   ElementType _filterElement = ElementType.None;
-  int _filteredSize = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -66,22 +65,19 @@ class _ResonatorScreenState extends State<ResonatorScreen> {
         const imageSize = 200;
         final size = MediaQuery.of(context).size;
         final numCols = (size.width / imageSize).floor();
-        rootLogger.info("Size: ${size.width}x${size.height}");
         if (state.processing) return Center(child: ProgressRing());
         if (state.resonators.isEmpty) {
           return Center(child: const Text("No Resonators Saved"));
         }
         List<Resonator> showedResonator = state.resonators;
-        if (_filterController.text.isNotEmpty &&
-            _filterElement == ElementType.None) {
+        if (_filterController.text.isNotEmpty && _filterElement == .None) {
           bool matchFilter(Resonator r) => r.name.toLowerCase().contains(
             _filterController.text.toLowerCase(),
           );
           showedResonator = state.resonators.where(matchFilter).toList();
         }
-        _filteredSize = showedResonator.length;
         return GridView.builder(
-          itemCount: _filteredSize,
+          itemCount: showedResonator.length,
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: numCols,
           ),
