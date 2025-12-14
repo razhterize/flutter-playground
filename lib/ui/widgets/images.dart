@@ -8,10 +8,16 @@ import 'package:ww_optimizer/wuthering/stat.dart';
 import 'package:ww_optimizer/wuthering/weapon.dart';
 
 class ResonatorImage extends StatelessWidget {
-  const ResonatorImage(this.resonator, {super.key, this.onClick});
+  const ResonatorImage(
+    this.resonator, {
+    super.key,
+    this.onClick,
+    this.imageSize,
+  });
 
   final Resonator resonator;
-  final void Function(Resonator)? onClick;
+  final Size? imageSize;
+  final void Function(Resonator resonator)? onClick;
 
   @override
   Widget build(BuildContext context) {
@@ -29,13 +35,23 @@ class ResonatorImage extends StatelessWidget {
       ),
     );
     return GestureDetector(
-      onTap: () => onClick != null ? (resonator) : null,
+      onTap: () {
+        if (onClick != null) {
+          onClick!(resonator);
+        }
+      },
       child: Container(
         decoration: _boxDecor,
         child: Stack(
           alignment: .bottomCenter,
           children: [
-            imagePath != null ? Image.file(File(imagePath)) : Placeholder(),
+            imagePath != null
+                ? Image.file(
+                    File(imagePath),
+                    height: imageSize?.height,
+                    width: imageSize?.width,
+                  )
+                : Placeholder(),
             OutlinedText(
               resonator.name,
               fontSize: 18,
