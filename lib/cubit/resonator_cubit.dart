@@ -2,11 +2,9 @@ import 'dart:async';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ww_optimizer/core/types.dart';
 import 'package:ww_optimizer/wuthering/resonator.dart';
 import 'package:ww_optimizer/cubit/saved_cubit.dart';
 import 'package:ww_optimizer/logger.dart';
-import 'package:ww_optimizer/repository/saved_repository.dart';
 
 typedef ResonatorBuilder = BlocBuilder<ResonatorCubit, ResonatorState>;
 
@@ -15,9 +13,16 @@ class ResonatorCubit extends Cubit<ResonatorState> {
     _subs = savedCubit.stream.listen((savedState) {
       emit(state.copyWith(true));
       _log.debug("Saved Cubit change state?");
-      emit(state.copyWith(false, savedState.resonators.map((e) => Resonator.fromJson(e)).toList()));
+      final resonatorList = savedState.resonators
+          .map((e) => Resonator.fromJson(e))
+          .toList();
+      emit(state.copyWith(false, resonatorList));
     });
-    savedCubit.loadData();
+
+    final resonatorList = savedCubit.state.resonators
+        .map((e) => Resonator.fromJson(e))
+        .toList();
+    emit(state.copyWith(false, resonatorList));
   }
 
   final SavedDataCubit savedCubit;
@@ -45,10 +50,17 @@ class ResonatorState extends Equatable {
   final List<Resonator> resonators;
   final Resonator? editedResonator;
   final bool processing;
-  const ResonatorState([this.processing = false, this.resonators = const [], this.editedResonator]);
+  const ResonatorState([
+    this.processing = false,
+    this.resonators = const [],
+    this.editedResonator,
+  ]);
 
   ResonatorState copyWith([bool? processing, List<Resonator>? resonators]) {
-    return ResonatorState(processing ?? this.processing, resonators ?? this.resonators);
+    return ResonatorState(
+      processing ?? this.processing,
+      resonators ?? this.resonators,
+    );
   }
 
   @override
