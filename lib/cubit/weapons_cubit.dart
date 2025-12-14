@@ -9,24 +9,37 @@ typedef WeaponBuilder = BlocBuilder<WeaponCubit, WeaponState>;
 
 class WeaponCubit extends Cubit<WeaponState> {
   WeaponCubit(this.savedCubit) : super(WeaponState(true)) {
-    int sortWeapon(Weapon w1, Weapon w2) => w1.type.index - w2.type.index;
-    _subs = savedCubit.stream.listen((savedState) {
-      emit(state.copyWith(true));
-      _log.debug("Received state change");
-      final weaponList =
-          savedState.weapons.map((w) => Weapon.fromJson(w)).toList()
-            ..sort(sortWeapon);
-      emit(state.copyWith(false, weaponList));
-    });
-    final weaponList =
-        savedCubit.state.weapons.map((w) => Weapon.fromJson(w)).toList()
-          ..sort(sortWeapon);
-    emit(state.copyWith(false, weaponList));
+    _initPriv();
   }
 
   final SavedDataCubit savedCubit;
   final _log = Logger("WeaponCubit");
   StreamSubscription? _subs;
+  late StreamSubscription _saveSubs;
+
+  void _initPriv() {
+    int sortWeapon(Weapon w1, Weapon w2) => w1.type.index - w2.type.index;
+
+    // Listen for saved state change
+    _subs = savedCubit.stream.listen((s) {
+      emit(state.copyWith(true));
+      final weaponList = s.weapons.map((w) => Weapon.fromJson(w)).toList();
+      weaponList.sort(sortWeapon);
+      emit(state.copyWith(false, weaponList));
+    });
+
+    // Automagically save weapons
+    _saveSubs = stream.listen((weaponState) {
+      savedCubit.saveWeapons(weaponState.weapons);
+    });
+
+    //Initial state set
+    final weaponList = savedCubit.state.weapons
+        .map((w) => Weapon.fromJson(w))
+        .toList();
+    weaponList.sort(sortWeapon);
+    emit(state.copyWith(false, weaponList));
+  }
 
   @override
   Future<void> close() {

@@ -10,32 +10,45 @@ typedef ResonatorBuilder = BlocBuilder<ResonatorCubit, ResonatorState>;
 
 class ResonatorCubit extends Cubit<ResonatorState> {
   ResonatorCubit(this.savedCubit) : super(ResonatorState()) {
-    int sortResonator(Resonator r1, Resonator r2) {
-      return r1.elementType.index - r2.elementType.index;
-    }
-
-    _subs = savedCubit.stream.listen((savedState) {
-      emit(state.copyWith(true));
-      _log.debug("Saved Cubit change state?");
-      final resonatorList =
-          savedState.resonators.map((e) => Resonator.fromJson(e)).toList()
-            ..sort(sortResonator);
-      emit(state.copyWith(false, resonatorList));
-    });
-
-    final resonatorList =
-        savedCubit.state.resonators.map((e) => Resonator.fromJson(e)).toList()
-          ..sort(sortResonator);
-    ;
-    emit(state.copyWith(false, resonatorList));
+    _initPriv();
   }
 
   final SavedDataCubit savedCubit;
   final _log = Logger("ResonatorCubit");
   StreamSubscription? _subs;
+  late StreamSubscription _saveSubs;
 
-  void addResonator(Resonator resonator) =>
-      emit(state.copyWith(state.processing, [...state.resonators, resonator]));
+  void _initPriv() {
+    int sortResonator(Resonator r1, Resonator r2) {
+      return r1.elementType.index - r2.elementType.index;
+    }
+
+    // Listen for saved state
+    _subs = savedCubit.stream.listen((savedState) {
+      emit(state.copyWith(true));
+      final resonatorList = savedState.resonators
+          .map((e) => Resonator.fromJson(e))
+          .toList();
+      resonatorList.sort(sortResonator);
+      emit(state.copyWith(false, resonatorList));
+    });
+
+    // Automagically save resonators
+    _saveSubs = stream.listen((resonatorState) {
+      savedCubit.saveResonator(resonatorState.resonators);
+    });
+
+    // Initial state set
+    final resonatorList = savedCubit.state.resonators
+        .map((e) => Resonator.fromJson(e))
+        .toList();
+    resonatorList.sort(sortResonator);
+    emit(state.copyWith(false, resonatorList));
+  }
+
+  void addResonator(Resonator resonator) {
+    emit(state.copyWith(state.processing, [...state.resonators, resonator]));
+  }
 
   void removeResonator(Resonator resonator) {
     emit(state.copyWith(true));
@@ -46,6 +59,7 @@ class ResonatorCubit extends Cubit<ResonatorState> {
   @override
   Future<void> close() {
     _subs?.cancel();
+    _saveSubs.cancel();
     // TODO: implement close
     return super.close();
   }

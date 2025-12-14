@@ -12,7 +12,16 @@ typedef EchoBuilder = BlocBuilder<EchoesCubit, EchoState>;
 
 class EchoesCubit extends Cubit<EchoState> {
   EchoesCubit(this.savedCubit) : super(EchoState()) {
+    _initPriv();
+  }
+
+  final SavedDataCubit savedCubit;
+  final _log = Logger("EchoesCubit");
+  StreamSubscription? _subs;
+
+  void _initPriv() {
     int echoIdSort(Echo e1, Echo e2) => e1.id - e2.id;
+    // Listen for saved state change
     _subs = savedCubit.stream.listen((savedState) {
       emit(state.copyWith(true));
       _log.debug("Saved State change");
@@ -20,6 +29,13 @@ class EchoesCubit extends Cubit<EchoState> {
         ..sort(echoIdSort);
       emit(state.copyWith(false, echoList));
     });
+
+    // Automagically save echoes
+    stream.listen((echoState) {
+      savedCubit.saveEcho(echoState.echoes);
+    });
+
+    // Initial state set
     final echoList = savedCubit.state.echoes.map((e) {
       return Echo.fromJson(e);
     }).toList()..sort(echoIdSort);
@@ -28,10 +44,6 @@ class EchoesCubit extends Cubit<EchoState> {
 
   void addEcho(Echo echo) =>
       emit(state.copyWith(false, [...state.echoes, echo]));
-
-  final SavedDataCubit savedCubit;
-  final _log = Logger("EchoesCubit");
-  StreamSubscription? _subs;
 
   void removeEcho(Echo echo) {
     emit(state.copyWith(true));
