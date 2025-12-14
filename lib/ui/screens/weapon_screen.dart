@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:ww_optimizer/assets.dart';
 import 'package:ww_optimizer/cubit/weapons_cubit.dart';
+import 'package:ww_optimizer/ui/widgets/images.dart';
 import 'package:ww_optimizer/ui/widgets/paddings.dart';
 import 'package:ww_optimizer/wuthering/weapon.dart';
 
@@ -71,24 +72,10 @@ class _WeaponScreenState extends State<WeaponScreen> {
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: numCols,
           ),
-          itemBuilder: (_, index) {
-            return CommonUI.padding8(child: _weaponImage(showedWeapon[index]));
-          },
+          itemBuilder: (_, index) =>
+              CommonUI.padding8(child: WeaponImage(showedWeapon[index])),
         );
       },
-    );
-  }
-
-  Widget _weaponImage(Weapon w) {
-    String? imagePath = localAssets.getImagePath(w.name);
-    return Stack(
-      alignment: .bottomCenter,
-      children: [
-        imagePath != null
-            ? Image.file(File(imagePath), semanticLabel: w.name)
-            : Placeholder(),
-        Text(w.name),
-      ],
     );
   }
 }

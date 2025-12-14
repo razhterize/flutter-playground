@@ -1,11 +1,10 @@
-import 'dart:io';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ww_optimizer/assets.dart';
+import 'package:ww_optimizer/ui/widgets/images.dart';
 import 'package:ww_optimizer/wuthering/resonator.dart';
 import 'package:ww_optimizer/wuthering/stat.dart';
 import 'package:ww_optimizer/cubit/resonator_cubit.dart';
-import 'package:ww_optimizer/logger.dart';
 import 'package:ww_optimizer/ui/widgets/paddings.dart';
 
 class ResonatorScreen extends StatefulWidget {
@@ -45,10 +44,8 @@ class _ResonatorScreenState extends State<ResonatorScreen> {
               child: TextBox(
                 controller: _filterController,
                 onChanged: (_) => setState(() {}),
-                autocorrect: true,
                 expands: false,
                 placeholder: "Search",
-                enableSuggestions: true,
               ),
             ),
             Flexible(child: Row(children: [])),
@@ -83,38 +80,10 @@ class _ResonatorScreenState extends State<ResonatorScreen> {
           ),
           itemBuilder: (context, index) => Padding(
             padding: const EdgeInsets.all(20.0),
-            child: _resonatorImage(showedResonator[index], context),
+            child: ResonatorImage(showedResonator[index]),
           ),
         );
       },
-    );
-  }
-
-  Widget _resonatorImage(Resonator resonator, [BuildContext? context]) {
-    String? imagePath = localAssets.getImagePath(resonator.name);
-    const _decor = BoxDecoration(
-      gradient: LinearGradient(
-        begin: .bottomCenter,
-        colors: [
-          Color.fromARGB(255, 0, 0, 0),
-          Color.fromARGB(45, 255, 255, 255),
-        ],
-        end: .topCenter,
-      ),
-    );
-    const _textStyle = TextStyle(
-      fontSize: 18,
-      color: Colors.white,
-      backgroundColor: Color.fromARGB(255, 0, 123, 184),
-    );
-    return Stack(
-      alignment: .bottomCenter,
-      children: [
-        imagePath != null
-            ? Image.file(File(imagePath), semanticLabel: resonator.name)
-            : Placeholder(),
-        Text(resonator.name, style: _textStyle),
-      ],
     );
   }
 }
