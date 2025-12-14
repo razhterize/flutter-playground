@@ -10,18 +10,23 @@ typedef ResonatorBuilder = BlocBuilder<ResonatorCubit, ResonatorState>;
 
 class ResonatorCubit extends Cubit<ResonatorState> {
   ResonatorCubit(this.savedCubit) : super(ResonatorState()) {
+    int sortResonator(Resonator r1, Resonator r2) {
+      return r1.elementType.index - r2.elementType.index;
+    }
+
     _subs = savedCubit.stream.listen((savedState) {
       emit(state.copyWith(true));
       _log.debug("Saved Cubit change state?");
-      final resonatorList = savedState.resonators
-          .map((e) => Resonator.fromJson(e))
-          .toList();
+      final resonatorList =
+          savedState.resonators.map((e) => Resonator.fromJson(e)).toList()
+            ..sort(sortResonator);
       emit(state.copyWith(false, resonatorList));
     });
 
-    final resonatorList = savedCubit.state.resonators
-        .map((e) => Resonator.fromJson(e))
-        .toList();
+    final resonatorList =
+        savedCubit.state.resonators.map((e) => Resonator.fromJson(e)).toList()
+          ..sort(sortResonator);
+    ;
     emit(state.copyWith(false, resonatorList));
   }
 

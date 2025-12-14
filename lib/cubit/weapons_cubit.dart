@@ -9,17 +9,18 @@ typedef WeaponBuilder = BlocBuilder<WeaponCubit, WeaponState>;
 
 class WeaponCubit extends Cubit<WeaponState> {
   WeaponCubit(this.savedCubit) : super(WeaponState(true)) {
+    int sortWeapon(Weapon w1, Weapon w2) => w1.type.index - w2.type.index;
     _subs = savedCubit.stream.listen((savedState) {
       emit(state.copyWith(true));
       _log.debug("Received state change");
-      final weaponList = savedState.weapons
-          .map((w) => Weapon.fromJson(w))
-          .toList();
+      final weaponList =
+          savedState.weapons.map((w) => Weapon.fromJson(w)).toList()
+            ..sort(sortWeapon);
       emit(state.copyWith(false, weaponList));
     });
-    final weaponList = savedCubit.state.weapons
-        .map((w) => Weapon.fromJson(w))
-        .toList();
+    final weaponList =
+        savedCubit.state.weapons.map((w) => Weapon.fromJson(w)).toList()
+          ..sort(sortWeapon);
     emit(state.copyWith(false, weaponList));
   }
 
