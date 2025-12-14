@@ -1,5 +1,5 @@
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:ww_optimizer/core/wuthering/buff.dart';
+import 'package:ww_optimizer/wuthering/buff.dart';
 
 class Conditional<T> {
   T? _value;

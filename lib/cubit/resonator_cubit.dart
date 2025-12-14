@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ww_optimizer/core/types.dart';
-import 'package:ww_optimizer/core/wuthering/resonator.dart';
+import 'package:ww_optimizer/wuthering/resonator.dart';
 import 'package:ww_optimizer/cubit/saved_cubit.dart';
 import 'package:ww_optimizer/logger.dart';
 import 'package:ww_optimizer/repository/saved_repository.dart';
