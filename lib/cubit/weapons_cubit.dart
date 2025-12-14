@@ -5,13 +5,22 @@ import 'package:ww_optimizer/wuthering/weapon.dart';
 import 'package:ww_optimizer/cubit/saved_cubit.dart';
 import 'package:ww_optimizer/logger.dart';
 
+typedef WeaponBuilder = BlocBuilder<WeaponCubit, WeaponState>;
+
 class WeaponCubit extends Cubit<WeaponState> {
   WeaponCubit(this.savedCubit) : super(WeaponState(true)) {
-    savedCubit.stream.listen((savedState) {
+    _subs = savedCubit.stream.listen((savedState) {
       emit(state.copyWith(true));
       _log.debug("Received state change");
-      emit(state.copyWith(false, savedState.weapons.map((w) => Weapon.fromJson(w)).toList()));
+      final weaponList = savedState.weapons
+          .map((w) => Weapon.fromJson(w))
+          .toList();
+      emit(state.copyWith(false, weaponList));
     });
+    final weaponList = savedCubit.state.weapons
+        .map((w) => Weapon.fromJson(w))
+        .toList();
+    emit(state.copyWith(false, weaponList));
   }
 
   final SavedDataCubit savedCubit;
@@ -29,7 +38,11 @@ class WeaponState extends Equatable {
   final List<Weapon> weapons;
   final Weapon? editedWeapon;
   final bool processing;
-  const WeaponState([this.processing = false, this.weapons = const [], this.editedWeapon]);
+  const WeaponState([
+    this.processing = false,
+    this.weapons = const [],
+    this.editedWeapon,
+  ]);
 
   WeaponState copyWith([bool? processing, List<Weapon>? weapons]) {
     return WeaponState(processing ?? this.processing, weapons ?? this.weapons);
