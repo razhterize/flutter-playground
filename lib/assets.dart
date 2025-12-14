@@ -4,7 +4,7 @@ import 'dart:io' show Directory, File;
 import 'package:dio/dio.dart';
 import 'logger.dart';
 import 'paths.dart';
-import 'core/wuthering/resonator.dart';
+import 'wuthering/resonator.dart';
 import 'cubit/status_cubit.dart';
 import 'core/types.dart';
 
