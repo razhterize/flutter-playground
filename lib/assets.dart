@@ -4,7 +4,7 @@ import 'dart:io' show Directory, File;
 import 'package:dio/dio.dart';
 import 'logger.dart';
 import 'paths.dart';
-import 'core/wuthering/resonator.dart';
+import 'wuthering/resonator.dart';
 import 'cubit/status_cubit.dart';
 import 'core/types.dart';
 
@@ -18,7 +18,6 @@ class WutheringAssets {
   WutheringAssets({StatusCubit? statusCubit}) {
     _log.info("Init");
     _statusCubit = statusCubit;
-
     final imageDir = Directory("${assetDir.path}/images");
     if (!imageDir.existsSync()) imageDir.createSync(recursive: true);
     _imageList = imageDir
@@ -34,7 +33,11 @@ class WutheringAssets {
 
   String? getImagePath(String name) {
     _log.debug("Get image for $name");
-    final valids = _imageList.where((filename) => filename.contains(name)).toList();
+    bool pred(String f) {
+      return f.split('/').last.toLowerCase() == "${name.toLowerCase()}.webp";
+    }
+
+    final valids = _imageList.where(pred).toList();
     if (valids.isNotEmpty) {
       return valids.first;
     }
@@ -46,16 +49,24 @@ class WutheringAssets {
     await _fetchCharacters(indexes["character"]);
     await _fetchWeapons(indexes["weapon"]);
     await _fetchEchoes(indexes["echo"]);
-    final imageList = _findImages(indexes);
-    await _fetchImages(imageList);
-    return;
+    // Update images after assets
+    final imageDir = Directory("${assetDir.path}/images");
+    _imageList = imageDir
+        .listSync()
+        .whereType<File>()
+        .where((f) => f.path.endsWith(".webp"))
+        .map((f) => f.path)
+        .toList();
   }
 
   Future<JsonType> _fetchIndexes() async {
     final indexList = ["character", "echo", "weapon"];
     JsonType indexes = {};
     _log.debug("Fetch Indexes");
-    _statusCubit?.notify(message: "Fetching Index", progress: ProgressData(current: 0, total: 3));
+    _statusCubit?.notify(
+      message: "Fetching Index",
+      progress: ProgressData(current: 0, total: 3),
+    );
     int idx = 0;
     for (String index in indexList) {
       final url = "$_apiHost/data/$index.json";
@@ -91,9 +102,14 @@ class WutheringAssets {
               ? _convertResonator(response.data)
               : _convertResonator(jsonDecode(response.data));
           _saveFile(filePath, parsedJson);
+          final imageList = _findImages(response.data);
+          await _fetchImages(imageList);
         }
       } on DioException catch (e) {
-        _log.error("${e.message}", st: e.stackTrace);
+        _log.error(
+          "Failed request on ${e.response?.realUri}",
+          st: e.stackTrace,
+        );
       }
     });
   }
@@ -116,7 +132,8 @@ class WutheringAssets {
               ? _convertEcho(response.data)
               : _convertEcho(jsonDecode(response.data));
           _saveFile(filePath, parsedJson);
-          // await file.writeAsString(jsonEncode(response.data));
+          final imageList = _findImages(response.data);
+          await _fetchImages(imageList);
         }
       } on DioException catch (e) {
         _log.error("${e.message}", st: e.stackTrace);
@@ -132,7 +149,11 @@ class WutheringAssets {
     weapons.forEach((key, val) async {
       final url = "$_apiHost/data/en/weapon/$key.json";
       _statusCubit?.notify(
-        progress: ProgressData(total: weapons.length, current: idx++, message: "${val["en"]}"),
+        progress: ProgressData(
+          total: weapons.length,
+          current: idx++,
+          message: "${val["en"]}",
+        ),
       );
       try {
         final response = await client.get(url);
@@ -142,6 +163,8 @@ class WutheringAssets {
               ? _convertWeapon(response.data)
               : _convertWeapon(jsonDecode(response.data));
           _saveFile(filePath, parsedJson);
+          final imageList = _findImages(response.data);
+          await _fetchImages(imageList);
         }
       } on DioException catch (e) {
         _log.error("${e.message}", st: e.stackTrace);
@@ -150,19 +173,33 @@ class WutheringAssets {
   }
 
   Future<void> _fetchImages(Map<String, String> images) async {
+    // For some reason element icon isnt available in all jsons
+    images.addAll({
+      "Glacio": "https://api.hakush.in/ww/UI/Static/T_IconElementIce.webp",
+      "Fusion": "https://api.hakush.in/ww/UI/Static/T_IconElementFire.webp",
+      "Electro": "https://api.hakush.in/ww/UI/Static/T_IconElementThunder.webp",
+      "Aero": "https://api.hakush.in/ww/UI/Static/T_IconElementWind.webp",
+      "Spectro": "https://api.hakush.in/ww/UI/Static/T_IconElementLight.webp",
+      "Havoc": "https://api.hakush.in/ww/UI/Static/T_IconElementDark.webp",
+    });
+
     final imageDir = Directory("${assetDir.path}/images");
     if (!imageDir.existsSync()) imageDir.createSync();
     int idx = 0;
     _statusCubit?.notify(message: "Fetch Images");
     images.forEach((name, path) async {
-      path = path.split('.').first;
-      final iconPath = path.replaceAll("/Game/Aki/", "");
       _statusCubit?.notify(
-        progress: ProgressData(total: images.length, current: idx++, message: "$iconPath.webp"),
+        progress: ProgressData(
+          total: images.length,
+          current: idx++,
+          message: path,
+        ),
       );
-      final iconUrl = "$_apiHost/$iconPath.webp";
       try {
-        await client.download(iconUrl, "${imageDir.path}/$name.webp");
+        // Only download if file doesnt already exist
+        if (!File("${imageDir.path}/$name.webp").existsSync()) {
+          await client.download(path, "${imageDir.path}/$name.webp");
+        }
       } on DioException catch (e) {
         _log.error("${e.message}", st: e.stackTrace);
       }
@@ -209,7 +246,14 @@ class WutheringAssets {
     // Rectifier 5
     JsonType weapon = {};
     weapon['name'] = json['Name'];
-    const weaponTypes = ["None", "Broadblade", "Sword", "Pistol", "Gauntlet", "Rectifier"];
+    const weaponTypes = [
+      "None",
+      "Broadblade",
+      "Sword",
+      "Pistol",
+      "Gauntlet",
+      "Rectifier",
+    ];
     weapon['type'] = weaponTypes[json["Type"]];
     // Include stat value maps?
     weapon['stats'] = {};
@@ -234,8 +278,23 @@ class WutheringAssets {
   }
 
   JsonType _convertResonator(JsonType json) {
-    const weaponTypes = ["None", "Broadblade", "Sword", "Pistol", "Gauntlet", "Rectifier"];
-    const elementTypes = ["None", "Glacio", "Fusion", "Electro", "Aero", "Spectro", "Havoc"];
+    const weaponTypes = [
+      "None",
+      "Broadblade",
+      "Sword",
+      "Pistol",
+      "Gauntlet",
+      "Rectifier",
+    ];
+    const elementTypes = [
+      "None",
+      "Glacio",
+      "Fusion",
+      "Electro",
+      "Aero",
+      "Spectro",
+      "Havoc",
+    ];
     JsonType resonator = {};
     resonator['name'] = json["Name"];
     resonator['weaponType'] = weaponTypes[json["Weapon"]];
@@ -259,16 +318,18 @@ class WutheringAssets {
 
   // Courtesy of Gemini 2.5 Thinking
   Map<String, String> _findImages(Map<String, dynamic> inputData) {
-    // The map to store our result: Key = Name, Value = Icon
     Map<String, String> imagesMap = {};
 
-    void traverse(dynamic data) {
+    void _traverse(dynamic data) {
       if (data is Map) {
         // 1. Check if the current Map has "Name" and "Icon"
-        final keys = data.keys.toList();
-        if (keys.contains('en') && keys.contains('icon')) {
-          String name = data['en'].toString();
-          String icon = data['icon'].toString();
+        if (data.containsKey('Name') && data.containsKey('Icon')) {
+          String name = data['Name'].toString();
+          String icon = data['Icon'].toString().replaceAll(
+            "/Game/Aki/",
+            "https://api.hakush.in/ww/",
+          );
+          icon = icon.replaceRange(icon.lastIndexOf('.'), null, ".webp");
 
           // 2. CHECK UNIQUENESS: Only add if this Name is not already a key in our map
           if (!imagesMap.containsKey(name)) {
@@ -278,17 +339,17 @@ class WutheringAssets {
 
         // 3. Recursive search through values
         for (var value in data.values) {
-          traverse(value);
+          _traverse(value);
         }
       } else if (data is List) {
         // 4. Recursive search through lists
         for (var item in data) {
-          traverse(item);
+          _traverse(item);
         }
       }
     }
 
-    traverse(inputData);
+    _traverse(inputData);
     return imagesMap;
   }
 
