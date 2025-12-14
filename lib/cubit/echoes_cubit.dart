@@ -11,15 +11,23 @@ import 'package:ww_optimizer/repository/saved_repository.dart';
 typedef EchoBuilder = BlocBuilder<EchoesCubit, EchoState>;
 
 class EchoesCubit extends Cubit<EchoState> {
-  EchoesCubit(this.savedCubit) : super(EchoState()){
-    _subs = savedCubit.stream.listen((savedState){
+  EchoesCubit(this.savedCubit) : super(EchoState()) {
+    int echoIdSort(Echo e1, Echo e2) => e1.id - e2.id;
+    _subs = savedCubit.stream.listen((savedState) {
       emit(state.copyWith(true));
       _log.debug("Saved State change");
-      emit(state.copyWith(false, savedState.echoes.map((e)=>Echo.fromJson(e)).toList()));
+      final echoList = savedState.echoes.map((e) => Echo.fromJson(e)).toList()
+        ..sort(echoIdSort);
+      emit(state.copyWith(false, echoList));
     });
+    final echoList = savedCubit.state.echoes.map((e) {
+      return Echo.fromJson(e);
+    }).toList()..sort(echoIdSort);
+    emit(state.copyWith(false, echoList));
   }
 
-  void addEcho(Echo echo) => emit(state.copyWith(false, [...state.echoes, echo]));
+  void addEcho(Echo echo) =>
+      emit(state.copyWith(false, [...state.echoes, echo]));
 
   final SavedDataCubit savedCubit;
   final _log = Logger("EchoesCubit");
@@ -30,20 +38,6 @@ class EchoesCubit extends Cubit<EchoState> {
     state.echoes.remove(echo);
     emit(state.copyWith(false, state.echoes));
   }
-
-  // void saveEchos() {
-  //   savedRepository.echoes = state.echoes.map((r) => r.toJson()).toList();
-  // }
-
-  // void getEchoes() {
-  //   emit(state.copyWith(true, []));
-  //   List<Echo> echoes = [];
-  //   final savedEchos = savedRepository.echoes;
-  //   for (var jsonEcho in savedEchos) {
-  //     echoes.add(Echo.fromJson(jsonEcho));
-  //   }
-  //   emit(EchoState(false, echoes));
-  // }
 }
 
 class EchoState extends Equatable {
