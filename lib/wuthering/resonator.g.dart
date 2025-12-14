@@ -27,10 +27,10 @@ Resonator _$ResonatorFromJson(Map<String, dynamic> json) => Resonator(
           .toList() ??
       const [],
   stats:
-      (json['stats'] as List<dynamic>?)
-          ?.map((e) => StatValue.fromJson(e as Map<String, dynamic>))
-          .toList() ??
-      const [],
+      (json['stats'] as Map<String, dynamic>?)?.map(
+        (k, e) => MapEntry(int.parse(k), (e as num).toDouble()),
+      ) ??
+      const {},
 );
 
 Map<String, dynamic> _$ResonatorToJson(Resonator instance) => <String, dynamic>{
@@ -41,7 +41,7 @@ Map<String, dynamic> _$ResonatorToJson(Resonator instance) => <String, dynamic>{
   'level': instance.level,
   'skills': instance.skills,
   'buffs': instance.buffs,
-  'stats': instance.stats,
+  'stats': instance.stats.map((k, e) => MapEntry(k.toString(), e)),
 };
 
 const _$WeaponTypeEnumMap = {

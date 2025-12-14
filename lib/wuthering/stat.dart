@@ -7,6 +7,7 @@ import 'package:ww_optimizer/wuthering/damage.dart';
 part 'stat.g.dart';
 
 typedef StatList = List<StatValue>;
+typedef StatMap = Map<int, double>;
 
 @JsonSerializable()
 class StatValue {
@@ -16,10 +17,18 @@ class StatValue {
 
   const StatValue(this.name, this.value, {this.appliesOnlyTo});
 
+  StatValue copyWith({StatName? name, double? value}) =>
+      StatValue(name ?? this.name, value ?? this.value);
+
   bool get isPercent => isPercentage(name);
 
   static bool isPercentage(StatName name) {
-    final nonPercentageStats = [StatName.ATK, StatName.FlatATK, StatName.DEF, StatName.HP];
+    final nonPercentageStats = [
+      StatName.ATK,
+      StatName.FlatATK,
+      StatName.DEF,
+      StatName.HP,
+    ];
     return !nonPercentageStats.contains(name);
   }
 
@@ -106,13 +115,20 @@ class StatName {
   static StatName get HavocRes => const StatName(58);
   static StatName get SpectroRes => const StatName(59);
 
-  static String name(StatName statName) => _statNames[statName] ?? "Invalid Index";
+  static final List<StatName> values = List.generate(
+    58,
+    (index) => StatName(index + 1),
+    growable: false,
+  );
+
+  static String name(StatName statName) =>
+      _statNames[statName] ?? "Invalid Index";
   static Map<StatName, String> get statNames => _statNames;
   static final Map<StatName, String> _statNames = const {
-    StatName(1): "ATK",
+    StatName(1): "ATK (Raw)", // Raw Resoantor/Weapon attack
     StatName(2): "DEF",
     StatName(3): "HP",
-    StatName(4): "ATK",
+    StatName(4): "ATK (Flat)", // Flat ATK From Tuning
     StatName(5): "ATK %",
     StatName(6): "DEF %",
     StatName(7): "HP %",
@@ -169,6 +185,10 @@ class StatName {
     StatName(58): "Havoc Res",
     StatName(59): "Spectro Res",
   };
+
+  static StatName strToName(String strName) =>
+      _strToStaName[strName] ?? StatName(0);
+
   static final Map<String, StatName> _strToStaName = Map.fromEntries(
     _statNames.map((k, v) {
       return MapEntry(v, k);

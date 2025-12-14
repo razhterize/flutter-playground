@@ -16,7 +16,7 @@ class Resonator {
   int level;
   List<Skill> skills;
   BuffList buffs;
-  StatList stats;
+  StatMap stats;
   Resonator({
     this.name = "",
     this.id = 0,
@@ -25,7 +25,7 @@ class Resonator {
     this.level = 90,
     this.skills = const [],
     this.buffs = const [],
-    this.stats = const [],
+    this.stats = const {},
   });
   factory Resonator.fromJson(JsonType json) => _$ResonatorFromJson(json);
   JsonType toJson() => _$ResonatorToJson(this);
