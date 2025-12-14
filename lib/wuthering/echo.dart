@@ -1,15 +1,15 @@
 // ignore_for_file: non_constant_identifier_names, constant_identifier_names
-
 import 'package:json_annotation/json_annotation.dart';
 import 'package:ww_optimizer/core/types.dart';
-import 'package:ww_optimizer/core/wuthering/buff.dart';
-import 'package:ww_optimizer/core/wuthering/sonata.dart';
-import 'package:ww_optimizer/core/wuthering/stat.dart';
+import 'package:ww_optimizer/wuthering/buff.dart';
+import 'package:ww_optimizer/wuthering/sonata.dart';
+import 'package:ww_optimizer/wuthering/stat.dart';
 
 part 'echo.g.dart';
 
 @JsonSerializable()
 class Echo {
+  int id;
   final String name;
   final BuffList buffs;
   final StatList substats;
@@ -19,6 +19,7 @@ class Echo {
   StatList mainStats;
 
   Echo({
+    this.id = 0,
     this.name = "",
     this.buffs = const [],
     this.cost = Echo.Cost1,

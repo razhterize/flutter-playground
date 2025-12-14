@@ -1,24 +1,28 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:ww_optimizer/core/types.dart';
-import 'package:ww_optimizer/core/wuthering/buff.dart';
-import 'package:ww_optimizer/core/wuthering/attack.dart';
-import 'package:ww_optimizer/core/wuthering/stat.dart';
-import 'package:ww_optimizer/core/wuthering/weapon.dart';
+import 'package:ww_optimizer/wuthering/buff.dart';
+import 'package:ww_optimizer/wuthering/attack.dart';
+import 'package:ww_optimizer/wuthering/stat.dart';
+import 'package:ww_optimizer/wuthering/weapon.dart';
 
 part 'resonator.g.dart';
 
 @JsonSerializable()
 class Resonator {
+  int id;
   final String name;
   final WeaponType weaponType;
   final ElementType elementType;
+  int level;
   List<Skill> skills;
   BuffList buffs;
   StatList stats;
   Resonator({
     this.name = "",
+    this.id = 0,
     this.weaponType = WeaponType.None,
     this.elementType = ElementType.None,
+    this.level = 90,
     this.skills = const [],
     this.buffs = const [],
     this.stats = const [],

@@ -7,6 +7,7 @@ part of 'echo.dart';
 // **************************************************************************
 
 Echo _$EchoFromJson(Map<String, dynamic> json) => Echo(
+  id: (json['id'] as num?)?.toInt() ?? 0,
   name: json['name'] as String? ?? "",
   buffs:
       (json['buffs'] as List<dynamic>?)
@@ -29,6 +30,7 @@ Echo _$EchoFromJson(Map<String, dynamic> json) => Echo(
 );
 
 Map<String, dynamic> _$EchoToJson(Echo instance) => <String, dynamic>{
+  'id': instance.id,
   'name': instance.name,
   'buffs': instance.buffs,
   'substats': instance.substats,

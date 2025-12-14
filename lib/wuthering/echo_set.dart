@@ -1,10 +1,10 @@
 import 'package:json_annotation/json_annotation.dart';
 
 import 'package:ww_optimizer/logger.dart';
-import 'package:ww_optimizer/core/wuthering/buff.dart';
-import 'package:ww_optimizer/core/wuthering/stat.dart';
-import 'package:ww_optimizer/core/wuthering/echo.dart';
-import 'package:ww_optimizer/core/wuthering/sonata.dart';
+import 'package:ww_optimizer/wuthering/buff.dart';
+import 'package:ww_optimizer/wuthering/stat.dart';
+import 'package:ww_optimizer/wuthering/echo.dart';
+import 'package:ww_optimizer/wuthering/sonata.dart';
 
 part 'echo_set.g.dart';
 

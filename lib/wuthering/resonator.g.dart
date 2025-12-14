@@ -8,12 +8,14 @@ part of 'resonator.dart';
 
 Resonator _$ResonatorFromJson(Map<String, dynamic> json) => Resonator(
   name: json['name'] as String? ?? "",
+  id: (json['id'] as num?)?.toInt() ?? 0,
   weaponType:
       $enumDecodeNullable(_$WeaponTypeEnumMap, json['weaponType']) ??
       WeaponType.None,
   elementType:
       $enumDecodeNullable(_$ElementTypeEnumMap, json['elementType']) ??
       ElementType.None,
+  level: (json['level'] as num?)?.toInt() ?? 90,
   skills:
       (json['skills'] as List<dynamic>?)
           ?.map((e) => Skill.fromJson(e as Map<String, dynamic>))
@@ -32,9 +34,11 @@ Resonator _$ResonatorFromJson(Map<String, dynamic> json) => Resonator(
 );
 
 Map<String, dynamic> _$ResonatorToJson(Resonator instance) => <String, dynamic>{
+  'id': instance.id,
   'name': instance.name,
   'weaponType': _$WeaponTypeEnumMap[instance.weaponType]!,
   'elementType': _$ElementTypeEnumMap[instance.elementType]!,
+  'level': instance.level,
   'skills': instance.skills,
   'buffs': instance.buffs,
   'stats': instance.stats,

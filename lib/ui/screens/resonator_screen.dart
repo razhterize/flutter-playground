@@ -2,8 +2,8 @@ import 'dart:io';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ww_optimizer/assets.dart';
-import 'package:ww_optimizer/core/wuthering/resonator.dart';
-import 'package:ww_optimizer/core/wuthering/stat.dart';
+import 'package:ww_optimizer/wuthering/resonator.dart';
+import 'package:ww_optimizer/wuthering/stat.dart';
 import 'package:ww_optimizer/cubit/resonator_cubit.dart';
 import 'package:ww_optimizer/logger.dart';
 import 'package:ww_optimizer/ui/widgets/paddings.dart';
@@ -72,7 +72,8 @@ class _ResonatorScreenState extends State<ResonatorScreen> {
           return Center(child: const Text("No Resonators Saved"));
         }
         List<Resonator> showedResonator = state.resonators;
-        if (_filterController.text.isNotEmpty && _filterElement == ElementType.None) {
+        if (_filterController.text.isNotEmpty &&
+            _filterElement == ElementType.None) {
           bool matchFilter(Resonator r) => r.name.toLowerCase().contains(
             _filterController.text.toLowerCase(),
           );
@@ -105,19 +106,19 @@ class _ResonatorScreenState extends State<ResonatorScreen> {
         end: .topCenter,
       ),
     );
-    const _textStyle = TextStyle(fontSize: 24, color: Colors.white);
-    return imagePath != null
-        ? Stack(
-            alignment: .bottomCenter,
-            children: [
-              Image.file(File(imagePath), semanticLabel: resonator.name),
-              Container(
-                width: MediaQuery.of(context!).size.width,
-                decoration: _decor,
-                child: Text(resonator.name, style: _textStyle),
-              ),
-            ],
-          )
-        : Placeholder();
+    const _textStyle = TextStyle(
+      fontSize: 18,
+      color: Colors.white,
+      backgroundColor: Color.fromARGB(255, 0, 123, 184),
+    );
+    return Stack(
+      alignment: .bottomCenter,
+      children: [
+        imagePath != null
+            ? Image.file(File(imagePath), semanticLabel: resonator.name)
+            : Placeholder(),
+        Text(resonator.name, style: _textStyle),
+      ],
+    );
   }
 }

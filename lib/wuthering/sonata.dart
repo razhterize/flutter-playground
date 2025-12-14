@@ -2,9 +2,9 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:ww_optimizer/core/enum_flag.dart';
 import 'package:ww_optimizer/core/types.dart';
-import 'package:ww_optimizer/core/wuthering/buff.dart';
-import 'package:ww_optimizer/core/wuthering/echo.dart';
-import 'package:ww_optimizer/core/wuthering/stat.dart';
+import 'package:ww_optimizer/wuthering/buff.dart';
+import 'package:ww_optimizer/wuthering/echo.dart';
+import 'package:ww_optimizer/wuthering/stat.dart';
 
 part 'sonata.g.dart';
 

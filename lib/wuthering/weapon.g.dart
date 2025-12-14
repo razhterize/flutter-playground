@@ -7,6 +7,7 @@ part of 'weapon.dart';
 // **************************************************************************
 
 Weapon _$WeaponFromJson(Map<String, dynamic> json) => Weapon(
+  id: (json['id'] as num?)?.toInt() ?? 0,
   name: json['name'] as String? ?? "",
   type:
       $enumDecodeNullable(_$WeaponTypeEnumMap, json['type']) ??
@@ -24,6 +25,7 @@ Weapon _$WeaponFromJson(Map<String, dynamic> json) => Weapon(
 );
 
 Map<String, dynamic> _$WeaponToJson(Weapon instance) => <String, dynamic>{
+  'id': instance.id,
   'name': instance.name,
   'type': _$WeaponTypeEnumMap[instance.type]!,
   'stats': instance.stats,

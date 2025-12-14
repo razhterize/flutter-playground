@@ -1,5 +1,5 @@
-import 'package:ww_optimizer/core/wuthering/buff.dart';
-import 'package:ww_optimizer/core/wuthering/stat.dart';
+import 'package:ww_optimizer/wuthering/buff.dart';
+import 'package:ww_optimizer/wuthering/stat.dart';
 
 class Conditional<T> {
   late T _object;
