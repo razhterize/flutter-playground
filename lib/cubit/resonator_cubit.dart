@@ -19,6 +19,7 @@ class ResonatorCubit extends Cubit<ResonatorState> {
   late StreamSubscription _saveSubs;
 
   void _initPriv() {
+    _log.debug("Init Resonator Cubit");
     int sortResonator(Resonator r1, Resonator r2) {
       return r1.elementType.index - r2.elementType.index;
     }
@@ -38,12 +39,16 @@ class ResonatorCubit extends Cubit<ResonatorState> {
       savedCubit.saveResonator(resonatorState.resonators);
     });
 
-    // Initial state set
-    final resonatorList = savedCubit.state.resonators
-        .map((e) => Resonator.fromJson(e))
-        .toList();
-    resonatorList.sort(sortResonator);
-    emit(state.copyWith(processing: false, resonators: resonatorList));
+    try {
+      // Initial state set
+      final resonatorList = savedCubit.state.resonators
+          .map((e) => Resonator.fromJson(e))
+          .toList();
+      resonatorList.sort(sortResonator);
+      emit(state.copyWith(processing: false, resonators: resonatorList));
+    } catch (e) {
+      _log.error("Something is wrong when loading initial resonators: ${e.toString()}", st: .current);
+    }
   }
 
   void editResonator(Resonator resonator) {
@@ -52,9 +57,11 @@ class ResonatorCubit extends Cubit<ResonatorState> {
 
   void updateResonator(Resonator resonator) {
     emit(state.copyWith(processing: true));
+    _log.debug("Update Resonator ${resonator.name}");
     final newList = state.resonators;
     final index = newList.indexWhere((r) => r.name == resonator.name);
     newList[index] = resonator;
+    _log.debug("Resonators count: ${newList.length}");
     emit(state.copyWith(processing: false, resonators: newList));
   }
 
@@ -67,6 +74,9 @@ class ResonatorCubit extends Cubit<ResonatorState> {
   void removeResonator(Resonator resonator) {
     emit(state.copyWith(processing: true));
     state.resonators.remove(resonator);
+    _log.debug(
+      "Remove ${resonator.name}. Current length: ${state.resonators.length}",
+    );
     emit(state.copyWith(processing: false, resonators: state.resonators));
   }
 
