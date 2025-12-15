@@ -18,10 +18,12 @@ class WeaponCubit extends Cubit<WeaponState> {
   late StreamSubscription _saveSubs;
 
   void _initPriv() {
+    _log.debug("Init WeaponCubit");
     int sortWeapon(Weapon w1, Weapon w2) => w1.type.index - w2.type.index;
 
     // Listen for saved state change
     _subs = savedCubit.stream.listen((s) {
+      _log.debug("Received saved cubit state");
       emit(state.copyWith(true));
       final weaponList = s.weapons.map((w) => Weapon.fromJson(w)).toList();
       weaponList.sort(sortWeapon);
@@ -30,6 +32,7 @@ class WeaponCubit extends Cubit<WeaponState> {
 
     // Automagically save weapons
     _saveSubs = stream.listen((weaponState) {
+      _log.debug("Data changed. Saving to local file");
       savedCubit.saveWeapons(weaponState.weapons);
     });
 
@@ -43,6 +46,7 @@ class WeaponCubit extends Cubit<WeaponState> {
 
   @override
   Future<void> close() {
+    _log.debug("WeaponCubit close");
     _subs?.cancel();
     _saveSubs.cancel();
     return super.close();
