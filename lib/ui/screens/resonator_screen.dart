@@ -5,8 +5,10 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ww_optimizer/core/types.dart';
 import 'package:ww_optimizer/paths.dart';
+import 'package:ww_optimizer/ui/widgets/buff_editor.dart';
 import 'package:ww_optimizer/ui/widgets/images.dart';
 import 'package:ww_optimizer/ui/widgets/stat_picker.dart';
+import 'package:ww_optimizer/wuthering/buff.dart';
 import 'package:ww_optimizer/wuthering/resonator.dart';
 import 'package:ww_optimizer/wuthering/stat.dart';
 import 'package:ww_optimizer/cubit/resonator_cubit.dart';
@@ -113,16 +115,18 @@ class _ResonatorEditorState extends State<ResonatorEditor> {
   // Raw Json to get base stats per level
   late JsonType _rawJson;
   late Resonator edited;
+  late ResonatorCubit _cubit;
 
   @override
   Widget build(BuildContext context) {
-    edited = context.read<ResonatorCubit>().state.editedResonator!;
+    _cubit = context.read<ResonatorCubit>();
+    edited = _cubit.state.editedResonator!;
     _rawJson = jsonDecode(
       File(
         "${assetDir.path}/resonators/${edited.name}.json",
       ).readAsStringSync(),
     );
-    return Column(
+    return ListView(
       children: [
         ListTile(
           leading: ResonatorImage(edited, imageSize: Size(150, 150)),
@@ -130,7 +134,9 @@ class _ResonatorEditorState extends State<ResonatorEditor> {
           subtitle: _levelSlider(context),
         ),
         _statsEditor(context),
+        CommonUI.spacer(height: 10),
         _buffsEditor(context),
+        CommonUI.spacer(height: 10),
         _skillsEditor(context),
       ],
     );
@@ -160,7 +166,7 @@ class _ResonatorEditorState extends State<ResonatorEditor> {
                   ifAbsent: () => levelStat.value,
                 );
               }
-              _update(context);
+              _update();
             },
           ),
         ),
@@ -186,6 +192,7 @@ class _ResonatorEditorState extends State<ResonatorEditor> {
                   bool pred(StatName n) {
                     return !edited.stats.containsKey(n) && n != StatName.None;
                   }
+
                   List<StatName> validKeys = StatName.values
                       .where(pred)
                       .toList();
@@ -195,7 +202,7 @@ class _ResonatorEditorState extends State<ResonatorEditor> {
                     ifAbsent: () => 0,
                   );
                   // TODO: Why the stats isn't updating when slider changes?
-                  _update(context);
+                  _update();
                 },
               );
             }
@@ -205,7 +212,7 @@ class _ResonatorEditorState extends State<ResonatorEditor> {
               except: edited.stats.entries.map((e) => e.key).toList(),
               buttonPress: () {
                 edited.stats.remove(entry.key);
-                _update(context);
+                _update();
               },
               onChange: (stat) {
                 // Check if key changes. Delete previous if it does
@@ -217,7 +224,7 @@ class _ResonatorEditorState extends State<ResonatorEditor> {
                   (v) => stat.value,
                   ifAbsent: () => stat.value,
                 );
-                _update(context);
+                _update();
               },
             );
           },
@@ -227,8 +234,39 @@ class _ResonatorEditorState extends State<ResonatorEditor> {
   }
 
   Widget _buffsEditor(BuildContext context) {
-    var resonator = context.read<ResonatorCubit>().state.editedResonator;
-    return Expander(header: const Text("Buffs"), content: Placeholder());
+    return Expander(
+      header: const Text("Buffs"),
+      content: SizedBox(
+        height: 200,
+        child: ListView.separated(
+          separatorBuilder: (_, _) => CommonUI.spacer(height: 8),
+          itemCount: edited.buffs.length + 1,
+          itemBuilder: (_, index) {
+            if (edited.buffs.isEmpty || index >= edited.buffs.length) {
+              return FilledButton(
+                child: Icon(FluentIcons.add),
+                onPressed: () {
+                  edited.buffs.add(Buff());
+                  _update();
+                },
+              );
+            }
+            final buff = edited.buffs[index];
+            return BuffPicker(
+              buff: buff,
+              buttonPress: () {
+                edited.buffs.removeAt(index);
+                _update();
+              },
+              onChange: (buff) {
+                edited.buffs[index] = buff;
+                _update();
+              },
+            );
+          },
+        ),
+      ),
+    );
   }
 
   Widget _skillsEditor(BuildContext context) {
@@ -236,9 +274,8 @@ class _ResonatorEditorState extends State<ResonatorEditor> {
     return Expander(header: const Text("Skills"), content: Placeholder());
   }
 
-  void _update(BuildContext context) {
-    final cubit = context.read<ResonatorCubit>();
-    cubit.updateResonator(edited);
-    cubit.editResonator(edited);
+  void _update() {
+    _cubit.updateResonator(edited);
+    _cubit.editResonator(edited);
   }
 }
