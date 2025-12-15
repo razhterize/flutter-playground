@@ -10,7 +10,7 @@ import 'package:ww_optimizer/ui/widgets/stat_picker.dart';
 import 'package:ww_optimizer/wuthering/resonator.dart';
 import 'package:ww_optimizer/wuthering/stat.dart';
 import 'package:ww_optimizer/cubit/resonator_cubit.dart';
-import 'package:ww_optimizer/ui/widgets/paddings.dart';
+import 'package:ww_optimizer/ui/widgets/common.dart';
 
 class ResonatorScreen extends StatefulWidget {
   const ResonatorScreen({super.key});

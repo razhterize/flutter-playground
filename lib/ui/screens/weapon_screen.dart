@@ -4,7 +4,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:ww_optimizer/assets.dart';
 import 'package:ww_optimizer/cubit/weapons_cubit.dart';
 import 'package:ww_optimizer/ui/widgets/images.dart';
-import 'package:ww_optimizer/ui/widgets/paddings.dart';
+import 'package:ww_optimizer/ui/widgets/common.dart';
 import 'package:ww_optimizer/wuthering/weapon.dart';
 
 class WeaponScreen extends StatefulWidget {

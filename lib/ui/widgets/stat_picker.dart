@@ -1,5 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/services.dart';
+import 'package:ww_optimizer/ui/widgets/common.dart';
 import 'package:ww_optimizer/wuthering/stat.dart';
 
 class StatNamePicker extends StatefulWidget {
@@ -88,7 +89,7 @@ class _StatValuePickerState extends State<StatValuePicker> {
             child: Icon(FluentIcons.skype_minus),
           ),
         ),
-        Container(width: 5, color: Colors.transparent),
+        CommonUI.spacer(),
         Flexible(
           flex: 9,
           child: StatNamePicker(
@@ -98,7 +99,7 @@ class _StatValuePickerState extends State<StatValuePicker> {
             except: widget.except,
           ),
         ),
-        Container(width: 5, color: Colors.transparent),
+        CommonUI.spacer(),
         Flexible(
           flex: 2,
           child: NumberBox<double>(
