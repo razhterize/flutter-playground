@@ -26,15 +26,18 @@ class Buff {
     this.target = BuffTarget.Self,
   });
 
-  @override
-  String toString() {
-    StringBuffer buffer = StringBuffer();
-    buffer.write("[$name] ");
-    final padding = buffer.length;
-    for (var stat in stats) {
-      buffer.write("\n${' ' * padding}${stat.toString()}");
-    }
-    return buffer.toString();
+  Buff copyWith({
+    String? name,
+    StatList? stats,
+    int? maxStack,
+    BuffTarget? target,
+  }) {
+    return Buff(
+      name: name ?? this.name,
+      stats: stats ?? this.stats,
+      maxStack: maxStack ?? this.maxStack,
+      target: target ?? this.target,
+    );
   }
 
   factory Buff.fromJson(JsonType json) => _$BuffFromJson(json);
