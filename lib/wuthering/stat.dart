@@ -212,7 +212,7 @@ const Map<StatName, String> strStatNames = {
 extension StatMapValues on StatMap {
   List<StatValue> get values => entries.map((e) => e.toStatValue()).toList();
 
-  StatMap fromJson(JsonType json) {
+  static StatMap fromJson(JsonType json) {
     StatMap statMap = {};
     for (var entry in json.entries) {
       var key = StatName.values
@@ -231,9 +231,9 @@ extension StatMapValues on StatMap {
     return statMap;
   }
 
-  JsonType toJson() {
+  static JsonType toJson(StatMap instance) {
     JsonType _json = {};
-    for (var entry in entries) {
+    for (var entry in instance.entries) {
       _json.update(
         '${entry.key.index}',
         (v) => entry.value,

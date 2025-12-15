@@ -16,6 +16,7 @@ class Resonator {
   int level;
   List<Skill> skills;
   BuffList buffs;
+  @JsonKey(toJson: StatMapValues.toJson, fromJson: StatMapValues.fromJson)
   StatMap stats;
   Resonator({
     this.name = "",
