@@ -1,3 +1,4 @@
+import 'dart:async';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,9 +11,14 @@ import 'package:ww_optimizer/wuthering/weapon.dart';
 class SavedDataCubit extends Cubit<SavedState> {
   SavedDataCubit() : super(const SavedState()) {
     loadData();
+
+    // only save every second
+    _saveTimer = Timer.periodic(Duration(seconds: 1), (_) => saveData());
   }
 
   final _savedRepository = SavedRepository();
+  late final Timer _saveTimer;
+  bool _saveFlag = false;
 
   void loadData([String? path]) {
     emit(state.copyWith(true));
@@ -22,20 +28,31 @@ class SavedDataCubit extends Cubit<SavedState> {
 
   void saveEcho(List<Echo> echoList) {
     _savedRepository.echoes = echoList.map((e) => e.toJson()).toList();
-    saveData();
+    _saveFlag = true;
   }
 
   void saveWeapons(List<Weapon> weaponList) {
     _savedRepository.weapons = weaponList.map((w) => w.toJson()).toList();
-    saveData();
+    _saveFlag = true;
   }
 
   void saveResonator(List<Resonator> resonatorList) {
     _savedRepository.resonators = resonatorList.map((r) => r.toJson()).toList();
-    saveData();
+    _saveFlag = true;
   }
 
-  void saveData() => _savedRepository.saveData();
+  void saveData() {
+    if (_saveFlag) {
+      _savedRepository.saveData();
+      _saveFlag = false;
+    }
+  }
+
+  @override
+  Future<void> close() {
+    _saveTimer.cancel();
+    return super.close();
+  }
 }
 
 class SavedState extends Equatable {
