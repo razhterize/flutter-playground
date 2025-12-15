@@ -26,8 +26,6 @@ class WutheringOptimizer extends StatefulWidget {
 }
 
 class _WutheringOptimizerState extends State<WutheringOptimizer> {
-  WutheringAssets assets = WutheringAssets();
-
   int _activeScreen = 0;
 
   @override
@@ -37,15 +35,27 @@ class _WutheringOptimizerState extends State<WutheringOptimizer> {
       theme: FluentThemeData(brightness: .dark),
       home: MultiBlocProvider(
         providers: [
-          BlocProvider(create: (ctx) => SavedDataCubit(), lazy: false),
-          BlocProvider(create: (ctx) => StatusCubit(), lazy: false),
+          BlocProvider(create: (_) => SavedDataCubit(), lazy: false),
+          BlocProvider(create: (_) => StatusCubit(), lazy: false),
         ],
-        child: Builder(builder: _buildLayout),
+        child: Builder(
+          builder: (BuildContext context) {
+            final _savedCubit = context.read<SavedDataCubit>();
+            return MultiBlocProvider(
+              providers: [
+                BlocProvider(create: (_) => ResonatorCubit(_savedCubit)),
+                BlocProvider(create: (_) => EchoesCubit(_savedCubit)),
+                BlocProvider(create: (_) => WeaponCubit(_savedCubit)),
+              ],
+              child: _buildLayout(),
+            );
+          },
+        ),
       ),
     );
   }
 
-  Widget _buildLayout(BuildContext _) {
+  Widget _buildLayout() {
     return NavigationView(
       appBar: NavigationAppBar(leading: WutheringMenuBar()),
       pane: NavigationPane(
@@ -56,27 +66,9 @@ class _WutheringOptimizerState extends State<WutheringOptimizer> {
         displayMode: .compact,
         items: [
           PaneItem(icon: Icon(FluentIcons.accept), body: BuildScreen()),
-          PaneItem(
-            icon: Icon(FluentIcons.album),
-            body: BlocProvider(
-              create: (context) => ResonatorCubit(context.read<SavedDataCubit>()),
-              child: ResonatorScreen(),
-            ),
-          ),
-          PaneItem(
-            icon: Icon(FluentIcons.album),
-            body: BlocProvider(
-              create: (context) => WeaponCubit(context.read<SavedDataCubit>()),
-              child: WeaponScreen(),
-            ),
-          ),
-          PaneItem(
-            icon: Icon(FluentIcons.album),
-            body: BlocProvider(
-              create: (context) => EchoesCubit(context.read<SavedDataCubit>()),
-              child: EchoScreen(),
-            ),
-          ),
+          PaneItem(icon: Icon(FluentIcons.album), body: ResonatorScreen()),
+          PaneItem(icon: Icon(FluentIcons.album), body: WeaponScreen()),
+          PaneItem(icon: Icon(FluentIcons.album), body: EchoScreen()),
         ],
       ),
     );
