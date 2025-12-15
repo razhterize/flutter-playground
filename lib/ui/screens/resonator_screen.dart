@@ -189,7 +189,7 @@ class _ResonatorEditorState extends State<ResonatorEditor> {
                 child: Icon(FluentIcons.add),
                 onPressed: () {
                   bool pred(StatName n) {
-                    return !resonator.stats.containsKey(n.index) &&
+                    return !resonator.stats.containsKey(n) &&
                         n != StatName.None;
                   }
 
@@ -214,8 +214,12 @@ class _ResonatorEditorState extends State<ResonatorEditor> {
                 _update(context);
               },
               onChange: (stat) {
+                // Check if key changes. Delete previous if it does
+                if (stat.name != entry.key) {
+                  resonator.stats.remove(entry.key);
+                }
                 resonator.stats.update(
-                  entry.key,
+                  stat.name,
                   (v) => stat.value,
                   ifAbsent: () => stat.value,
                 );
