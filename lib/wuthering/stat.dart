@@ -215,11 +215,11 @@ extension StatMapValues on StatMap {
   static StatMap fromJson(JsonType json) {
     StatMap statMap = {};
     for (var entry in json.entries) {
-      var key = StatName.values
-          .where((statIdx) => "${statIdx.index}" == entry.key)
-          .first;
+      var keyIndex = StatName.values.indexWhere(
+        (statName) => statName.name == entry.key,
+      );
       statMap.update(
-        key,
+        StatName.values[keyIndex],
         (v) => entry.value is double
             ? entry.value
             : double.tryParse(entry.value) ?? 0,
@@ -235,7 +235,7 @@ extension StatMapValues on StatMap {
     JsonType _json = {};
     for (var entry in instance.entries) {
       _json.update(
-        '${entry.key.index}',
+        entry.key.name,
         (v) => entry.value,
         ifAbsent: () => entry.value,
       );
