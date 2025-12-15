@@ -31,9 +31,6 @@ class _StatNamePickerState extends State<StatNamePicker> {
 
   @override
   Widget build(BuildContext context) {
-    final validStatNames = strStatNames.entries
-        .where((e) => widget.except.contains(e.key) == false)
-        .toList();
     return ComboBox<StatName>(
       value: _statName,
       onChanged: (value) {
@@ -41,8 +38,12 @@ class _StatNamePickerState extends State<StatNamePicker> {
         widget.onChange(value);
         setState(() {});
       },
-      items: validStatNames.map((e) {
-        return ComboBoxItem(value: e.key, child: Text(e.value));
+      items: strStatNames.entries.map((e) {
+        return ComboBoxItem(
+          value: e.key,
+          enabled: !widget.except.contains(e.key),
+          child: Text(e.value),
+        );
       }).toList(),
     );
   }
