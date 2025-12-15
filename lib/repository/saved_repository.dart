@@ -47,8 +47,14 @@ class SavedRepository {
   }
 
   void saveData() {
-    String _json = jsonEncode(_savedData);
-    _savedFile.writeAsString(_json);
+    try {
+      String _json = jsonEncode(_savedData);
+      _savedFile.writeAsString(_json);
+    } on JsonUnsupportedObjectError catch (e) {
+      _log.error("Failed to decode ${e.cause.runtimeType}", st: e.stackTrace);
+    } on IOException catch (e) {
+      _log.error(e.toString(), st: .current);
+    }
   }
 
   void _writeDefaultValues() {
