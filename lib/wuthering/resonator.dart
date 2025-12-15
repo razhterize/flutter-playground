@@ -16,7 +16,8 @@ class Resonator {
   int level;
   List<Skill> skills;
   BuffList buffs;
-  Map<StatName, double> stats;
+  @JsonKey(fromJson: _statMapFromJson, toJson: _statMapToJson)
+  StatMap stats;
   Resonator({
     this.name = "",
     this.id = 0,
@@ -29,4 +30,35 @@ class Resonator {
   });
   factory Resonator.fromJson(JsonType json) => _$ResonatorFromJson(json);
   JsonType toJson() => _$ResonatorToJson(this);
+}
+
+StatMap _statMapFromJson(JsonType json) {
+  StatMap statMap = {};
+  for (var entry in json.entries) {
+    var key = StatName.values
+        .where((statIdx) => "${statIdx.index}" == entry.key)
+        .first;
+    statMap.update(
+      key,
+      (v) => entry.value is double
+          ? entry.value
+          : double.tryParse(entry.value) ?? 0,
+      ifAbsent: () => entry.value is double
+          ? entry.value
+          : double.tryParse(entry.value) ?? 0,
+    );
+  }
+  return statMap;
+}
+
+JsonType _statMapToJson(StatMap statMap) {
+  JsonType _json = {};
+  for (var entry in statMap.entries) {
+    _json.update(
+      '${entry.key.index}',
+      (v) => entry.value,
+      ifAbsent: () => entry.value,
+    );
+  }
+  return _json;
 }
