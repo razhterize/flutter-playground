@@ -10,6 +10,8 @@ late final Directory assetDir;
 Future<void> initDirectories() async {
   rootDir = File(Platform.resolvedExecutable).parent;
   assetDir = Directory((await getApplicationCacheDirectory()).join("assets"));
+  rootLogger.info("Using rootDir: ${rootDir.path}");
+  rootLogger.info("Using assetDir: ${assetDir.path}");
 }
 
 extension DirectoryJoin on Directory {
