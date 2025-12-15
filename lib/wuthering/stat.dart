@@ -208,3 +208,42 @@ const Map<StatName, String> strStatNames = {
   StatName.HavocRes: "Havoc Res",
   StatName.SpectroRes: "Spectro Res",
 };
+
+extension StatMapValues on StatMap {
+  List<StatValue> get values => entries.map((e) => e.toStatValue()).toList();
+
+  StatMap fromJson(JsonType json) {
+    StatMap statMap = {};
+    for (var entry in json.entries) {
+      var key = StatName.values
+          .where((statIdx) => "${statIdx.index}" == entry.key)
+          .first;
+      statMap.update(
+        key,
+        (v) => entry.value is double
+            ? entry.value
+            : double.tryParse(entry.value) ?? 0,
+        ifAbsent: () => entry.value is double
+            ? entry.value
+            : double.tryParse(entry.value) ?? 0,
+      );
+    }
+    return statMap;
+  }
+
+  JsonType toJson() {
+    JsonType _json = {};
+    for (var entry in entries) {
+      _json.update(
+        '${entry.key.index}',
+        (v) => entry.value,
+        ifAbsent: () => entry.value,
+      );
+    }
+    return _json;
+  }
+}
+
+extension StatMapEntry on MapEntry<StatName, double> {
+  StatValue toStatValue() => StatValue(key, value);
+}
