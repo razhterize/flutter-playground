@@ -151,7 +151,6 @@ class _ResonatorEditorState extends State<ResonatorEditor> {
             value: resonator.level.toDouble(),
             onChanged: (v) {
               resonator.level = v.toInt();
-              // TODO: Take json value from _rawJson and put it as stats
               StatMap _levelStats = {
                 StatName.ATK: _rawJson["stats"]["${v.toInt()}"]["ATK"],
                 StatName.HP: _rawJson["stats"]["${v.toInt()}"]["HP"],
@@ -159,7 +158,7 @@ class _ResonatorEditorState extends State<ResonatorEditor> {
               };
               for (var levelStat in _levelStats.entries) {
                 resonator.stats.update(
-                  levelStat.key.index,
+                  levelStat.key,
                   (value) => levelStat.value,
                   ifAbsent: () => levelStat.value,
                 );
@@ -189,14 +188,16 @@ class _ResonatorEditorState extends State<ResonatorEditor> {
               return FilledButton(
                 child: Icon(FluentIcons.add),
                 onPressed: () {
-                  bool pred(StatName n) =>
-                      !resonator.stats.containsKey(n.index) &&
-                      n != StatName.None;
+                  bool pred(StatName n) {
+                    return !resonator.stats.containsKey(n.index) &&
+                        n != StatName.None;
+                  }
+
                   List<StatName> validKeys = StatName.values
                       .where(pred)
                       .toList();
                   resonator.stats.update(
-                    validKeys.first.index,
+                    validKeys.first,
                     (v) => 0,
                     ifAbsent: () => 0,
                   );
@@ -206,8 +207,8 @@ class _ResonatorEditorState extends State<ResonatorEditor> {
             }
             final entry = statEntries[index];
             return StatValuePicker(
-              statValue: StatValue(StatName.values[entry.key], entry.value),
-              except: statEntries.map((e) => StatName.values[e.key]).toList(),
+              statValue: StatValue(entry.key, entry.value),
+              except: statEntries.map((e) => e.key).toList(),
               buttonPress: () {
                 resonator.stats.remove(entry.key);
                 _update(context);
@@ -240,6 +241,5 @@ class _ResonatorEditorState extends State<ResonatorEditor> {
   void _update(BuildContext context) {
     final cubit = context.read<ResonatorCubit>();
     cubit.updateResonator(cubit.state.editedResonator!);
-    setState(() {});
   }
 }

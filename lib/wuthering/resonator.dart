@@ -16,7 +16,7 @@ class Resonator {
   int level;
   List<Skill> skills;
   BuffList buffs;
-  Map<int, double> stats;
+  Map<StatName, double> stats;
   Resonator({
     this.name = "",
     this.id = 0,
