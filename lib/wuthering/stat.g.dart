@@ -7,7 +7,7 @@ part of 'stat.dart';
 // **************************************************************************
 
 StatValue _$StatValueFromJson(Map<String, dynamic> json) => StatValue(
-  StatName.fromJson(json['name'] as Map<String, dynamic>),
+  $enumDecode(_$StatNameEnumMap, json['name']),
   (json['value'] as num).toDouble(),
   appliesOnlyTo: $enumDecodeNullable(
     _$DamageTypeEnumMap,
@@ -16,9 +16,72 @@ StatValue _$StatValueFromJson(Map<String, dynamic> json) => StatValue(
 );
 
 Map<String, dynamic> _$StatValueToJson(StatValue instance) => <String, dynamic>{
-  'name': instance.name,
+  'name': _$StatNameEnumMap[instance.name]!,
   'value': instance.value,
   'appliesOnlyTo': _$DamageTypeEnumMap[instance.appliesOnlyTo],
+};
+
+const _$StatNameEnumMap = {
+  StatName.None: 0,
+  StatName.ATK: 1,
+  StatName.DEF: 2,
+  StatName.HP: 3,
+  StatName.FlatATK: 4,
+  StatName.ATKPercent: 5,
+  StatName.DEFPercent: 6,
+  StatName.HPPercent: 7,
+  StatName.CritRate: 8,
+  StatName.CritDamage: 9,
+  StatName.EnergyRegen: 10,
+  StatName.HealingBonus: 11,
+  StatName.AeroDamage: 12,
+  StatName.ElectroDamage: 13,
+  StatName.FusionDamage: 14,
+  StatName.GlacioDamage: 15,
+  StatName.HavocDamage: 16,
+  StatName.SpectroDamage: 17,
+  StatName.BasicAttackDamage: 18,
+  StatName.HeavyAttackDamage: 19,
+  StatName.ResonanceDamage: 20,
+  StatName.LiberationDamage: 21,
+  StatName.CoordinatedAttackDamage: 22,
+  StatName.IntroDamage: 23,
+  StatName.OutroDamage: 24,
+  StatName.EchoDamage: 25,
+  StatName.SpectroFrazzleDamage: 26,
+  StatName.AeroErosionDamage: 27,
+  StatName.GlacioChafeDamage: 28,
+  StatName.ElectroFlareDamage: 29,
+  StatName.HavocBaneDamage: 30,
+  StatName.FusionBurstDamage: 31,
+  StatName.GeneralDamage: 32,
+  StatName.AeroAmp: 33,
+  StatName.ElectroAmp: 34,
+  StatName.FusionAmp: 35,
+  StatName.GlacioAmp: 36,
+  StatName.HavocAmp: 37,
+  StatName.SpectroAmp: 38,
+  StatName.BasicAttackAmp: 39,
+  StatName.HeavyAttackAmp: 40,
+  StatName.ResonanceAmp: 41,
+  StatName.LiberationAmp: 42,
+  StatName.CoordinatedAttackAmp: 43,
+  StatName.IntroAmp: 44,
+  StatName.OutroAmp: 45,
+  StatName.EchoAmp: 46,
+  StatName.SpectroFrazzleAmp: 47,
+  StatName.AeroErosionAmp: 48,
+  StatName.ElectroFlareAmp: 49,
+  StatName.GlacioChafeAmp: 50,
+  StatName.HavocBaneAmp: 51,
+  StatName.FusionBurstAmp: 52,
+  StatName.GeneralAmp: 53,
+  StatName.AeroRes: 54,
+  StatName.ElectroRes: 55,
+  StatName.FusionRes: 56,
+  StatName.GlacioRes: 57,
+  StatName.HavocRes: 58,
+  StatName.SpectroRes: 59,
 };
 
 const _$DamageTypeEnumMap = {
@@ -45,11 +108,4 @@ const _$DamageTypeEnumMap = {
   DamageType.Outro: 20,
   DamageType.Echo: 21,
   DamageType.TuneBreak: 22,
-};
-
-StatName _$StatNameFromJson(Map<String, dynamic> json) =>
-    StatName((json['value'] as num).toInt());
-
-Map<String, dynamic> _$StatNameToJson(StatName instance) => <String, dynamic>{
-  'value': instance.value,
 };

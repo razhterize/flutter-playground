@@ -49,7 +49,7 @@ class Damage {
     this.hitCount = 1,
     this.damageType = DamageType.Raw,
     this.isFlat = false,
-    this.source = const StatName(1), // ATK By default
+    this.source = .ATK, // ATK By default
   });
 
   factory Damage.fromJson(JsonType json) => _$DamageFromJson(json);

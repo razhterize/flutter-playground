@@ -2,9 +2,9 @@ import 'package:ww_optimizer/wuthering/stat.dart';
 
 class EffectiveStats {
   EffectiveStats() {
-    for (var entry in StatName.statNames.entries) {
-      if (entry.key == 0) continue;
-      _effectiveStats[entry.key] = 0.0;
+    for (var entry in StatName.values) {
+      if (entry == .None) continue;
+      _effectiveStats[entry] = 0.0;
     }
   }
 
@@ -12,7 +12,7 @@ class EffectiveStats {
   Map<StatName, double> get effectiveStats => _effectiveStats;
 
   double addStat(StatValue stat) {
-    assert(stat.name.value != 0, "Cannot update StatName.None");
+    assert(stat.name != StatName.None, "Cannot update StatName.None");
     double updated = _effectiveStats.update(
       stat.name,
       (value) => value + stat.value,
@@ -22,7 +22,10 @@ class EffectiveStats {
   }
 
   List<double> addStats(List<StatValue> stats) {
-    assert(stats.any((stat) => stat.name.value != 0), "Cannot update StatName.None");
+    assert(
+      stats.any((stat) => stat.name != StatName.None),
+      "Cannot update StatName.None",
+    );
     List<double> updatedValues = [];
     for (var stat in stats) {
       double updated = addStat(stat);
@@ -32,7 +35,7 @@ class EffectiveStats {
   }
 
   double removeStat(StatValue stat) {
-    assert(stat.name.value != 0, "Cannot update StatName.None");
+    assert(stat.name != StatName.None, "Cannot update StatName.None");
     double updated = _effectiveStats.update(
       stat.name,
       (value) => value - stat.value,
@@ -42,7 +45,10 @@ class EffectiveStats {
   }
 
   List<double> removeStats(List<StatValue> stats) {
-    assert(stats.any((stat) => stat.name.value != 0), "Cannot update StatName.None");
+    assert(
+      stats.any((stat) => stat.name != StatName.None),
+      "Cannot update StatName.None",
+    );
     List<double> updatedValues = [];
     for (var stat in stats) {
       double updated = removeStat(stat);
@@ -51,7 +57,7 @@ class EffectiveStats {
     return updatedValues;
   }
 
-  double operator [](StatName name) => _effectiveStats[name.value] ?? 0.0;
+  double operator [](StatName name) => _effectiveStats[name] ?? 0.0;
 
   StatValue operator +(StatValue stat) {
     double updatedValue = addStat(stat);

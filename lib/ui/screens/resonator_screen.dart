@@ -153,13 +153,13 @@ class _ResonatorEditorState extends State<ResonatorEditor> {
               resonator.level = v.toInt();
               // TODO: Take json value from _rawJson and put it as stats
               StatMap _levelStats = {
-                StatName.ATK.value: _rawJson["stats"]["${v.toInt()}"]["ATK"],
-                StatName.HP.value: _rawJson["stats"]["${v.toInt()}"]["HP"],
-                StatName.DEF.value: _rawJson["stats"]["${v.toInt()}"]["DEF"],
+                StatName.ATK: _rawJson["stats"]["${v.toInt()}"]["ATK"],
+                StatName.HP: _rawJson["stats"]["${v.toInt()}"]["HP"],
+                StatName.DEF: _rawJson["stats"]["${v.toInt()}"]["DEF"],
               };
               for (var levelStat in _levelStats.entries) {
                 resonator.stats.update(
-                  levelStat.key,
+                  levelStat.key.index,
                   (value) => levelStat.value,
                   ifAbsent: () => levelStat.value,
                 );
@@ -189,27 +189,36 @@ class _ResonatorEditorState extends State<ResonatorEditor> {
               return FilledButton(
                 child: Icon(FluentIcons.add),
                 onPressed: () {
+                  bool pred(StatName n) =>
+                      !resonator.stats.containsKey(n.index) &&
+                      n != StatName.None;
                   List<StatName> validKeys = StatName.values
-                      .where((n) => !resonator.stats.containsKey(n))
+                      .where(pred)
                       .toList();
                   resonator.stats.update(
-                    validKeys.first.value,
+                    validKeys.first.index,
                     (v) => 0,
                     ifAbsent: () => 0,
                   );
-                  setState(() {});
+                  _update(context);
                 },
               );
             }
             final entry = statEntries[index];
             return StatValuePicker(
-              statValue: StatValue(StatName(entry.key), entry.value),
+              statValue: StatValue(StatName.values[entry.key], entry.value),
+              except: statEntries.map((e) => StatName.values[e.key]).toList(),
               buttonPress: () {
                 resonator.stats.remove(entry.key);
                 _update(context);
               },
               onChange: (stat) {
-                resonator.stats.update(stat.name.value, (v) => stat.value);
+                resonator.stats.update(
+                  entry.key,
+                  (v) => stat.value,
+                  ifAbsent: () => stat.value,
+                );
+                _update(context);
               },
             );
           },

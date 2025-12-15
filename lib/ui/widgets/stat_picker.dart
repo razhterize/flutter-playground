@@ -5,21 +5,35 @@ import 'package:ww_optimizer/wuthering/stat.dart';
 class StatNamePicker extends StatefulWidget {
   const StatNamePicker({
     super.key,
+    required this.name,
     required this.onChange,
     this.enabled = true,
+    this.except = const [],
   });
 
+  final StatName name;
   final bool enabled;
   final void Function(StatName name) onChange;
+  final List<StatName> except;
 
   @override
   State<StatNamePicker> createState() => _StatNamePickerState();
 }
 
 class _StatNamePickerState extends State<StatNamePicker> {
-  StatName _statName = StatName.ATK;
+  late StatName _statName;
+
+  @override
+  void initState() {
+    _statName = widget.name;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final validStatNames = strStatNames.entries
+        .where((e) => widget.except.contains(e.key) == false)
+        .toList();
     return ComboBox<StatName>(
       value: _statName,
       onChanged: (value) {
@@ -27,11 +41,8 @@ class _StatNamePickerState extends State<StatNamePicker> {
         widget.onChange(value);
         setState(() {});
       },
-      items: StatName.statNames.entries.map((e) {
-        return ComboBoxItem(
-          value: e.key,
-          child: Text(e.value),
-        );
+      items: validStatNames.map((e) {
+        return ComboBoxItem(value: e.key, child: Text(e.value));
       }).toList(),
     );
   }
@@ -44,12 +55,14 @@ class StatValuePicker extends StatefulWidget {
     required this.statValue,
     this.buttonPress,
     this.enable = true,
+    this.except = const [],
   });
 
   final StatValue statValue;
   final void Function()? buttonPress;
   final void Function(StatValue statValue) onChange;
   final bool enable;
+  final List<StatName> except;
 
   @override
   State<StatValuePicker> createState() => _StatValuePickerState();
@@ -61,7 +74,6 @@ class _StatValuePickerState extends State<StatValuePicker> {
   @override
   void initState() {
     _statValue = widget.statValue;
-    // TODO: implement initState
     super.initState();
   }
 
@@ -83,7 +95,12 @@ class _StatValuePickerState extends State<StatValuePicker> {
         Container(width: 5, color: Colors.transparent),
         Flexible(
           flex: 9,
-          child: StatNamePicker(onChange: nameFn, enabled: widget.enable),
+          child: StatNamePicker(
+            name: _statValue.name,
+            onChange: nameFn,
+            enabled: widget.enable,
+            except: widget.except,
+          ),
         ),
         Container(width: 5, color: Colors.transparent),
         Flexible(
@@ -105,10 +122,12 @@ class _StatValuePickerState extends State<StatValuePicker> {
   void nameFn(StatName name) {
     _statValue = _statValue.copyWith(name: name);
     widget.onChange(_statValue);
+    setState(() {});
   }
 
   void valueFn(double? val) {
     _statValue = _statValue.copyWith(value: val);
     widget.onChange(_statValue);
+    setState(() {});
   }
 }
