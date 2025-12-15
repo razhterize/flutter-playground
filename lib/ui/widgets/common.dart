@@ -17,7 +17,7 @@ class CommonUI {
     return Padding(padding: EdgeInsets.all(padding), child: child);
   }
 
-  static Widget spacer({double width = 5}) {
-    return Container(width: width, color: Colors.transparent);
+  static Widget spacer({double? width, double? height}) {
+    return Container(width: width, height: height, color: Colors.transparent);
   }
 }
