@@ -74,7 +74,6 @@ class ResonatorCubit extends Cubit<ResonatorState> {
   Future<void> close() {
     _subs?.cancel();
     _saveSubs.cancel();
-    // TODO: implement close
     return super.close();
   }
 }

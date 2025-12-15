@@ -4,7 +4,6 @@ import 'dart:io' show Directory, File;
 import 'package:dio/dio.dart';
 import 'logger.dart';
 import 'paths.dart';
-import 'wuthering/resonator.dart';
 import 'cubit/status_cubit.dart';
 import 'core/types.dart';
 
@@ -28,8 +27,6 @@ class WutheringAssets {
         .toList();
   }
   List<String> _imageList = [];
-
-  // TODO: Add something to fetch assets from API
 
   String? getImagePath(String name) {
     _log.debug("Get image for $name");
@@ -320,7 +317,7 @@ class WutheringAssets {
   Map<String, String> _findImages(Map<String, dynamic> inputData) {
     Map<String, String> imagesMap = {};
 
-    void _traverse(dynamic data) {
+    void traverse(dynamic data) {
       if (data is Map) {
         // 1. Check if the current Map has "Name" and "Icon"
         if (data.containsKey('Name') && data.containsKey('Icon')) {
@@ -339,17 +336,17 @@ class WutheringAssets {
 
         // 3. Recursive search through values
         for (var value in data.values) {
-          _traverse(value);
+          traverse(value);
         }
       } else if (data is List) {
         // 4. Recursive search through lists
         for (var item in data) {
-          _traverse(item);
+          traverse(item);
         }
       }
     }
 
-    _traverse(inputData);
+    traverse(inputData);
     return imagesMap;
   }
 

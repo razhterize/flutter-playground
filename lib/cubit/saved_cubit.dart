@@ -1,10 +1,7 @@
-import 'dart:convert';
-import 'dart:io';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ww_optimizer/core/types.dart';
-import 'package:ww_optimizer/paths.dart';
 import 'package:ww_optimizer/repository/saved_repository.dart';
 import 'package:ww_optimizer/wuthering/echo.dart';
 import 'package:ww_optimizer/wuthering/resonator.dart';

@@ -1,8 +1,6 @@
-import 'dart:developer';
 import 'dart:io';
 import 'dart:convert';
 import 'package:ww_optimizer/core/types.dart';
-import 'package:ww_optimizer/wuthering/echo.dart';
 import 'package:ww_optimizer/wuthering/stat.dart';
 import 'package:ww_optimizer/wuthering/weapon.dart';
 import 'package:ww_optimizer/wuthering/resonator.dart';

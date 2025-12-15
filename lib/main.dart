@@ -12,7 +12,6 @@ import 'package:ww_optimizer/ui/screens/main_screen.dart';
 import 'package:ww_optimizer/ui/screens/resonator_screen.dart';
 import 'package:ww_optimizer/ui/screens/weapon_screen.dart';
 import 'package:ww_optimizer/ui/widgets/menu_bar.dart';
-import 'package:ww_optimizer/repository/saved_repository.dart';
 
 void main() async {
   await initDirectories();
@@ -30,9 +29,6 @@ class _WutheringOptimizerState extends State<WutheringOptimizer> {
   WutheringAssets assets = WutheringAssets();
 
   int _activeScreen = 0;
-
-  var _orientation = 'landscape';
-  var _iconSize = 'small_icons';
 
   @override
   Widget build(BuildContext context) {
