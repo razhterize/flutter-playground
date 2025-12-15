@@ -110,36 +110,33 @@ class ResonatorEditor extends StatefulWidget {
 }
 
 class _ResonatorEditorState extends State<ResonatorEditor> {
+  // Raw Json to get base stats per level
   late JsonType _rawJson;
+  late Resonator edited;
 
   @override
   Widget build(BuildContext context) {
-    var edited = context.read<ResonatorCubit>().state.editedResonator!;
+    edited = context.read<ResonatorCubit>().state.editedResonator!;
     _rawJson = jsonDecode(
       File(
         "${assetDir.path}/resonators/${edited.name}.json",
       ).readAsStringSync(),
     );
-    return ResonatorBuilder(
-      builder: (_, state) {
-        return Column(
-          children: [
-            ListTile(
-              leading: ResonatorImage(edited, imageSize: Size(150, 150)),
-              title: TextBox(placeholder: edited.name, enabled: false),
-              subtitle: _levelSlider(context),
-            ),
-            _statsEditor(context),
-            _buffsEditor(context),
-            _skillsEditor(context),
-          ],
-        );
-      },
+    return Column(
+      children: [
+        ListTile(
+          leading: ResonatorImage(edited, imageSize: Size(150, 150)),
+          title: TextBox(placeholder: edited.name, enabled: false),
+          subtitle: _levelSlider(context),
+        ),
+        _statsEditor(context),
+        _buffsEditor(context),
+        _skillsEditor(context),
+      ],
     );
   }
 
   Widget _levelSlider(BuildContext context) {
-    var resonator = context.read<ResonatorCubit>().state.editedResonator!;
     return Row(
       children: [
         const Text("Level", style: TextStyle(fontSize: 18)),
@@ -147,17 +144,17 @@ class _ResonatorEditorState extends State<ResonatorEditor> {
           child: Slider(
             min: 1,
             max: 90,
-            label: "${resonator.level}",
-            value: resonator.level.toDouble(),
+            label: "${edited.level}",
+            value: edited.level.toDouble(),
             onChanged: (v) {
-              resonator.level = v.toInt();
+              edited.level = v.toInt();
               StatMap _levelStats = {
                 StatName.ATK: _rawJson["stats"]["${v.toInt()}"]["ATK"],
                 StatName.HP: _rawJson["stats"]["${v.toInt()}"]["HP"],
                 StatName.DEF: _rawJson["stats"]["${v.toInt()}"]["DEF"],
               };
               for (var levelStat in _levelStats.entries) {
-                resonator.stats.update(
+                edited.stats.update(
                   levelStat.key,
                   (value) => levelStat.value,
                   ifAbsent: () => levelStat.value,
@@ -172,53 +169,50 @@ class _ResonatorEditorState extends State<ResonatorEditor> {
   }
 
   Widget _statsEditor(BuildContext context) {
-    var resonator = context.read<ResonatorCubit>().state.editedResonator!;
-    var statEntries = resonator.stats.entries.toList();
     return Expander(
       header: const Text("Stats"),
       content: SizedBox(
-        height: 200,
+        height: 400,
         child: ListView.separated(
           separatorBuilder: (_, _) {
             return Container(height: 10, color: Colors.transparent);
           },
-          itemCount: resonator.stats.isEmpty ? 1 : resonator.stats.length + 1,
+          itemCount: edited.stats.isEmpty ? 1 : edited.stats.length + 1,
           itemBuilder: (_, index) {
-            if (resonator.stats.isEmpty || index >= resonator.stats.length) {
+            if (edited.stats.isEmpty || index >= edited.stats.length) {
               return FilledButton(
                 child: Icon(FluentIcons.add),
                 onPressed: () {
                   bool pred(StatName n) {
-                    return !resonator.stats.containsKey(n) &&
-                        n != StatName.None;
+                    return !edited.stats.containsKey(n) && n != StatName.None;
                   }
-
                   List<StatName> validKeys = StatName.values
                       .where(pred)
                       .toList();
-                  resonator.stats.update(
+                  edited.stats.update(
                     validKeys.first,
                     (v) => 0,
                     ifAbsent: () => 0,
                   );
+                  // TODO: Why the stats isn't updating when slider changes?
                   _update(context);
                 },
               );
             }
-            final entry = statEntries[index];
+            final entry = edited.stats.entries.elementAt(index);
             return StatValuePicker(
-              statValue: StatValue(entry.key, entry.value),
-              except: statEntries.map((e) => e.key).toList(),
+              statValue: entry.toStatValue(),
+              except: edited.stats.entries.map((e) => e.key).toList(),
               buttonPress: () {
-                resonator.stats.remove(entry.key);
+                edited.stats.remove(entry.key);
                 _update(context);
               },
               onChange: (stat) {
                 // Check if key changes. Delete previous if it does
                 if (stat.name != entry.key) {
-                  resonator.stats.remove(entry.key);
+                  edited.stats.remove(entry.key);
                 }
-                resonator.stats.update(
+                edited.stats.update(
                   stat.name,
                   (v) => stat.value,
                   ifAbsent: () => stat.value,
@@ -244,6 +238,7 @@ class _ResonatorEditorState extends State<ResonatorEditor> {
 
   void _update(BuildContext context) {
     final cubit = context.read<ResonatorCubit>();
-    cubit.updateResonator(cubit.state.editedResonator!);
+    cubit.updateResonator(edited);
+    cubit.editResonator(edited);
   }
 }

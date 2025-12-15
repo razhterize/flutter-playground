@@ -5,13 +5,13 @@ import 'package:ww_optimizer/wuthering/stat.dart';
 class StatNamePicker extends StatefulWidget {
   const StatNamePicker({
     super.key,
-    required this.name,
+    required this.statName,
     required this.onChange,
     this.enabled = true,
     this.except = const [],
   });
 
-  final StatName name;
+  final StatName statName;
   final bool enabled;
   final void Function(StatName name) onChange;
   final List<StatName> except;
@@ -25,7 +25,7 @@ class _StatNamePickerState extends State<StatNamePicker> {
 
   @override
   void initState() {
-    _statName = widget.name;
+    _statName = widget.statName;
     super.initState();
   }
 
@@ -70,13 +70,6 @@ class StatValuePicker extends StatefulWidget {
 }
 
 class _StatValuePickerState extends State<StatValuePicker> {
-  late StatValue _statValue;
-
-  @override
-  void initState() {
-    _statValue = widget.statValue;
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -97,8 +90,8 @@ class _StatValuePickerState extends State<StatValuePicker> {
         Flexible(
           flex: 9,
           child: StatNamePicker(
-            name: _statValue.name,
-            onChange: nameFn,
+            statName: widget.statValue.name,
+            onChange: _nameChange,
             enabled: widget.enable,
             except: widget.except,
           ),
@@ -107,28 +100,26 @@ class _StatValuePickerState extends State<StatValuePicker> {
         Flexible(
           flex: 10,
           child: NumberBox<double>(
-            value: _statValue.value,
+            value: widget.statValue.value,
             placeholder: "Value",
             inputFormatters: [
               FilteringTextInputFormatter.allow(RegExp(r"[\d\.\,]")),
             ],
             keyboardType: .number,
-            onChanged: valueFn,
+            onChanged: _valueChange,
           ),
         ),
       ],
     );
   }
 
-  void nameFn(StatName name) {
-    _statValue = _statValue.copyWith(name: name);
-    widget.onChange(_statValue);
+  void _nameChange(StatName name) {
+    widget.onChange(widget.statValue.copyWith(name: name));
     setState(() {});
   }
 
-  void valueFn(double? val) {
-    _statValue = _statValue.copyWith(value: val);
-    widget.onChange(_statValue);
+  void _valueChange(double? val) {
+    widget.onChange(widget.statValue.copyWith(value: val));
     setState(() {});
   }
 }
