@@ -44,6 +44,7 @@ class WeaponCubit extends Cubit<WeaponState> {
   @override
   Future<void> close() {
     _subs?.cancel();
+    _saveSubs.cancel();
     return super.close();
   }
 }

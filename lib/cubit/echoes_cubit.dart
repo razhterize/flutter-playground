@@ -2,11 +2,9 @@ import 'dart:async';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ww_optimizer/assets.dart';
 import 'package:ww_optimizer/wuthering/echo.dart';
 import 'package:ww_optimizer/cubit/saved_cubit.dart';
 import 'package:ww_optimizer/logger.dart';
-import 'package:ww_optimizer/repository/saved_repository.dart';
 
 typedef EchoBuilder = BlocBuilder<EchoesCubit, EchoState>;
 
@@ -18,6 +16,7 @@ class EchoesCubit extends Cubit<EchoState> {
   final SavedDataCubit savedCubit;
   final _log = Logger("EchoesCubit");
   StreamSubscription? _subs;
+  late StreamSubscription _savedSubs;
 
   void _initPriv() {
     int echoIdSort(Echo e1, Echo e2) => e1.id - e2.id;
@@ -31,7 +30,7 @@ class EchoesCubit extends Cubit<EchoState> {
     });
 
     // Automagically save echoes
-    stream.listen((echoState) {
+    _savedSubs = stream.listen((echoState) {
       savedCubit.saveEcho(echoState.echoes);
     });
 
@@ -49,6 +48,14 @@ class EchoesCubit extends Cubit<EchoState> {
     emit(state.copyWith(true));
     state.echoes.remove(echo);
     emit(state.copyWith(false, state.echoes));
+  }
+
+  @override
+  Future<void> close() {
+    _subs?.cancel();
+    _savedSubs.cancel();
+    // TODO: implement close
+    return super.close();
   }
 }
 
