@@ -49,6 +49,8 @@ class _StatNamePickerState extends State<StatNamePicker> {
   }
 }
 
+
+
 class StatValuePicker extends StatefulWidget {
   const StatValuePicker({
     super.key,
@@ -98,7 +100,7 @@ class _StatValuePickerState extends State<StatValuePicker> {
         ),
         Container(width: 5, color: Colors.transparent),
         Flexible(
-          flex: 10,
+          flex: 2,
           child: NumberBox<double>(
             value: widget.statValue.value,
             placeholder: "Value",
@@ -106,6 +108,7 @@ class _StatValuePickerState extends State<StatValuePicker> {
               FilteringTextInputFormatter.allow(RegExp(r"[\d\.\,]")),
             ],
             keyboardType: .number,
+            mode: .inline,
             onChanged: _valueChange,
           ),
         ),
