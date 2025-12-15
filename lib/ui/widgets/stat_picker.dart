@@ -39,7 +39,7 @@ class _StatNamePickerState extends State<StatNamePicker> {
         widget.onChange(value);
         setState(() {});
       },
-      items: strStatNames.entries.map((e) {
+      items: StatName.strNames.entries.map((e) {
         return ComboBoxItem(
           value: e.key,
           enabled: !widget.except.contains(e.key),
@@ -49,8 +49,6 @@ class _StatNamePickerState extends State<StatNamePicker> {
     );
   }
 }
-
-
 
 class StatValuePicker extends StatefulWidget {
   const StatValuePicker({
@@ -73,7 +71,6 @@ class StatValuePicker extends StatefulWidget {
 }
 
 class _StatValuePickerState extends State<StatValuePicker> {
-
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -89,9 +86,8 @@ class _StatValuePickerState extends State<StatValuePicker> {
             child: Icon(FluentIcons.skype_minus),
           ),
         ),
-        CommonUI.spacer(),
+        CommonUI.spacer(width: 10),
         Flexible(
-          flex: 9,
           child: StatNamePicker(
             statName: widget.statValue.name,
             onChange: _nameChange,
@@ -99,9 +95,8 @@ class _StatValuePickerState extends State<StatValuePicker> {
             except: widget.except,
           ),
         ),
-        CommonUI.spacer(),
+        CommonUI.spacer(width: 10),
         Flexible(
-          flex: 2,
           child: NumberBox<double>(
             value: widget.statValue.value,
             placeholder: "Value",

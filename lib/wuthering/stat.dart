@@ -47,7 +47,6 @@ class StatValue {
 
 enum ElementType { None, Glacio, Fusion, Electro, Aero, Spectro, Havoc }
 
-@JsonEnum(valueField: "index")
 enum StatName {
   None,
   // Base Stats
@@ -126,88 +125,88 @@ enum StatName {
   FusionRes,
   GlacioRes,
   HavocRes,
-  SpectroRes,
+  SpectroRes;
+
+  static Map<StatName, String> strNames = const {
+    // Base Stats
+    StatName.ATK: "ATK (Raw)", // Raw Resoantor/Weapon attack
+    StatName.DEF: "DEF",
+    StatName.HP: "HP",
+
+    // Percentage/Flat Stats
+    StatName.FlatATK: "ATK (Flat)", // Flat ATK From Tuning
+    StatName.ATKPercent: "ATK %",
+    StatName.DEFPercent: "DEF %",
+    StatName.HPPercent: "HP %",
+
+    // Damage Modifiers
+    StatName.CritRate: "Crit. Rate",
+    StatName.CritDamage: "Crit. Damage",
+    StatName.EnergyRegen: "Energy Regen",
+    StatName.HealingBonus: "Healing Bonus",
+
+    // Element Damage %
+    StatName.AeroDamage: "Aero Damage",
+    StatName.ElectroDamage: "Electro Damage",
+    StatName.FusionDamage: "Fusion Damage",
+    StatName.GlacioDamage: "Glacio Damage",
+    StatName.HavocDamage: "Havoc Damage",
+    StatName.SpectroDamage: "Spectro Damage",
+
+    // Skill Damage %
+    StatName.BasicAttackDamage: "Basic Attack Damage",
+    StatName.HeavyAttackDamage: "Heavy Attack Damage",
+    StatName.ResonanceDamage: "Resonance Damage",
+    StatName.LiberationDamage: "Liberation Damage",
+    StatName.CoordinatedAttackDamage: "Coordinated Attack Damage",
+    StatName.IntroDamage: "Intro Damage",
+    StatName.OutroDamage: "Outro Damage",
+    StatName.EchoDamage: "Echo Damage",
+
+    // Status/Dot Damage %
+    StatName.SpectroFrazzleDamage: "Spectro Frazzle Damage",
+    StatName.AeroErosionDamage: "Aero Erosion Damage",
+    StatName.GlacioChafeDamage: "Glacio Chafe Damage",
+    StatName.ElectroFlareDamage: "Electro Flare Damage",
+    StatName.HavocBaneDamage: "Havoc Bane Damage",
+    StatName.FusionBurstDamage: "Fusion Burst Damage",
+    StatName.GeneralDamage: "General Damage", // Often All Damage %
+    // Element Amplification (Amp is often a specific damage multiplier/modifier)
+    StatName.AeroAmp: "Aero Amp",
+    StatName.ElectroAmp: "Electro Amp",
+    StatName.FusionAmp: "Fusion Amp",
+    StatName.GlacioAmp: "Glacio Amp",
+    StatName.HavocAmp: "Havoc Amp",
+    StatName.SpectroAmp: "Spectro Amp",
+
+    // Skill Amplification
+    StatName.BasicAttackAmp: "Basic Attack Amp",
+    StatName.HeavyAttackAmp: "Heavy Attack Amp",
+    StatName.ResonanceAmp: "Resonance Amp",
+    StatName.LiberationAmp: "Liberation Amp",
+    StatName.CoordinatedAttackAmp: "Coordinated Attack Amp",
+    StatName.IntroAmp: "Intro Amp",
+    StatName.OutroAmp: "Outro Amp",
+    StatName.EchoAmp: "Echo Amp",
+
+    // Status/Dot Amplification
+    StatName.SpectroFrazzleAmp: "Spectro Frazzle Amp",
+    StatName.AeroErosionAmp: "Aero Erosion Amp",
+    StatName.ElectroFlareAmp: "Electro Flare Amp",
+    StatName.GlacioChafeAmp: "Glacio Chafe Amp",
+    StatName.HavocBaneAmp: "Havoc Bane Amp",
+    StatName.FusionBurstAmp: "Fusion Burst Amp",
+    StatName.GeneralAmp: "General Amp",
+
+    // Resistances
+    StatName.AeroRes: "Aero Res",
+    StatName.ElectroRes: "Electro Res",
+    StatName.FusionRes: "Fusion Res",
+    StatName.GlacioRes: "Glacio Res",
+    StatName.HavocRes: "Havoc Res",
+    StatName.SpectroRes: "Spectro Res",
+  };
 }
-
-const Map<StatName, String> strStatNames = {
-  // Base Stats
-  StatName.ATK: "ATK (Raw)", // Raw Resoantor/Weapon attack
-  StatName.DEF: "DEF",
-  StatName.HP: "HP",
-
-  // Percentage/Flat Stats
-  StatName.FlatATK: "ATK (Flat)", // Flat ATK From Tuning
-  StatName.ATKPercent: "ATK %",
-  StatName.DEFPercent: "DEF %",
-  StatName.HPPercent: "HP %",
-
-  // Damage Modifiers
-  StatName.CritRate: "Crit. Rate",
-  StatName.CritDamage: "Crit. Damage",
-  StatName.EnergyRegen: "Energy Regen",
-  StatName.HealingBonus: "Healing Bonus",
-
-  // Element Damage %
-  StatName.AeroDamage: "Aero Damage",
-  StatName.ElectroDamage: "Electro Damage",
-  StatName.FusionDamage: "Fusion Damage",
-  StatName.GlacioDamage: "Glacio Damage",
-  StatName.HavocDamage: "Havoc Damage",
-  StatName.SpectroDamage: "Spectro Damage",
-
-  // Skill Damage %
-  StatName.BasicAttackDamage: "Basic Attack Damage",
-  StatName.HeavyAttackDamage: "Heavy Attack Damage",
-  StatName.ResonanceDamage: "Resonance Damage",
-  StatName.LiberationDamage: "Liberation Damage",
-  StatName.CoordinatedAttackDamage: "Coordinated Attack Damage",
-  StatName.IntroDamage: "Intro Damage",
-  StatName.OutroDamage: "Outro Damage",
-  StatName.EchoDamage: "Echo Damage",
-
-  // Status/Dot Damage %
-  StatName.SpectroFrazzleDamage: "Spectro Frazzle Damage",
-  StatName.AeroErosionDamage: "Aero Erosion Damage",
-  StatName.GlacioChafeDamage: "Glacio Chafe Damage",
-  StatName.ElectroFlareDamage: "Electro Flare Damage",
-  StatName.HavocBaneDamage: "Havoc Bane Damage",
-  StatName.FusionBurstDamage: "Fusion Burst Damage",
-  StatName.GeneralDamage: "General Damage", // Often All Damage %
-  // Element Amplification (Amp is often a specific damage multiplier/modifier)
-  StatName.AeroAmp: "Aero Amp",
-  StatName.ElectroAmp: "Electro Amp",
-  StatName.FusionAmp: "Fusion Amp",
-  StatName.GlacioAmp: "Glacio Amp",
-  StatName.HavocAmp: "Havoc Amp",
-  StatName.SpectroAmp: "Spectro Amp",
-
-  // Skill Amplification
-  StatName.BasicAttackAmp: "Basic Attack Amp",
-  StatName.HeavyAttackAmp: "Heavy Attack Amp",
-  StatName.ResonanceAmp: "Resonance Amp",
-  StatName.LiberationAmp: "Liberation Amp",
-  StatName.CoordinatedAttackAmp: "Coordinated Attack Amp",
-  StatName.IntroAmp: "Intro Amp",
-  StatName.OutroAmp: "Outro Amp",
-  StatName.EchoAmp: "Echo Amp",
-
-  // Status/Dot Amplification
-  StatName.SpectroFrazzleAmp: "Spectro Frazzle Amp",
-  StatName.AeroErosionAmp: "Aero Erosion Amp",
-  StatName.ElectroFlareAmp: "Electro Flare Amp",
-  StatName.GlacioChafeAmp: "Glacio Chafe Amp",
-  StatName.HavocBaneAmp: "Havoc Bane Amp",
-  StatName.FusionBurstAmp: "Fusion Burst Amp",
-  StatName.GeneralAmp: "General Amp",
-
-  // Resistances
-  StatName.AeroRes: "Aero Res",
-  StatName.ElectroRes: "Electro Res",
-  StatName.FusionRes: "Fusion Res",
-  StatName.GlacioRes: "Glacio Res",
-  StatName.HavocRes: "Havoc Res",
-  StatName.SpectroRes: "Spectro Res",
-};
 
 extension StatMapValues on StatMap {
   List<StatValue> get values => entries.map((e) => e.toStatValue()).toList();
