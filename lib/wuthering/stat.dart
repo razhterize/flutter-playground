@@ -33,7 +33,9 @@ class StatValue {
   }
 
   @override
-  String toString() => "${name.toString()} : $value${isPercent ? "%" : ""}";
+  String toString() {
+    return "${StatName.strNames[name]}:  $value${isPercent ? '%' : ''}";
+  }
 
   factory StatValue.fromJson(JsonType json) => _$StatValueFromJson(json);
   JsonType toJson() => _$StatValueToJson(this);
