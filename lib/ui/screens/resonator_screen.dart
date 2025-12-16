@@ -259,7 +259,6 @@ class _ResonatorEditorState extends State<ResonatorEditor> {
   }
 
   Widget _skillsEditor(BuildContext context) {
-    var resonator = context.read<ResonatorCubit>().state.editedResonator;
     return Expander(header: const Text("Skills"), content: Placeholder());
   }
 
