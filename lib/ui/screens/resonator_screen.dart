@@ -1,6 +1,5 @@
-import 'dart:convert';
 import 'dart:io';
-
+import 'dart:convert';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ww_optimizer/core/types.dart';
@@ -8,7 +7,6 @@ import 'package:ww_optimizer/paths.dart';
 import 'package:ww_optimizer/ui/widgets/buff_editor.dart';
 import 'package:ww_optimizer/ui/widgets/images.dart';
 import 'package:ww_optimizer/ui/widgets/stat_picker.dart';
-import 'package:ww_optimizer/wuthering/buff.dart';
 import 'package:ww_optimizer/wuthering/resonator.dart';
 import 'package:ww_optimizer/wuthering/stat.dart';
 import 'package:ww_optimizer/cubit/resonator_cubit.dart';
@@ -240,17 +238,8 @@ class _ResonatorEditorState extends State<ResonatorEditor> {
         height: 200,
         child: ListView.separated(
           separatorBuilder: (_, _) => CommonUI.spacer(height: 8),
-          itemCount: edited.buffs.length + 1,
+          itemCount: edited.buffs.length,
           itemBuilder: (_, index) {
-            if (edited.buffs.isEmpty || index >= edited.buffs.length) {
-              return FilledButton(
-                child: Icon(FluentIcons.add),
-                onPressed: () {
-                  edited.buffs.add(Buff());
-                  _update();
-                },
-              );
-            }
             final buff = edited.buffs[index];
             return BuffPicker(
               buff: buff,
