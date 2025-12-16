@@ -3,7 +3,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:ww_optimizer/logger.dart';
 import 'package:ww_optimizer/ui/widgets/common.dart';
 import 'package:ww_optimizer/ui/widgets/stat_picker.dart';
-import 'package:ww_optimizer/wuthering.dart';
+import 'package:ww_optimizer/wuthering/wuthering.dart';
 
 class BuffPicker extends StatefulWidget {
   const BuffPicker({
