@@ -127,16 +127,45 @@ class _ResonatorEditorState extends State<ResonatorEditor> {
     );
     return ListView(
       children: [
-        ListTile(
-          leading: ResonatorImage(edited, imageSize: Size(150, 150)),
-          title: TextField(),
-          subtitle: _levelSlider(context),
+        SizedBox(
+          height: 200,
+          child: Card(
+            child: CommonUI.padding8(
+              child: Row(
+                children: [
+                  ResonatorImage(
+                    edited,
+                    imageSize: Size(200, 200),
+                    showName: false,
+                  ),
+                  CommonUI.spacer(width: 10),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: .start,
+                      crossAxisAlignment: .start,
+                      children: [
+                        TextField(
+                          controller: _nameController,
+                          readOnly: true,
+                          decoration: InputDecoration(
+                            label: const Text("Resonator Name"),
+                          ),
+                        ),
+                        _levelSlider(context),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
-        _statsEditor(context),
+
+        Card(child: CommonUI.padding8(child: _statsEditor(context))),
         CommonUI.spacer(height: 10),
-        _buffsEditor(context),
+        Card(child: CommonUI.padding8(child: _buffsEditor(context))),
         CommonUI.spacer(height: 10),
-        _skillsEditor(context),
+        Card(child: CommonUI.padding8(child: _skillsEditor(context))),
       ],
     );
   }
@@ -188,7 +217,6 @@ class _ResonatorEditorState extends State<ResonatorEditor> {
                 bool pred(StatName n) {
                   return !edited.stats.containsKey(n) && n != StatName.None;
                 }
-
                 StatName validKey = StatName.values.where(pred).first;
                 edited.stats.update(validKey, (v) => 0, ifAbsent: () => 0);
                 _update();
