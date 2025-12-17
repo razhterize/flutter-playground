@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ww_optimizer/cubit/echoes_cubit.dart';
 import 'package:ww_optimizer/cubit/resonator_cubit.dart';
 import 'package:ww_optimizer/cubit/saved_cubit.dart';
+import 'package:ww_optimizer/cubit/screen_cubit.dart';
 import 'package:ww_optimizer/cubit/status_cubit.dart';
 import 'package:ww_optimizer/cubit/weapons_cubit.dart';
 import 'package:ww_optimizer/paths.dart';
@@ -31,7 +32,7 @@ class _WutheringOptimizerState extends State<WutheringOptimizer> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: "Wuthering Optimizer",
-      theme: .dark(),
+      theme: .dark(useMaterial3: true),
       home: Scaffold(
         body: MultiBlocProvider(
           providers: [
@@ -46,6 +47,7 @@ class _WutheringOptimizerState extends State<WutheringOptimizer> {
                   BlocProvider(create: (_) => ResonatorCubit(_savedCubit)),
                   BlocProvider(create: (_) => EchoesCubit(_savedCubit)),
                   BlocProvider(create: (_) => WeaponCubit(_savedCubit)),
+                  BlocProvider(create: (_) => ScreenCubit(BuildScreen())),
                 ],
                 child: _buildLayout(),
               );
@@ -63,35 +65,43 @@ class _WutheringOptimizerState extends State<WutheringOptimizer> {
       WeaponScreen(),
       EchoScreen(),
     ];
-    return Row(
-      children: [
-        NavigationRail(
-          destinations: [
-            NavigationRailDestination(
-              icon: Icon(Icons.widgets),
-              label: Text("Build"),
+    return Builder(
+      builder: (context) {
+        return Row(
+          children: [
+            NavigationRail(
+              destinations: [
+                NavigationRailDestination(
+                  icon: Icon(Icons.widgets),
+                  label: Text("Build"),
+                ),
+                NavigationRailDestination(
+                  icon: Icon(Icons.arrow_forward),
+                  label: Text("Resonator"),
+                ),
+                NavigationRailDestination(
+                  icon: Icon(Icons.widgets),
+                  label: Text("Weapon"),
+                ),
+                NavigationRailDestination(
+                  icon: Icon(Icons.widgets),
+                  label: Text("Echo"),
+                ),
+              ],
+              selectedIndex: _activeScreen,
+              onDestinationSelected: (value) {
+                context.read<ScreenCubit>().setScreen(screens[value]);
+              },
             ),
-            NavigationRailDestination(
-              icon: Icon(Icons.arrow_forward),
-              label: Text("Resonator"),
-            ),
-            NavigationRailDestination(
-              icon: Icon(Icons.widgets),
-              label: Text("Weapon"),
-            ),
-            NavigationRailDestination(
-              icon: Icon(Icons.widgets),
-              label: Text("Echo"),
+            // Animated Screen Change
+            Expanded(
+              child: BlocBuilder<ScreenCubit, ScreenState>(
+                builder: (_, state) => state.screen,
+              ),
             ),
           ],
-          selectedIndex: _activeScreen,
-          onDestinationSelected: (value) {
-            _activeScreen = value;
-            setState(() {});
-          },
-        ),
-        Expanded(child: screens[_activeScreen]),
-      ],
+        );
+      }
     );
     // return NavigationView(
     //   appBar: NavigationAppBar(leading: WutheringMenuBar()),
