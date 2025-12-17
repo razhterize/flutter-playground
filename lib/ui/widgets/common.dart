@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class CommonUI {
+sealed class CommonUI {
   static Widget padding2({Widget? child}) {
     return Padding(padding: const EdgeInsets.all(2), child: child);
   }
