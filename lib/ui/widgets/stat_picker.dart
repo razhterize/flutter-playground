@@ -128,7 +128,9 @@ class _StatValuePickerState extends State<StatValuePicker> {
   }
 
   void _valueChange(double? val) {
-    widget.onChange(widget.statValue.copyWith(value: val));
+    final newStat = widget.statValue.copyWith(value: val);
+    widget.onChange(newStat);
+    _valueController.text = "${newStat.value}${newStat.isPercent ? '%' : ''}";
     setState(() {});
   }
 }
