@@ -183,22 +183,18 @@ class _ResonatorEditorState extends State<ResonatorEditor> {
         itemCount: edited.stats.isEmpty ? 1 : edited.stats.length + 1,
         itemBuilder: (_, index) {
           if (edited.stats.isEmpty || index >= edited.stats.length) {
-            return FilledButton(
-              child: Icon(Icons.add),
+            return IconButton.filled(
               onPressed: () {
                 bool pred(StatName n) {
                   return !edited.stats.containsKey(n) && n != StatName.None;
                 }
 
-                List<StatName> validKeys = StatName.values.where(pred).toList();
-                edited.stats.update(
-                  validKeys.first,
-                  (v) => 0,
-                  ifAbsent: () => 0,
-                );
-                // TODO: Why the stats isn't updating when slider changes?
+                StatName validKey = StatName.values.where(pred).first;
+                edited.stats.update(validKey, (v) => 0, ifAbsent: () => 0);
                 _update();
               },
+              icon: Icon(Icons.add),
+              alignment: .center,
             );
           }
           final entry = edited.stats.entries.elementAt(index);

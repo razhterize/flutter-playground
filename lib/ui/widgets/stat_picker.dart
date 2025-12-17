@@ -33,6 +33,10 @@ class _StatNamePickerState extends State<StatNamePicker> {
   @override
   Widget build(BuildContext context) {
     return DropdownMenu<StatName>(
+      initialSelection: _statName,
+      textStyle: TextStyle(color: Colors.white),
+      enabled: widget.enabled,
+      label: Text("Stat Name"),
       onSelected: (value) {
         if (value != null) {
           _statName = value;
@@ -73,21 +77,27 @@ class StatValuePicker extends StatefulWidget {
 }
 
 class _StatValuePickerState extends State<StatValuePicker> {
+  final _valueController = TextEditingController();
+
+  @override
+  void initState() {
+    _valueController.text =
+        "${widget.statValue.value}${widget.statValue.isPercent ? '%' : ''}";
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: .start,
       crossAxisAlignment: .center,
       children: [
-        SizedBox(
-          width: 40,
-          height: 32,
-          child: FilledButton(
-            onPressed: widget.enable ? widget.buttonPress : null,
-            style: ButtonStyle(),
-            child: Icon(Icons.minimize_outlined),
-          ),
-        ),
+        widget.buttonPress != null
+            ? IconButton.filled(
+                onPressed: widget.enable ? widget.buttonPress : null,
+                icon: Icon(Icons.remove),
+              )
+            : IconButton(onPressed: () {}, icon: Icon(Icons.remove)),
         CommonUI.spacer(width: 10),
         Flexible(
           child: StatNamePicker(
@@ -100,19 +110,13 @@ class _StatValuePickerState extends State<StatValuePicker> {
         CommonUI.spacer(width: 10),
         Flexible(
           child: TextField(
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r"[\d\,\.\%]")),
+            ],
+            controller: _valueController,
             keyboardType: .number,
             onChanged: (value) => _valueChange(double.tryParse(value)),
           ),
-          // child: NumberBox<double>(
-          //   value: widget.statValue.value,
-          //   placeholder: "Value",
-          //   inputFormatters: [
-          //     FilteringTextInputFormatter.allow(RegExp(r"[\d\.\,]")),
-          //   ],
-          //   keyboardType: .number,
-          //   mode: .inline,
-          //   onChanged: _valueChange,
-          // ),
         ),
       ],
     );
