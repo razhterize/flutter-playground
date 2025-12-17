@@ -13,10 +13,12 @@ class ResonatorImage extends StatelessWidget {
     super.key,
     this.onClick,
     this.imageSize,
+    this.showName = true,
   });
 
   final Resonator resonator;
   final Size? imageSize;
+  final bool showName;
   final void Function(Resonator resonator)? onClick;
 
   @override
@@ -52,11 +54,14 @@ class ResonatorImage extends StatelessWidget {
                     width: imageSize?.width,
                   )
                 : Placeholder(),
-            OutlinedText(
-              resonator.name,
-              fontSize: 18,
-              fillColor: _elementColor[resonator.elementType] ?? Colors.black,
-            ),
+            showName
+                ? OutlinedText(
+                    resonator.name,
+                    fontSize: 18,
+                    fillColor:
+                        _elementColor[resonator.elementType] ?? Colors.black,
+                  )
+                : Container(width: imageSize?.width ?? 100,),
           ],
         ),
       ),
