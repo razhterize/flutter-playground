@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'dart:convert';
-import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ww_optimizer/core/types.dart';
 import 'package:ww_optimizer/paths.dart';
@@ -52,11 +52,10 @@ class _ResonatorScreenState extends State<ResonatorScreen> {
         child: Row(
           children: [
             Flexible(
-              child: TextBox(
+              child: TextField(
                 controller: _filterController,
                 onChanged: (_) => setState(() {}),
                 expands: false,
-                placeholder: "Search",
               ),
             ),
             Flexible(child: Row(children: [])),
@@ -73,7 +72,7 @@ class _ResonatorScreenState extends State<ResonatorScreen> {
         const imageSize = 200;
         final size = MediaQuery.of(context).size;
         final numCols = (size.width / imageSize).floor();
-        if (state.processing) return Center(child: ProgressRing());
+        if (state.processing) return Center(child: CircularProgressIndicator());
         if (state.resonators.isEmpty) {
           return Center(child: const Text("No Resonators Saved"));
         }
@@ -114,11 +113,13 @@ class _ResonatorEditorState extends State<ResonatorEditor> {
   late JsonType _rawJson;
   late Resonator edited;
   late ResonatorCubit _cubit;
+  final _nameController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     _cubit = context.read<ResonatorCubit>();
     edited = _cubit.state.editedResonator!;
+    _nameController.text = edited.name;
     _rawJson = jsonDecode(
       File(
         "${assetDir.path}/resonators/${edited.name}.json",
@@ -128,7 +129,7 @@ class _ResonatorEditorState extends State<ResonatorEditor> {
       children: [
         ListTile(
           leading: ResonatorImage(edited, imageSize: Size(150, 150)),
-          title: TextBox(placeholder: edited.name, enabled: false),
+          title: TextField(),
           subtitle: _levelSlider(context),
         ),
         _statsEditor(context),
@@ -173,93 +174,85 @@ class _ResonatorEditorState extends State<ResonatorEditor> {
   }
 
   Widget _statsEditor(BuildContext context) {
-    return Expander(
-      header: const Text("Stats"),
-      content: SizedBox(
-        height: 400,
-        child: ListView.separated(
-          separatorBuilder: (_, _) {
-            return Container(height: 10, color: Colors.transparent);
-          },
-          itemCount: edited.stats.isEmpty ? 1 : edited.stats.length + 1,
-          itemBuilder: (_, index) {
-            if (edited.stats.isEmpty || index >= edited.stats.length) {
-              return FilledButton(
-                child: Icon(FluentIcons.add),
-                onPressed: () {
-                  bool pred(StatName n) {
-                    return !edited.stats.containsKey(n) && n != StatName.None;
-                  }
-
-                  List<StatName> validKeys = StatName.values
-                      .where(pred)
-                      .toList();
-                  edited.stats.update(
-                    validKeys.first,
-                    (v) => 0,
-                    ifAbsent: () => 0,
-                  );
-                  // TODO: Why the stats isn't updating when slider changes?
-                  _update();
-                },
-              );
-            }
-            final entry = edited.stats.entries.elementAt(index);
-            return StatValuePicker(
-              statValue: entry.toStatValue(),
-              except: edited.stats.entries.map((e) => e.key).toList(),
-              buttonPress: () {
-                edited.stats.remove(entry.key);
-                _update();
-              },
-              onChange: (stat) {
-                // Check if key changes. Delete previous if it does
-                if (stat.name != entry.key) {
-                  edited.stats.remove(entry.key);
+    return SizedBox(
+      height: 400,
+      child: ListView.separated(
+        separatorBuilder: (_, _) {
+          return Container(height: 10, color: Colors.transparent);
+        },
+        itemCount: edited.stats.isEmpty ? 1 : edited.stats.length + 1,
+        itemBuilder: (_, index) {
+          if (edited.stats.isEmpty || index >= edited.stats.length) {
+            return FilledButton(
+              child: Icon(Icons.add),
+              onPressed: () {
+                bool pred(StatName n) {
+                  return !edited.stats.containsKey(n) && n != StatName.None;
                 }
+
+                List<StatName> validKeys = StatName.values.where(pred).toList();
                 edited.stats.update(
-                  stat.name,
-                  (v) => stat.value,
-                  ifAbsent: () => stat.value,
+                  validKeys.first,
+                  (v) => 0,
+                  ifAbsent: () => 0,
                 );
+                // TODO: Why the stats isn't updating when slider changes?
                 _update();
               },
             );
-          },
-        ),
+          }
+          final entry = edited.stats.entries.elementAt(index);
+          return StatValuePicker(
+            statValue: entry.toStatValue(),
+            except: edited.stats.entries.map((e) => e.key).toList(),
+            buttonPress: () {
+              edited.stats.remove(entry.key);
+              _update();
+            },
+            onChange: (stat) {
+              // Check if key changes. Delete previous if it does
+              if (stat.name != entry.key) {
+                edited.stats.remove(entry.key);
+              }
+              edited.stats.update(
+                stat.name,
+                (v) => stat.value,
+                ifAbsent: () => stat.value,
+              );
+              _update();
+            },
+          );
+        },
       ),
     );
   }
 
   Widget _buffsEditor(BuildContext context) {
-    return Expander(
-      header: const Text("Buffs"),
-      content: SizedBox(
-        height: 200,
-        child: ListView.separated(
-          separatorBuilder: (_, _) => CommonUI.spacer(height: 8),
-          itemCount: edited.buffs.length,
-          itemBuilder: (_, index) {
-            final buff = edited.buffs[index];
-            return BuffPicker(
-              buff: buff,
-              buttonPress: () {
-                edited.buffs.removeAt(index);
-                _update();
-              },
-              onChange: (buff) {
-                edited.buffs[index] = buff;
-                _update();
-              },
-            );
-          },
-        ),
+    return SizedBox(
+      height: 200,
+      child: ListView.separated(
+        separatorBuilder: (_, _) => CommonUI.spacer(height: 8),
+        itemCount: edited.buffs.length,
+        itemBuilder: (_, index) {
+          final buff = edited.buffs[index];
+          return BuffPicker(
+            buff: buff,
+            buttonPress: () {
+              edited.buffs.removeAt(index);
+              _update();
+            },
+            onChange: (buff) {
+              edited.buffs[index] = buff;
+              _update();
+            },
+          );
+        },
       ),
     );
   }
 
   Widget _skillsEditor(BuildContext context) {
-    return Expander(header: const Text("Skills"), content: Placeholder());
+    return Placeholder();
   }
 
   void _update() {

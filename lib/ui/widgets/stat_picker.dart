@@ -1,4 +1,4 @@
-import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ww_optimizer/ui/widgets/common.dart';
 import 'package:ww_optimizer/wuthering/stat.dart';
@@ -32,18 +32,20 @@ class _StatNamePickerState extends State<StatNamePicker> {
 
   @override
   Widget build(BuildContext context) {
-    return ComboBox<StatName>(
-      value: _statName,
-      onChanged: (value) {
-        _statName = value!;
-        widget.onChange(value);
-        setState(() {});
+    return DropdownMenu<StatName>(
+      onSelected: (value) {
+        if (value != null) {
+          _statName = value;
+          widget.onChange(value);
+          setState(() {});
+        }
       },
-      items: StatName.strNames.entries.map((e) {
-        return ComboBoxItem(
+      dropdownMenuEntries: StatName.strNames.entries.map((e) {
+        return DropdownMenuEntry(
+          label: e.value,
           value: e.key,
           enabled: !widget.except.contains(e.key),
-          child: Text(e.value),
+          // child: Text(e.value),
         );
       }).toList(),
     );
@@ -83,7 +85,7 @@ class _StatValuePickerState extends State<StatValuePicker> {
           child: FilledButton(
             onPressed: widget.enable ? widget.buttonPress : null,
             style: ButtonStyle(),
-            child: Icon(FluentIcons.skype_minus),
+            child: Icon(Icons.minimize_outlined),
           ),
         ),
         CommonUI.spacer(width: 10),
@@ -97,16 +99,20 @@ class _StatValuePickerState extends State<StatValuePicker> {
         ),
         CommonUI.spacer(width: 10),
         Flexible(
-          child: NumberBox<double>(
-            value: widget.statValue.value,
-            placeholder: "Value",
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r"[\d\.\,]")),
-            ],
+          child: TextField(
             keyboardType: .number,
-            mode: .inline,
-            onChanged: _valueChange,
+            onChanged: (value) => _valueChange(double.tryParse(value)),
           ),
+          // child: NumberBox<double>(
+          //   value: widget.statValue.value,
+          //   placeholder: "Value",
+          //   inputFormatters: [
+          //     FilteringTextInputFormatter.allow(RegExp(r"[\d\.\,]")),
+          //   ],
+          //   keyboardType: .number,
+          //   mode: .inline,
+          //   onChanged: _valueChange,
+          // ),
         ),
       ],
     );

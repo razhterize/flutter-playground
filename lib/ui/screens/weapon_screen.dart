@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter/material.dart';
 import 'package:ww_optimizer/assets.dart';
 import 'package:ww_optimizer/cubit/weapons_cubit.dart';
 import 'package:ww_optimizer/ui/widgets/images.dart';
@@ -40,11 +40,10 @@ class _WeaponScreenState extends State<WeaponScreen> {
           children: [
             // Name search box
             Flexible(
-              child: TextBox(
+              child: TextField(
                 controller: _filterController,
                 onChanged: (_) => setState(() {}),
                 expands: false,
-                placeholder: "Search",
               ),
             ),
           ],
@@ -59,7 +58,7 @@ class _WeaponScreenState extends State<WeaponScreen> {
         const int imageSize = 200;
         final size = MediaQuery.of(context).size;
         final numCols = (size.width / imageSize).floor();
-        if (state.processing) return ProgressRing();
+        if (state.processing) return CircularProgressIndicator();
         if (state.weapons.isEmpty) return const Text("No Weapon Saved");
         List<Weapon> showedWeapon = state.weapons;
         if (_filterText.isNotEmpty && _filterType == .None) {
