@@ -7,6 +7,7 @@ import 'package:ww_optimizer/cubit/screen_cubit.dart';
 import 'package:ww_optimizer/cubit/status_cubit.dart';
 import 'package:ww_optimizer/cubit/weapons_cubit.dart';
 import 'package:ww_optimizer/paths.dart';
+import 'package:ww_optimizer/ui/screens/data_preview.dart';
 import 'package:ww_optimizer/ui/screens/echo_screen.dart';
 import 'package:ww_optimizer/ui/screens/main_screen.dart';
 import 'package:ww_optimizer/ui/screens/resonator_screen.dart';
@@ -64,6 +65,7 @@ class _WutheringOptimizerState extends State<WutheringOptimizer> {
       ResonatorScreen(),
       WeaponScreen(),
       EchoScreen(),
+      SavedDataPreview()
     ];
     return Builder(
       builder: (context) {
@@ -87,6 +89,10 @@ class _WutheringOptimizerState extends State<WutheringOptimizer> {
                   icon: Icon(Icons.widgets),
                   label: Text("Echo"),
                 ),
+                NavigationRailDestination(
+                  icon: Icon(Icons.javascript),
+                  label: const Text("JSON Preview"),
+                ),
               ],
               selectedIndex: _activeScreen,
               onDestinationSelected: (value) {
@@ -101,23 +107,7 @@ class _WutheringOptimizerState extends State<WutheringOptimizer> {
             ),
           ],
         );
-      }
+      },
     );
-    // return NavigationView(
-    //   appBar: NavigationAppBar(leading: WutheringMenuBar()),
-    //   pane: NavigationPane(
-    //     onChanged: (idx) => setState(() {
-    //       _activeScreen = idx;
-    //     }),
-    //     selected: _activeScreen,
-    //     displayMode: .compact,
-    //     items: [
-    //       PaneItem(icon: Icon(FluentIcons.accept), body: BuildScreen()),
-    //       PaneItem(icon: Icon(FluentIcons.album), body: ResonatorScreen()),
-    //       PaneItem(icon: Icon(FluentIcons.album), body: WeaponScreen()),
-    //       PaneItem(icon: Icon(FluentIcons.album), body: EchoScreen()),
-    //     ],
-    //   ),
-    // );
   }
 }
