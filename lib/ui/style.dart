@@ -14,7 +14,7 @@ Style get cardStyle => Style(
     $box.margin.vertical(10),
   ),
   horizontalMargin(
-    $box.margin.vertical(10),
+    $box.margin.horizontal(10),
   ),
   allMargin(
     $box.margin.all(10),
