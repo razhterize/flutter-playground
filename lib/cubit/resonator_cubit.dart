@@ -18,6 +18,9 @@ class ResonatorCubit extends Cubit<ResonatorState> {
   StreamSubscription? _subs;
   late StreamSubscription _saveSubs;
 
+  Resonator? get edited => state.editedResonator;
+  List<Resonator> get resonators => state.resonators;
+
   void _initPriv() {
     _log.debug("Init Resonator Cubit");
     int sortResonator(Resonator r1, Resonator r2) {
@@ -47,7 +50,10 @@ class ResonatorCubit extends Cubit<ResonatorState> {
       resonatorList.sort(sortResonator);
       emit(state.copyWith(processing: false, resonators: resonatorList));
     } catch (e) {
-      _log.error("Something is wrong when loading initial resonators: ${e.toString()}", st: .current);
+      _log.error(
+        "Something is wrong when loading initial resonators: ${e.toString()}",
+        st: .current,
+      );
     }
   }
 
@@ -97,6 +103,15 @@ class ResonatorState extends Equatable {
     this.resonators = const [],
     this.editedResonator,
   ]);
+
+  @override
+  String toString() {
+    return """
+    Processing: $processing
+    Resonators Length: ${resonators.length}
+    Edited: $editedResonator
+    """;
+  }
 
   ResonatorState copyWith({
     bool? processing,
