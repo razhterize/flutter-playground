@@ -14,6 +14,7 @@ import 'package:ww_optimizer/wuthering/resonator.dart';
 import 'package:ww_optimizer/wuthering/stat.dart';
 import 'package:ww_optimizer/cubit/resonator_cubit.dart';
 import 'package:ww_optimizer/ui/widgets/common.dart';
+import 'package:ww_optimizer/wuthering/wuthering.dart';
 
 class ResonatorScreen extends StatefulWidget {
   const ResonatorScreen({super.key});
@@ -132,10 +133,12 @@ class _ResonatorEditorState extends State<ResonatorEditor> {
           // Box(style: cardStyle, child: _statsEditor(context)),
           ExpandableBox(
             header: const Text("Stats"),
+            expandedHeight: (100 + (50 * edited.stats.length)).toDouble(),
             child: _statsEditor(context),
           ),
           ExpandableBox(
             header: const Text("Buffs"),
+            expandedHeight: (100 + (50 * edited.buffs.length)).toDouble(),
             child: _buffsEditor(context),
           ),
           ExpandableBox(
@@ -149,7 +152,7 @@ class _ResonatorEditorState extends State<ResonatorEditor> {
 
   Widget _resonatorInfo(BuildContext context) {
     return Box(
-      style: cardStyle,
+      style: cardStyle.applyVariant(horizontalMargin),
       child: HBox(
         style: flexStyle,
         children: [
@@ -242,26 +245,36 @@ class _ResonatorEditorState extends State<ResonatorEditor> {
   }
 
   Widget _buffsEditor(BuildContext context) {
-    return SizedBox(
-      height: 200,
-      child: ListView.separated(
-        separatorBuilder: (_, _) => CommonUI.spacer(height: 8),
-        itemCount: edited.buffs.length,
-        itemBuilder: (_, index) {
-          final buff = edited.buffs[index];
-          return BuffPicker(
-            buff: buff,
-            buttonPress: () {
-              edited.buffs.removeAt(index);
-              _update();
-            },
-            onChange: (buff) {
-              edited.buffs[index] = buff;
-              _update();
-            },
+    return ListView.separated(
+      separatorBuilder: (_, _) => CommonUI.spacer(height: 8),
+      itemCount: edited.buffs.length + 1,
+      itemBuilder: (_, index) {
+        // Add Buff Button
+        if (edited.buffs.isEmpty || index >= edited.buffs.length) {
+          return Tooltip(
+            message: "Add Buff",
+            child: FilledButton(
+              onPressed: () {
+                edited.buffs.add(Buff());
+                _update();
+              },
+              child: Icon(Icons.add),
+            ),
           );
-        },
-      ),
+        }
+        final buff = edited.buffs[index];
+        return BuffPicker(
+          buff: buff,
+          buttonPress: () {
+            edited.buffs.removeAt(index);
+            _update();
+          },
+          onChange: (buff) {
+            edited.buffs[index] = buff;
+            _update();
+          },
+        );
+      },
     );
   }
 
