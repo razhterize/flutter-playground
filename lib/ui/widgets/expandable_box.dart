@@ -9,12 +9,14 @@ class ExpandableBox extends StatefulWidget {
     required this.child,
     this.header,
     this.onExpandChange,
+    this.expandedHeight = 400,
     this.style,
   });
 
   final Widget child;
   final Widget? header;
   final Function()? onExpandChange;
+  final double expandedHeight;
   final Style? style;
 
   @override
@@ -27,7 +29,9 @@ class _ExpandableBoxState extends State<ExpandableBox> {
   @override
   Widget build(BuildContext context) {
     return PressableBox(
-      style: cardStyle,
+      style: cardStyle
+          .applyVariant(horizontalMargin)
+          .merge(widget.style),
       onPress: () {
         _expanded = !_expanded;
         setState(() {});
@@ -45,7 +49,9 @@ class _ExpandableBoxState extends State<ExpandableBox> {
           ),
           Box(
             style: AnimatedStyle(
-              _expanded ? Style($box.height(400)) : Style($box.height(0)),
+              _expanded
+                  ? Style($box.height(widget.expandedHeight))
+                  : Style($box.height(0)),
               duration: const Duration(milliseconds: 500),
               curve: Curves.easeInOutCirc,
             ),
