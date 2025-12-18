@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:ww_optimizer/core/types.dart';
 import 'package:ww_optimizer/wuthering/buff.dart';
@@ -8,7 +9,7 @@ import 'package:ww_optimizer/wuthering/weapon.dart';
 part 'resonator.g.dart';
 
 @JsonSerializable()
-class Resonator {
+class Resonator extends Equatable {
   int id;
   final String name;
   final WeaponType weaponType;
@@ -18,6 +19,7 @@ class Resonator {
   BuffList buffs;
   @JsonKey(toJson: StatMapValues.toJson, fromJson: StatMapValues.fromJson)
   StatMap stats;
+
   Resonator({
     this.name = "",
     this.id = 0,
@@ -28,6 +30,27 @@ class Resonator {
     this.buffs = const [],
     this.stats = const {},
   });
+
+  Resonator copyWith({
+    int? level,
+    List<Skill>? skills,
+    BuffList? buffs,
+    StatMap? stats,
+  }) {
+    return Resonator(
+      name: name,
+      id: id,
+      weaponType: weaponType,
+      level: level ?? this.level,
+      skills: skills ?? this.skills,
+      buffs: buffs ?? this.buffs,
+      stats: stats ?? this.stats,
+    );
+  }
+
   factory Resonator.fromJson(JsonType json) => _$ResonatorFromJson(json);
   JsonType toJson() => _$ResonatorToJson(this);
+
+  @override
+  List<Object?> get props => [name, skills, buffs, stats, level];
 }
