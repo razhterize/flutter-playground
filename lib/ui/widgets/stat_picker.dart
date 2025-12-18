@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mix/mix.dart';
+import 'package:ww_optimizer/ui/style.dart';
 import 'package:ww_optimizer/ui/widgets/common.dart';
 import 'package:ww_optimizer/wuthering/stat.dart';
 
@@ -59,8 +61,8 @@ class _StatNamePickerState extends State<StatNamePicker> {
 class StatValuePicker extends StatefulWidget {
   const StatValuePicker({
     super.key,
-    required this.onChange,
     required this.statValue,
+    required this.onChange,
     this.buttonPress,
     this.enable = true,
     this.except = const [],
@@ -78,38 +80,36 @@ class StatValuePicker extends StatefulWidget {
 
 class _StatValuePickerState extends State<StatValuePicker> {
   final _valueController = TextEditingController();
-
-  @override
-  void initState() {
-    _valueController.text =
-        "${widget.statValue.value}${widget.statValue.isPercent ? '%' : ''}";
-    super.initState();
-  }
+  late StatValue _statValue;
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: .start,
-      crossAxisAlignment: .center,
+    _statValue = widget.statValue;
+    _valueController.text =
+        "${widget.statValue.value}${widget.statValue.isPercent ? '%' : ''}";
+    return HBox(
+      style: flexStyle.applyVariant(flexH),
       children: [
-        widget.buttonPress != null
-            ? IconButton.filled(
-                onPressed: widget.enable ? widget.buttonPress : null,
-                icon: Icon(Icons.remove),
-              )
-            : IconButton(onPressed: () {}, icon: Icon(Icons.remove)),
-        CommonUI.spacer(width: 10),
+        Tooltip(
+          message: "Remove Stats",
+          child: widget.buttonPress != null
+              ? IconButton.filled(
+                  onPressed: widget.enable ? widget.buttonPress : null,
+                  icon: Icon(Icons.remove),
+                )
+              : IconButton(onPressed: () {}, icon: Icon(Icons.remove)),
+        ),
         Flexible(
           child: StatNamePicker(
-            statName: widget.statValue.name,
+            statName: _statValue.name,
             onChange: _nameChange,
             enabled: widget.enable,
             except: widget.except,
           ),
         ),
-        CommonUI.spacer(width: 10),
         Flexible(
           child: TextField(
+            decoration: InputDecoration(label: const Text("Value")),
             inputFormatters: [
               FilteringTextInputFormatter.allow(RegExp(r"[\d\,\.\%]")),
             ],
@@ -123,14 +123,16 @@ class _StatValuePickerState extends State<StatValuePicker> {
   }
 
   void _nameChange(StatName name) {
-    widget.onChange(widget.statValue.copyWith(name: name));
+    _statValue = _statValue.copyWith(name: name);
+    widget.onChange(_statValue);
     setState(() {});
   }
 
   void _valueChange(double? val) {
-    final newStat = widget.statValue.copyWith(value: val);
-    widget.onChange(newStat);
-    _valueController.text = "${newStat.value}${newStat.isPercent ? '%' : ''}";
+    _statValue = _statValue.copyWith(value: val);
+    widget.onChange(_statValue);
+    _valueController.text =
+        "${_statValue.value}${_statValue.isPercent ? '%' : ''}";
     setState(() {});
   }
 }

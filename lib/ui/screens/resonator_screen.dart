@@ -2,9 +2,12 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mix/mix.dart';
 import 'package:ww_optimizer/core/types.dart';
 import 'package:ww_optimizer/paths.dart';
+import 'package:ww_optimizer/ui/style.dart';
 import 'package:ww_optimizer/ui/widgets/buff_editor.dart';
+import 'package:ww_optimizer/ui/widgets/expandable_box.dart';
 import 'package:ww_optimizer/ui/widgets/images.dart';
 import 'package:ww_optimizer/ui/widgets/stat_picker.dart';
 import 'package:ww_optimizer/wuthering/resonator.dart';
@@ -44,23 +47,19 @@ class _ResonatorScreenState extends State<ResonatorScreen> {
   }
 
   Widget _resonatorFilter(BuildContext context) {
-    final size = MediaQuery.of(context).size;
     return CommonUI.padding8(
-      child: SizedBox(
-        height: 30,
-        width: size.width,
-        child: Row(
-          children: [
-            Flexible(
-              child: TextField(
-                controller: _filterController,
-                onChanged: (_) => setState(() {}),
-                expands: false,
-              ),
+      child: Row(
+        children: [
+          Icon(Icons.search),
+          CommonUI.spacer(),
+          Expanded(
+            child: TextField(
+              decoration: InputDecoration(label: const Text("Filter by name")),
+              controller: _filterController,
+              onChanged: (_) => setState(() {}),
             ),
-            Flexible(child: Row(children: [])),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -111,143 +110,134 @@ class ResonatorEditor extends StatefulWidget {
 class _ResonatorEditorState extends State<ResonatorEditor> {
   // Raw Json to get base stats per level
   late JsonType _rawJson;
-  late Resonator edited;
   late ResonatorCubit _cubit;
+  Resonator edited = Resonator();
   final _nameController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     _cubit = context.read<ResonatorCubit>();
-    edited = _cubit.state.editedResonator!;
-    _nameController.text = edited.name;
+    _nameController.text = _cubit.edited!.name;
+    edited = _cubit.edited!;
     _rawJson = jsonDecode(
       File(
         "${assetDir.path}/resonators/${edited.name}.json",
       ).readAsStringSync(),
     );
-    return ListView(
-      children: [
-        SizedBox(
-          height: 200,
-          child: Card(
-            child: CommonUI.padding8(
-              child: Row(
-                children: [
-                  ResonatorImage(
-                    edited,
-                    imageSize: Size(200, 200),
-                    showName: false,
+    return SingleChildScrollView(
+      child: VBox(
+        style: flexStyle,
+        children: [
+          _resonatorInfo(context),
+          // Box(style: cardStyle, child: _statsEditor(context)),
+          ExpandableBox(
+            header: const Text("Stats"),
+            child: _statsEditor(context),
+          ),
+          ExpandableBox(
+            header: const Text("Buffs"),
+            child: _buffsEditor(context),
+          ),
+          ExpandableBox(
+            header: const Text("Skill"),
+            child: _skillsEditor(context),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _resonatorInfo(BuildContext context) {
+    return Box(
+      style: cardStyle,
+      child: HBox(
+        style: flexStyle,
+        children: [
+          ResonatorImage(edited, imageSize: Size(200, 200), showName: false),
+          Expanded(
+            child: VBox(
+              style: flexStyle,
+              children: [
+                TextField(
+                  controller: _nameController,
+                  readOnly: true,
+                  decoration: InputDecoration(
+                    label: const Text("Resonator Name"),
                   ),
-                  CommonUI.spacer(width: 10),
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: .start,
-                      crossAxisAlignment: .start,
-                      children: [
-                        TextField(
-                          controller: _nameController,
-                          readOnly: true,
-                          decoration: InputDecoration(
-                            label: const Text("Resonator Name"),
-                          ),
-                        ),
-                        _levelSlider(context),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+                ),
+                _levelSlider(context),
+              ],
             ),
           ),
-        ),
-
-        Card(child: CommonUI.padding8(child: _statsEditor(context))),
-        CommonUI.spacer(height: 10),
-        Card(child: CommonUI.padding8(child: _buffsEditor(context))),
-        CommonUI.spacer(height: 10),
-        Card(child: CommonUI.padding8(child: _skillsEditor(context))),
-      ],
+        ],
+      ),
     );
   }
 
   Widget _levelSlider(BuildContext context) {
-    return Row(
-      children: [
-        const Text("Level", style: TextStyle(fontSize: 18)),
-        Flexible(
-          child: Slider(
-            min: 1,
-            max: 90,
-            label: "${edited.level}",
-            value: edited.level.toDouble(),
-            onChanged: (v) {
-              edited.level = v.toInt();
-              StatMap _levelStats = {
-                StatName.ATK: _rawJson["stats"]["${v.toInt()}"]["ATK"],
-                StatName.HP: _rawJson["stats"]["${v.toInt()}"]["HP"],
-                StatName.DEF: _rawJson["stats"]["${v.toInt()}"]["DEF"],
-              };
-              for (var levelStat in _levelStats.entries) {
-                edited.stats.update(
-                  levelStat.key,
-                  (value) => levelStat.value,
-                  ifAbsent: () => levelStat.value,
-                );
-              }
-              _update();
-            },
-          ),
-        ),
-      ],
+    return Slider(
+      min: 1,
+      max: 90,
+      label: "${edited.level}",
+      value: edited.level.toDouble(),
+      onChanged: (v) {
+        edited.level = v.toInt();
+        StatMap _levelStats = {
+          StatName.ATK: _rawJson["stats"]["${v.toInt()}"]["ATK"],
+          StatName.HP: _rawJson["stats"]["${v.toInt()}"]["HP"],
+          StatName.DEF: _rawJson["stats"]["${v.toInt()}"]["DEF"],
+        };
+        for (var levelStat in _levelStats.entries) {
+          edited.stats.update(
+            levelStat.key,
+            (value) => levelStat.value,
+            ifAbsent: () => levelStat.value,
+          );
+        }
+        _update();
+      },
     );
   }
 
   Widget _statsEditor(BuildContext context) {
-    return SizedBox(
-      height: 400,
-      child: ListView.separated(
-        separatorBuilder: (_, _) {
-          return Container(height: 10, color: Colors.transparent);
-        },
-        itemCount: edited.stats.isEmpty ? 1 : edited.stats.length + 1,
-        itemBuilder: (_, index) {
-          if (edited.stats.isEmpty || index >= edited.stats.length) {
-            return IconButton.filled(
-              onPressed: () {
-                bool pred(StatName n) {
-                  return !edited.stats.containsKey(n) && n != StatName.None;
-                }
-                StatName validKey = StatName.values.where(pred).first;
-                edited.stats.update(validKey, (v) => 0, ifAbsent: () => 0);
-                _update();
-              },
-              icon: Icon(Icons.add),
-              alignment: .center,
-            );
-          }
-          final entry = edited.stats.entries.elementAt(index);
-          return StatValuePicker(
-            statValue: entry.toStatValue(),
-            except: edited.stats.entries.map((e) => e.key).toList(),
-            buttonPress: () {
-              edited.stats.remove(entry.key);
+    return ListView.separated(
+      separatorBuilder: (_, _) => CommonUI.spacer(),
+      itemCount: edited.stats.isEmpty ? 1 : edited.stats.length + 1,
+      itemBuilder: (_, index) {
+        if (edited.stats.isEmpty || index >= edited.stats.length) {
+          return IconButton.filled(
+            onPressed: () {
+              StatName validKey = StatName.values.where((n) {
+                return !edited.stats.containsKey(n) && n != StatName.None;
+              }).first;
+              edited.stats.update(validKey, (v) => 0, ifAbsent: () => 0);
               _update();
             },
-            onChange: (stat) {
-              // Check if key changes. Delete previous if it does
-              if (stat.name != entry.key) {
-                edited.stats.remove(entry.key);
-              }
-              edited.stats.update(
-                stat.name,
-                (v) => stat.value,
-                ifAbsent: () => stat.value,
-              );
-              _update();
-            },
+            icon: Icon(Icons.add),
           );
-        },
-      ),
+        }
+        final entry = edited.stats.entries.elementAt(index);
+        return StatValuePicker(
+          statValue: StatValue(entry.key, entry.value),
+          except: edited.stats.entries.map((e) => e.key).toList(),
+          buttonPress: () {
+            edited.stats.remove(entry.key);
+            _update();
+          },
+          onChange: (stat) {
+            // Check if key changes. Delete previous if it does
+            if (stat.name != entry.key) {
+              edited.stats.remove(entry.key);
+            }
+            edited.stats.update(
+              stat.name,
+              (v) => stat.value,
+              ifAbsent: () => stat.value,
+            );
+            _update();
+          },
+        );
+      },
     );
   }
 
