@@ -303,8 +303,8 @@ Map<Sonata, List<SonataEffect>> presetSonataEffects = {
       sonata: .FlamewingShadow,
       requiredEchoes: 3,
       buffs: [
-        Buff(stats: [StatValue(.CritRate, 20, appliesOnlyTo: .HeavyAttack)]),
-        Buff(stats: [StatValue(.CritRate, 20, appliesOnlyTo: .Echo)]),
+        Buff(stats: [StatValue(.CritRate, 20, appliesOnlyTo: [.HeavyAttack])]),
+        Buff(stats: [StatValue(.CritRate, 20, appliesOnlyTo: [.Echo])]),
         Buff(stats: [StatValue(.FusionDamage, 16)]),
       ],
     ),
