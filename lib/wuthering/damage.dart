@@ -9,6 +9,7 @@ part 'damage.g.dart';
 
 @JsonEnum(valueField: "index")
 enum DamageType with EnumFlag {
+  None,
   Raw,
   Healing,
   Spectro,
@@ -34,23 +35,37 @@ enum DamageType with EnumFlag {
   TuneBreak,
 }
 
-typedef DamageList = List<Damage>;
-
 @JsonSerializable()
 class Damage {
   final double multiplier;
   final int hitCount;
-  final DamageType damageType;
+  final List<DamageType> damageType;
   final bool isFlat;
   final StatName? source;
 
   const Damage({
     this.multiplier = 0,
     this.hitCount = 1,
-    this.damageType = DamageType.Raw,
+    this.damageType = const [],
     this.isFlat = false,
     this.source = .ATK, // ATK By default
   });
+
+  Damage copyWith({
+    double? multiplier,
+    int? hitCount,
+    List<DamageType>? damageType,
+    bool? isFlat,
+    StatName? source,
+  }) {
+    return Damage(
+      multiplier: multiplier ?? this.multiplier,
+      hitCount: hitCount ?? this.hitCount,
+      damageType: damageType ?? this.damageType,
+      isFlat: isFlat ?? this.isFlat,
+      source: source ?? this.source,
+    );
+  }
 
   factory Damage.fromJson(JsonType json) => _$DamageFromJson(json);
   JsonType toJson() => _$DamageToJson(this);

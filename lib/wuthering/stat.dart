@@ -13,12 +13,19 @@ typedef StatMap = Map<StatName, double>;
 class StatValue {
   final StatName name;
   final double value;
-  final DamageType? appliesOnlyTo;
+  final List<DamageType> appliesOnlyTo;
 
-  const StatValue(this.name, this.value, {this.appliesOnlyTo});
+  const StatValue(this.name, this.value, {this.appliesOnlyTo = const []});
 
-  StatValue copyWith({StatName? name, double? value}) =>
-      StatValue(name ?? this.name, value ?? this.value);
+  StatValue copyWith({
+    StatName? name,
+    double? value,
+    List<DamageType>? appliesOnlyTo,
+  }) => StatValue(
+    name ?? this.name,
+    value ?? this.value,
+    appliesOnlyTo: appliesOnlyTo ?? this.appliesOnlyTo,
+  );
 
   bool get isPercent => isPercentage(name);
 

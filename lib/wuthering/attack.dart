@@ -8,10 +8,23 @@ part 'attack.g.dart';
 @JsonSerializable()
 class Attack extends Equatable {
   final String name;
-  DamageList damages;
-  DamageType? damageType;
+  List<Damage> damages;
+  List<DamageType> damageType;
 
-  Attack({this.name = "", this.damages = const [], this.damageType});
+  Attack({this.name = "", this.damages = const [], this.damageType = const []});
+
+  Attack copyWith({
+    String? name,
+    List<Damage>? damages,
+    List<DamageType>? damageType,
+  }) {
+    return Attack(
+      name: name ?? this.name,
+      damages: damages ?? this.damages,
+      damageType: damageType ?? this.damageType,
+    );
+  }
+
   factory Attack.fromJson(JsonType json) => _$AttackFromJson(json);
   JsonType toJson() => _$AttackToJson(this);
 
@@ -27,10 +40,17 @@ class Skill extends Equatable {
 
   Skill({this.name = "", this.description = "", this.attacks = const []});
 
+  Skill copyWith({String? name, String? description, List<Attack>? attacks}) {
+    return Skill(
+      name: name ?? this.name,
+      description: description ?? this.description,
+      attacks: attacks ?? this.attacks,
+    );
+  }
+
   factory Skill.fromJson(JsonType json) => _$SkillFromJson(json);
   JsonType toJson() => _$SkillToJson(this);
 
   @override
-  // TODO: implement props
   List<Object?> get props => [name, description, attacks];
 }
