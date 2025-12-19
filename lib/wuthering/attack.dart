@@ -8,10 +8,10 @@ part 'attack.g.dart';
 @JsonSerializable()
 class Attack extends Equatable {
   final String name;
-  List<Damage> damages;
-  List<DamageType> damageType;
+  final List<Damage> damages;
+  final List<DamageType> damageType;
 
-  Attack({this.name = "", this.damages = const [], this.damageType = const []});
+  const Attack({this.name = "", this.damages = const [], this.damageType = const []});
 
   Attack copyWith({
     String? name,
