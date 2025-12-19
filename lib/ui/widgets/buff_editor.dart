@@ -79,7 +79,6 @@ class _BuffPickerState extends State<BuffPicker> {
       builder: (_) {
         final isLandscape = MediaQuery.of(context).orientation == .landscape;
         return Dialog(
-          // TODO: Finish dialog
           alignment: .center,
           constraints: BoxConstraints(
             maxWidth: isLandscape ? 600 : 400,
@@ -138,6 +137,7 @@ class __BuffPopupState extends State<_BuffPopup> {
     return Box(
       style: cardStyle.add(
         $box.constraints.maxHeight(200 + (_buff.stats.length * 50)),
+        $box.margin.all(0)
       ),
       child: VBox(
         style: vboxStyle,
