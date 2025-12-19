@@ -12,12 +12,14 @@ class StatNamePicker extends StatefulWidget {
     required this.onChange,
     this.enabled = true,
     this.except = const [],
+    this.only = const [],
   });
 
   final StatName statName;
   final bool enabled;
   final void Function(StatName name) onChange;
   final List<StatName> except;
+  final List<StatName> only;
 
   @override
   State<StatNamePicker> createState() => _StatNamePickerState();
@@ -46,14 +48,22 @@ class _StatNamePickerState extends State<StatNamePicker> {
           setState(() {});
         }
       },
-      dropdownMenuEntries: StatName.strNames.entries.map((e) {
-        return DropdownMenuEntry(
-          label: e.value,
-          value: e.key,
-          enabled: !widget.except.contains(e.key),
-          // child: Text(e.value),
-        );
-      }).toList(),
+      dropdownMenuEntries: widget.only.isEmpty
+          ? StatName.strNames.entries.map((e) {
+              return DropdownMenuEntry(
+                label: e.value,
+                value: e.key,
+                
+                // child: Text(e.value),
+              );
+            }).toList()
+          : widget.only.map((e) {
+              return DropdownMenuEntry(
+                value: e,
+                enabled: !widget.except.contains(e),
+                label: StatName.strNames[e] ?? "Unknown",
+              );
+            }).toList(),
     );
   }
 }
