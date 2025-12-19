@@ -9,9 +9,8 @@ import 'package:ww_optimizer/ui/style.dart';
 import 'package:ww_optimizer/ui/widgets/buff_editor.dart';
 import 'package:ww_optimizer/ui/widgets/expandable_box.dart';
 import 'package:ww_optimizer/ui/widgets/images.dart';
+import 'package:ww_optimizer/ui/widgets/skill_editor.dart';
 import 'package:ww_optimizer/ui/widgets/stat_picker.dart';
-import 'package:ww_optimizer/wuthering/resonator.dart';
-import 'package:ww_optimizer/wuthering/stat.dart';
 import 'package:ww_optimizer/cubit/resonator_cubit.dart';
 import 'package:ww_optimizer/ui/widgets/common.dart';
 import 'package:ww_optimizer/wuthering/wuthering.dart';
@@ -143,6 +142,7 @@ class _ResonatorEditorState extends State<ResonatorEditor> {
           ),
           ExpandableBox(
             header: const Text("Skill"),
+            expandedHeight: (100 + (600 * edited.skills.length)).toDouble(),
             child: _skillsEditor(context),
           ),
         ],
@@ -279,7 +279,31 @@ class _ResonatorEditorState extends State<ResonatorEditor> {
   }
 
   Widget _skillsEditor(BuildContext context) {
-    return Placeholder();
+    return ListView.separated(
+      itemCount: edited.skills.length + 1,
+      separatorBuilder: (_, _) => CommonUI.spacer(),
+      itemBuilder: (_, index) {
+        if (index >= edited.skills.length) {
+          return Tooltip(
+            message: "Add Skill",
+            child: FilledButton(
+              onPressed: () {
+                edited.skills.add(Skill());
+                _update();
+              },
+              child: Icon(Icons.add),
+            ),
+          );
+        }
+        return SkillEditor(
+          skill: edited.skills[index],
+          onChange: (skill) {
+            edited.skills[index] = skill;
+            _update();
+          },
+        );
+      },
+    );
   }
 
   void _update() {
