@@ -41,8 +41,9 @@ class SavedDataCubit extends Cubit<SavedState> {
     _saveFlag = true;
   }
 
-  void saveData() {
-    if (_saveFlag) {
+  void saveData([bool immediate = false]) {
+    if (immediate) _savedRepository.saveData();
+    if (_saveFlag && !immediate) {
       _savedRepository.saveData();
       _saveFlag = false;
     }

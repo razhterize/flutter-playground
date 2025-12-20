@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mix/mix.dart';
 import 'package:ww_optimizer/cubit/echoes_cubit.dart';
 import 'package:ww_optimizer/cubit/resonator_cubit.dart';
 import 'package:ww_optimizer/cubit/saved_cubit.dart';
@@ -12,6 +13,7 @@ import 'package:ww_optimizer/ui/screens/echo_screen.dart';
 import 'package:ww_optimizer/ui/screens/main_screen.dart';
 import 'package:ww_optimizer/ui/screens/resonator_screen.dart';
 import 'package:ww_optimizer/ui/screens/weapon_screen.dart';
+import 'package:ww_optimizer/ui/style.dart';
 import 'package:ww_optimizer/ui/widgets/menu_bar.dart';
 
 void main() async {
@@ -34,13 +36,23 @@ class _WutheringOptimizerState extends State<WutheringOptimizer> {
     return MaterialApp(
       title: "Wuthering Optimizer",
       theme: .dark(useMaterial3: true),
-      home: Scaffold(
-        body: MultiBlocProvider(
-          providers: [
-            BlocProvider(create: (_) => SavedDataCubit(), lazy: false),
-            BlocProvider(create: (_) => StatusCubit(), lazy: false),
-          ],
-          child: Builder(
+      home: MultiBlocProvider(
+        providers: [
+          BlocProvider(create: (_) => SavedDataCubit(), lazy: false),
+          BlocProvider(create: (_) => StatusCubit(), lazy: false),
+        ],
+        child: Scaffold(
+          appBar: AppBar(
+            leadingWidth: MediaQuery.sizeOf(context).width,
+            leading: HBox(
+              style: hboxStyle.merge(Style($box.margin.left(20))),
+              children: [
+                Icon(Icons.abc),
+                Expanded(child: WutheringMenuBar()),
+              ],
+            ),
+          ),
+          body: Builder(
             builder: (BuildContext context) {
               final _savedCubit = context.read<SavedDataCubit>();
               return MultiBlocProvider(
@@ -65,7 +77,7 @@ class _WutheringOptimizerState extends State<WutheringOptimizer> {
       ResonatorScreen(),
       WeaponScreen(),
       EchoScreen(),
-      SavedDataPreview()
+      SavedDataPreview(),
     ];
     return Builder(
       builder: (context) {

@@ -53,7 +53,7 @@ class _StatNamePickerState extends State<StatNamePicker> {
               return DropdownMenuEntry(
                 label: e.value,
                 value: e.key,
-                
+
                 // child: Text(e.value),
               );
             }).toList()
@@ -76,6 +76,7 @@ class StatValuePicker extends StatefulWidget {
     this.buttonPress,
     this.enable = true,
     this.except = const [],
+    this.only = const [],
   });
 
   final StatValue statValue;
@@ -83,6 +84,7 @@ class StatValuePicker extends StatefulWidget {
   final void Function(StatValue statValue) onChange;
   final bool enable;
   final List<StatName> except;
+  final List<StatName> only;
 
   @override
   State<StatValuePicker> createState() => _StatValuePickerState();
@@ -115,6 +117,7 @@ class _StatValuePickerState extends State<StatValuePicker> {
             onChange: _nameChange,
             enabled: widget.enable,
             except: widget.except,
+            only: widget.only,
           ),
         ),
         Flexible(

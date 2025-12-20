@@ -18,15 +18,18 @@ class EchoesCubit extends Cubit<EchoState> {
   StreamSubscription? _subs;
   late StreamSubscription _savedSubs;
 
+  List<Echo> get echoes => state.echoes;
+  Echo? get editedEcho => state.editedEcho;
+
   void _initPriv() {
     int echoIdSort(Echo e1, Echo e2) => e1.id - e2.id;
     // Listen for saved state change
     _subs = savedCubit.stream.listen((savedState) {
-      emit(state.copyWith(true));
+      emit(state.copyWith(processing: true));
       _log.debug("Saved State change");
       final echoList = savedState.echoes.map((e) => Echo.fromJson(e)).toList()
         ..sort(echoIdSort);
-      emit(state.copyWith(false, echoList));
+      emit(state.copyWith(processing: false, echoes: echoList));
     });
 
     // Automagically save echoes
@@ -38,36 +41,50 @@ class EchoesCubit extends Cubit<EchoState> {
     final echoList = savedCubit.state.echoes.map((e) {
       return Echo.fromJson(e);
     }).toList()..sort(echoIdSort);
-    emit(state.copyWith(false, echoList));
+    emit(state.copyWith(processing: false, echoes: echoList));
   }
 
-  void addEcho(Echo echo) =>
-      emit(state.copyWith(false, [...state.echoes, echo]));
+  void addEcho(Echo echo) {
+    emit(state.copyWith(echoes: [...state.echoes, echo]));
+    editEcho(echo);
+  }
+
+  void editEcho(Echo echo) {
+    emit(state.copyWith(editedEcho: echo));
+  }
 
   void removeEcho(Echo echo) {
-    emit(state.copyWith(true));
+    emit(state.copyWith(processing: true));
     state.echoes.remove(echo);
-    emit(state.copyWith(false, state.echoes));
+    emit(state.copyWith(echoes: state.echoes));
   }
 
   @override
   Future<void> close() {
     _subs?.cancel();
     _savedSubs.cancel();
-    // TODO: implement close
     return super.close();
   }
 }
 
 class EchoState extends Equatable {
   final List<Echo> echoes;
+  final Echo? editedEcho;
   final bool processing;
-  const EchoState([this.processing = false, this.echoes = const []]);
+  const EchoState({
+    this.processing = false,
+    this.echoes = const [],
+    this.editedEcho,
+  });
 
-  EchoState copyWith([bool? processing, List<Echo>? echoes]) {
-    return EchoState(processing ?? this.processing, echoes ?? this.echoes);
+  EchoState copyWith({bool? processing, List<Echo>? echoes, Echo? editedEcho}) {
+    return EchoState(
+      processing: processing ?? this.processing,
+      echoes: echoes ?? this.echoes,
+      editedEcho: editedEcho ?? this.editedEcho,
+    );
   }
 
   @override
-  List<Object?> get props => [processing, echoes];
+  List<Object?> get props => [processing, echoes, editedEcho];
 }
