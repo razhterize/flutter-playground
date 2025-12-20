@@ -49,8 +49,10 @@ class SonataEffect {
        _stats = stats;
 
   String get name => sonataNames[sonata] ?? "Unknown Sonata";
-  BuffList getBuffs(List<Echo> echoes) => _metRequirements(echoes) ? _buffs : [];
-  StatList getStats(List<Echo> echoes) => _metRequirements(echoes) ? _stats : [];
+  BuffList getBuffs(List<Echo> echoes) =>
+      _metRequirements(echoes) ? _buffs : [];
+  StatList getStats(List<Echo> echoes) =>
+      _metRequirements(echoes) ? _stats : [];
 
   bool _metRequirements(List<Echo> echoes) {
     int numberMatch = 0;
@@ -66,41 +68,57 @@ class SonataEffect {
 
 Map<Sonata, List<SonataEffect>> presetSonataEffects = {
   Sonata.FreezingFrost: [
-    SonataEffect(sonata: .FreezingFrost, requiredEchoes: 2, stats: [StatValue(.GlacioDamage, 10)]),
+    SonataEffect(
+      sonata: .FreezingFrost,
+      requiredEchoes: 2,
+      stats: [StatValue(name: .GlacioDamage, value: 10)],
+    ),
     SonataEffect(
       sonata: .FreezingFrost,
       requiredEchoes: 5,
       buffs: [
-        Buff(stats: [StatValue(.GlacioDamage, 10)], maxStack: 3),
+        Buff(stats: [StatValue(name: .GlacioDamage, value: 10)], maxStack: 3),
       ],
     ),
   ],
   Sonata.SierraGale: [
-    SonataEffect(sonata: .SierraGale, requiredEchoes: 2, stats: [StatValue(.AeroDamage, 10)]),
+    SonataEffect(
+      sonata: .SierraGale,
+      requiredEchoes: 2,
+      stats: [StatValue(name: .AeroDamage, value: 10)],
+    ),
     SonataEffect(
       sonata: .SierraGale,
       requiredEchoes: 5,
       buffs: [
-        Buff(stats: [StatValue(.AeroDamage, 30)]),
+        Buff(stats: [StatValue(name: .AeroDamage, value: 30)]),
       ],
     ),
   ],
   Sonata.MoltenRift: [
-    SonataEffect(sonata: .MoltenRift, requiredEchoes: 2, stats: [StatValue(.FusionDamage, 10)]),
+    SonataEffect(
+      sonata: .MoltenRift,
+      requiredEchoes: 2,
+      stats: [StatValue(name: .FusionDamage, value: 10)],
+    ),
     SonataEffect(
       sonata: .MoltenRift,
       buffs: [
-        Buff(stats: [StatValue(.FusionDamage, 30)]),
+        Buff(stats: [StatValue(name: .FusionDamage, value: 30)]),
       ],
     ),
   ],
   Sonata.VoidThunder: [
-    SonataEffect(sonata: .VoidThunder, requiredEchoes: 2, stats: [StatValue(.ElectroDamage, 10)]),
+    SonataEffect(
+      sonata: .VoidThunder,
+      requiredEchoes: 2,
+      stats: [StatValue(name: .ElectroDamage, value: 10)],
+    ),
     SonataEffect(
       sonata: .VoidThunder,
 
       buffs: [
-        Buff(stats: [StatValue(.ElectroDamage, 15)], maxStack: 2),
+        Buff(stats: [StatValue(name: .ElectroDamage, value: 15)], maxStack: 2),
       ],
     ),
   ],
@@ -108,22 +126,26 @@ Map<Sonata, List<SonataEffect>> presetSonataEffects = {
     SonataEffect(
       sonata: .CelestialLight,
       requiredEchoes: 2,
-      stats: [StatValue(.SpectroDamage, 10)],
+      stats: [StatValue(name: .SpectroDamage, value: 10)],
     ),
     SonataEffect(
       sonata: .CelestialLight,
 
       buffs: [
-        Buff(stats: [StatValue(StatName.SpectroDamage, 30)]),
+        Buff(stats: [StatValue(name: .SpectroDamage, value: 30)]),
       ],
     ),
   ],
   Sonata.HavocEclipse: [
-    SonataEffect(sonata: .HavocEclipse, requiredEchoes: 2, stats: [StatValue(.HavocDamage, 10)]),
+    SonataEffect(
+      sonata: .HavocEclipse,
+      requiredEchoes: 2,
+      stats: [StatValue(name: .HavocDamage, value: 10)],
+    ),
     SonataEffect(
       sonata: .HavocEclipse,
       buffs: [
-        Buff(stats: [StatValue(.HavocDamage, 7.5)], maxStack: 4),
+        Buff(stats: [StatValue(name: .HavocDamage, value: 7.5)], maxStack: 4),
       ],
     ),
   ],
@@ -131,31 +153,42 @@ Map<Sonata, List<SonataEffect>> presetSonataEffects = {
     SonataEffect(
       sonata: .RejuvenatingGlow,
       requiredEchoes: 2,
-      stats: [StatValue(.HealingBonus, 10)],
+      stats: [StatValue(name: .HealingBonus, value: 10)],
     ),
     SonataEffect(
       sonata: .RejuvenatingGlow,
       buffs: [
-        Buff(stats: [StatValue(.ATKPercent, 15)]),
+        Buff(stats: [StatValue(name: .ATKPercent, value: 15)]),
       ],
     ),
   ],
   Sonata.MoonlitClouds: [
-    SonataEffect(sonata: .MoonlitClouds, requiredEchoes: 2, stats: [StatValue(.EnergyRegen, 10)]),
+    SonataEffect(
+      sonata: .MoonlitClouds,
+      requiredEchoes: 2,
+      stats: [StatValue(name: .EnergyRegen, value: 10)],
+    ),
     SonataEffect(
       sonata: .MoonlitClouds,
       buffs: [
-        Buff(stats: [StatValue(.ATKPercent, 22.5)], target: .Ally),
+        Buff(
+          stats: [StatValue(name: .ATKPercent, value: 22.5)],
+          target: .Ally,
+        ),
       ],
     ),
   ],
   Sonata.LingeringTunes: [
-    SonataEffect(sonata: .LingeringTunes, requiredEchoes: 2, stats: [StatValue(.ATKPercent, 10)]),
     SonataEffect(
       sonata: .LingeringTunes,
-      stats: [StatValue(.OutroDamage, 60)],
+      requiredEchoes: 2,
+      stats: [StatValue(name: .ATKPercent, value: 10)],
+    ),
+    SonataEffect(
+      sonata: .LingeringTunes,
+      stats: [StatValue(name: .OutroDamage, value: 60)],
       buffs: [
-        Buff(stats: [StatValue(StatName.ATKPercent, 5)], maxStack: 4),
+        Buff(stats: [StatValue(name: .ATKPercent, value: 5)], maxStack: 4),
       ],
     ),
   ],
@@ -164,13 +197,16 @@ Map<Sonata, List<SonataEffect>> presetSonataEffects = {
     SonataEffect(
       sonata: .FrostyResolve,
       requiredEchoes: 2,
-      stats: [StatValue(.ResonanceDamage, 12)],
+      stats: [StatValue(name: .ResonanceDamage, value: 12)],
     ),
     SonataEffect(
       sonata: Sonata.FrostyResolve,
       buffs: [
-        Buff(stats: [StatValue(.GlacioDamage, 22.5)]),
-        Buff(stats: [StatValue(.ResonanceDamage, 18)], maxStack: 2),
+        Buff(stats: [StatValue(name: .GlacioDamage, value: 22.5)]),
+        Buff(
+          stats: [StatValue(name: .ResonanceDamage, value: 18)],
+          maxStack: 2,
+        ),
       ],
     ),
   ],
@@ -178,22 +214,29 @@ Map<Sonata, List<SonataEffect>> presetSonataEffects = {
     SonataEffect(
       sonata: .EternalRadiance,
       requiredEchoes: 2,
-      stats: [StatValue(.SpectroDamage, 10)],
+      stats: [StatValue(name: .SpectroDamage, value: 10)],
     ),
     SonataEffect(
       sonata: .EternalRadiance,
       buffs: [
-        Buff(stats: [StatValue(StatName.CritRate, 20)]),
-        Buff(stats: [StatValue(.SpectroDamage, 10)]),
+        Buff(stats: [StatValue(name: .CritRate, value: 20)]),
+        Buff(stats: [StatValue(name: .SpectroDamage, value: 10)]),
       ],
     ),
   ],
   Sonata.MidnightVeil: [
-    SonataEffect(sonata: .MidnightVeil, requiredEchoes: 2, stats: [StatValue(.HavocDamage, 10)]),
+    SonataEffect(
+      sonata: .MidnightVeil,
+      requiredEchoes: 2,
+      stats: [StatValue(name: .HavocDamage, value: 10)],
+    ),
     SonataEffect(
       sonata: .MidnightVeil,
       buffs: [
-        Buff(stats: [StatValue(.HavocDamage, 15)], target: .Team),
+        Buff(
+          stats: [StatValue(name: .HavocDamage, value: 15)],
+          target: .Team,
+        ),
       ],
     ),
   ],
@@ -201,43 +244,60 @@ Map<Sonata, List<SonataEffect>> presetSonataEffects = {
     SonataEffect(
       sonata: .TidebreakingCourage,
       requiredEchoes: 2,
-      stats: [StatValue(.EnergyRegen, 10)],
+      stats: [StatValue(name: .EnergyRegen, value: 10)],
     ),
     SonataEffect(
       sonata: .TidebreakingCourage,
-      stats: [StatValue(.EnergyRegen, 10)],
+      stats: [StatValue(name: .EnergyRegen, value: 10)],
       //   TODO: Figure out something with conditional buff
       buffs: [
         Buff(
           stats: [
-            StatValue(.AeroDamage, 30),
-            StatValue(.ElectroDamage, 30),
-            StatValue(.GlacioDamage, 30),
-            StatValue(.FusionDamage, 30),
-            StatValue(.SpectroDamage, 30),
-            StatValue(.HavocDamage, 30),
+            StatValue(name: .AeroDamage, value: 30),
+            StatValue(name: .ElectroDamage, value: 30),
+            StatValue(name: .GlacioDamage, value: 30),
+            StatValue(name: .FusionDamage, value: 30),
+            StatValue(name: .SpectroDamage, value: 30),
+            StatValue(name: .HavocDamage, value: 30),
           ],
         ),
       ],
     ),
   ],
   Sonata.EmpyreanAnthem: [
-    SonataEffect(sonata: .EmpyreanAnthem, requiredEchoes: 2, stats: [StatValue(.EnergyRegen, 10)]),
     SonataEffect(
       sonata: .EmpyreanAnthem,
-      stats: [StatValue(.CoordinatedAttackDamage, 80)],
+      requiredEchoes: 2,
+      stats: [StatValue(name: .EnergyRegen, value: 10)],
+    ),
+    SonataEffect(
+      sonata: .EmpyreanAnthem,
+      stats: [StatValue(name: .CoordinatedAttackDamage, value: 80)],
       buffs: [
-        Buff(stats: [StatValue(.ATKPercent, 20)], target: .Ally),
+        Buff(
+          stats: [StatValue(name: .ATKPercent, value: 20)],
+          target: .Ally,
+        ),
       ],
     ),
   ],
   Sonata.GustsOfWelkin: [
-    SonataEffect(sonata: .GustsOfWelkin, requiredEchoes: 2, stats: [StatValue(.AeroDamage, 10)]),
+    SonataEffect(
+      sonata: .GustsOfWelkin,
+      requiredEchoes: 2,
+      stats: [StatValue(name: .AeroDamage, value: 10)],
+    ),
     SonataEffect(
       sonata: .GustsOfWelkin,
       buffs: [
-        Buff(stats: [StatValue(.AeroDamage, 15)], target: .Team),
-        Buff(stats: [StatValue(.AeroDamage, 15)], target: .Self),
+        Buff(
+          stats: [StatValue(name: .AeroDamage, value: 15)],
+          target: .Team,
+        ),
+        Buff(
+          stats: [StatValue(name: .AeroDamage, value: 15)],
+          target: .Self,
+        ),
       ],
     ),
   ],
@@ -245,12 +305,17 @@ Map<Sonata, List<SonataEffect>> presetSonataEffects = {
     SonataEffect(
       sonata: .WindwardPilgrimage,
       requiredEchoes: 2,
-      stats: [StatValue(.AeroDamage, 10)],
+      stats: [StatValue(name: .AeroDamage, value: 10)],
     ),
     SonataEffect(
       sonata: .WindwardPilgrimage,
       buffs: [
-        Buff(stats: [StatValue(.CritRate, 10), StatValue(.AeroDamage, 30)]),
+        Buff(
+          stats: [
+            StatValue(name: .CritRate, value: 10),
+            StatValue(name: .AeroDamage, value: 30),
+          ],
+        ),
       ],
     ),
   ],
@@ -259,14 +324,20 @@ Map<Sonata, List<SonataEffect>> presetSonataEffects = {
       sonata: .FlamingClawprint,
       requiredEchoes: 2,
       buffs: [
-        Buff(stats: [StatValue(.FusionDamage, 10)]),
+        Buff(stats: [StatValue(name: .FusionDamage, value: 10)]),
       ],
     ),
     SonataEffect(
       sonata: .FlamingClawprint,
       buffs: [
-        Buff(stats: [StatValue(.FusionDamage, 15)], target: .Team),
-        Buff(stats: [StatValue(.LiberationDamage, 20)], target: .Self),
+        Buff(
+          stats: [StatValue(name: .FusionDamage, value: 15)],
+          target: .Team,
+        ),
+        Buff(
+          stats: [StatValue(name: .LiberationDamage, value: 20)],
+          target: .Self,
+        ),
       ],
     ),
   ],
@@ -275,7 +346,12 @@ Map<Sonata, List<SonataEffect>> presetSonataEffects = {
       sonata: .DreamsOfTheLost,
       requiredEchoes: 3,
       buffs: [
-        Buff(stats: [StatValue(.CritRate, 20), StatValue(.EchoDamage, 35)]),
+        Buff(
+          stats: [
+            StatValue(name: .CritRate, value: 20),
+            StatValue(name: .EchoDamage, value: 35),
+          ],
+        ),
       ],
     ),
   ],
@@ -284,7 +360,13 @@ Map<Sonata, List<SonataEffect>> presetSonataEffects = {
       sonata: .CrownOfValor,
       requiredEchoes: 3,
       buffs: [
-        Buff(stats: [StatValue(.ATKPercent, 6), StatValue(.CritDamage, 4)], maxStack: 5),
+        Buff(
+          stats: [
+            StatValue(name: .ATKPercent, value: 6),
+            StatValue(name: .CritDamage, value: 4),
+          ],
+          maxStack: 5,
+        ),
       ],
     ),
   ],
@@ -293,8 +375,8 @@ Map<Sonata, List<SonataEffect>> presetSonataEffects = {
       sonata: .LawOfHarmony,
       requiredEchoes: 3,
       buffs: [
-        Buff(stats: [StatValue(.HeavyAttackDamage, 30)]),
-        Buff(stats: [StatValue(.EchoDamage, 4)], maxStack: 4),
+        Buff(stats: [StatValue(name: .HeavyAttackDamage, value: 30)]),
+        Buff(stats: [StatValue(name: .EchoDamage, value: 4)], maxStack: 4),
       ],
     ),
   ],
@@ -303,9 +385,21 @@ Map<Sonata, List<SonataEffect>> presetSonataEffects = {
       sonata: .FlamewingShadow,
       requiredEchoes: 3,
       buffs: [
-        Buff(stats: [StatValue(.CritRate, 20, appliesOnlyTo: [.HeavyAttack])]),
-        Buff(stats: [StatValue(.CritRate, 20, appliesOnlyTo: [.Echo])]),
-        Buff(stats: [StatValue(.FusionDamage, 16)]),
+        Buff(
+          stats: [
+            StatValue(
+              name: .CritRate,
+              value: 20,
+              appliesOnlyTo: [.HeavyAttack],
+            ),
+          ],
+        ),
+        Buff(
+          stats: [
+            StatValue(name: .CritRate, value: 20, appliesOnlyTo: [.Echo]),
+          ],
+        ),
+        Buff(stats: [StatValue(name: .FusionDamage, value: 16)]),
       ],
     ),
   ],
@@ -314,7 +408,12 @@ Map<Sonata, List<SonataEffect>> presetSonataEffects = {
       sonata: .ThreadOfSeveredFate,
       requiredEchoes: 3,
       buffs: [
-        Buff(stats: [StatValue(.ATKPercent, 20), StatValue(.LiberationDamage, 30)]),
+        Buff(
+          stats: [
+            StatValue(name: .ATKPercent, value: 20),
+            StatValue(name: .LiberationDamage, value: 30),
+          ],
+        ),
       ],
     ),
   ],

@@ -221,7 +221,7 @@ class _ResonatorEditorState extends State<ResonatorEditor> {
         }
         final entry = edited.stats.entries.elementAt(index);
         return StatValuePicker(
-          statValue: StatValue(entry.key, entry.value),
+          statValue: StatValue(name: entry.key, value: entry.value),
           except: edited.stats.entries.map((e) => e.key).toList(),
           buttonPress: () {
             edited.stats.remove(entry.key);

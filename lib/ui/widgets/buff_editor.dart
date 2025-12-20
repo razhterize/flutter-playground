@@ -201,7 +201,7 @@ class __BuffPopupState extends State<_BuffPopup> {
   }
 
   void _addBuff() {
-    _buff = _buff.copyWith(stats: [..._buff.stats, StatValue(.ATK, 0)]);
+    _buff = _buff.copyWith(stats: [..._buff.stats, StatValue(name: .ATK,value: 0)]);
     setState(() {});
     widget.onChange(_buff);
   }

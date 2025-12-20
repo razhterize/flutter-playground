@@ -61,11 +61,13 @@ class EffectiveStats {
 
   StatValue operator +(StatValue stat) {
     double updatedValue = addStat(stat);
-    return StatValue(stat.name, updatedValue);
+    return StatValue(name: stat.name, value: updatedValue);
   }
 
   StatValue operator -(StatValue stat) {
-    double updatedValue = addStat(StatValue(stat.name, -stat.value));
-    return StatValue(stat.name, updatedValue);
+    double updatedValue = addStat(
+      StatValue(name: stat.name, value: -stat.value),
+    );
+    return StatValue(name: stat.name, value: updatedValue);
   }
 }

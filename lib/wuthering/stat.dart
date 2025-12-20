@@ -15,15 +15,19 @@ class StatValue {
   final double value;
   final List<DamageType> appliesOnlyTo;
 
-  const StatValue(this.name, this.value, {this.appliesOnlyTo = const []});
+  const StatValue({
+    this.name = .ATK,
+    this.value = 0,
+    this.appliesOnlyTo = const [],
+  });
 
   StatValue copyWith({
     StatName? name,
     double? value,
     List<DamageType>? appliesOnlyTo,
   }) => StatValue(
-    name ?? this.name,
-    value ?? this.value,
+    name: name ?? this.name,
+    value: value ?? this.value,
     appliesOnlyTo: appliesOnlyTo ?? this.appliesOnlyTo,
   );
 
@@ -253,5 +257,5 @@ extension StatMapValues on StatMap {
 }
 
 extension StatMapEntry on MapEntry<StatName, double> {
-  StatValue toStatValue() => StatValue(key, value);
+  StatValue toStatValue() => StatValue(name: key, value: value);
 }
