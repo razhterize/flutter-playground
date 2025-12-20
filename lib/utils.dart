@@ -16,3 +16,7 @@ void timeFunction(Function() func, [String? name]) {
   final us = _stopwatch.elapsedMicroseconds;
   rootLogger.info("${name ?? func} execution takes $us μs / $ms ms");
 }
+
+extension PrecisionRound on double {
+  double toPrecision(int n) => double.tryParse(toStringAsFixed(n)) ?? this;
+}
