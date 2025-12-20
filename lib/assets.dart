@@ -199,6 +199,9 @@ class WutheringAssets {
         ),
       );
       try {
+        // Sanitize some weird names with quotes and HTML tags
+        // Fucking kuroware
+        name = name.replaceAll(RegExp(r'(<[^>]*>)|(\")'), "");
         // Only download if file doesnt already exist
         if (!File("${imageDir.path}/$name.webp").existsSync()) {
           await client.download(path, "${imageDir.path}/$name.webp");
