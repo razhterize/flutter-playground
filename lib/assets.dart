@@ -56,6 +56,12 @@ class WutheringAssets {
         .toList();
   }
 
+  void removeAssets() {
+    assetDir.listSync().whereType<Directory>().forEach(
+      (d) => d.deleteSync(recursive: true),
+    );
+  }
+
   Future<JsonType> _fetchIndexes() async {
     final indexList = ["character", "echo", "weapon"];
     JsonType indexes = {};
