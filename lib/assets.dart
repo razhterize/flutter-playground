@@ -228,6 +228,7 @@ class WutheringAssets {
         echo['cost'] = 3;
         break;
       case 2:
+      case 3:
         echo['cost'] = 4;
         break;
       default:
