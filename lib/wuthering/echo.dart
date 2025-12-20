@@ -16,6 +16,7 @@ class Echo {
   final StatList substats;
   final int cost;
   final Sonata sonata;
+  @JsonKey(toJson: _statPairToJson, fromJson: _statPairFromJson)
   final Pair<StatValue, StatValue> mainStats;
   late int _level;
 
@@ -62,6 +63,17 @@ class Echo {
 
   factory Echo.fromJson(JsonType json) => _$EchoFromJson(json);
   JsonType toJson() => _$EchoToJson(this);
+}
+
+Pair<StatValue, StatValue> _statPairFromJson(JsonType json) {
+  assert(json.containsKey('first') && json.containsKey('second'));
+  StatValue first = StatValue.fromJson(json['first']);
+  StatValue second = StatValue.fromJson(json['second']);
+  return Pair(first: first, second: second);
+}
+
+JsonType _statPairToJson(Pair<StatValue, StatValue> instance) {
+  return {'first': instance.first.toJson(), 'second': instance.second.toJson()};
 }
 
 Set<double> _critSubstatModifiers = {
