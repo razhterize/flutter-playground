@@ -164,26 +164,33 @@ class __EchoCreatorState extends State<_EchoCreator> {
   }
 
   Widget _levelSlider() {
-    return Slider(
-      max: 25,
-      min: 1,
-      value: _echo.level.toDouble(),
-      onChanged: (v) {
-        StatValue topStat = echoTopMainStats.getTopMainStat(
-          _echo.cost,
-          v.toInt(),
-          _echo.mainStats.first.name,
-        );
-        StatValue botStat = echoBotMainStats.getBottomMainStat(
-          _echo.cost,
-          v.toInt(),
-        );
-        _echo = _echo.copyWith(
-          level: v.toInt(),
-          mainStats: Pair(first: topStat, second: botStat),
-        );
-        _cubit.editEcho(_echo);
-      },
+    return HBox(
+      children: [
+        Text("${_echo.level}"),
+        Expanded(
+          child: Slider(
+            max: 25,
+            min: 0,
+            value: _echo.level.toDouble(),
+            onChanged: (v) {
+              StatValue topStat = echoTopMainStats.getTopMainStat(
+                _echo.cost,
+                v.toInt(),
+                _echo.mainStats.first.name,
+              );
+              StatValue botStat = echoBotMainStats.getBottomMainStat(
+                _echo.cost,
+                v.toInt(),
+              );
+              _echo = _echo.copyWith(
+                level: v.toInt(),
+                mainStats: Pair(first: topStat, second: botStat),
+              );
+              _cubit.editEcho(_echo);
+            },
+          ),
+        ),
+      ],
     );
   }
 
