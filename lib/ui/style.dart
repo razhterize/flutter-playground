@@ -30,7 +30,8 @@ Style get flexStyle => Style(
   $flex.mainAxisAlignment.start(),
   $flex.gap(10),
   flexV(
-    $flex.direction.vertical()
+    $flex.direction.vertical(),
+    $flex.mainAxisAlignment.center()
   ),
   flexH($flex.direction.horizontal()),
   flexNoGap(
