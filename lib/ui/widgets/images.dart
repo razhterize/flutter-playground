@@ -61,7 +61,7 @@ class ResonatorImage extends StatelessWidget {
                     fillColor:
                         _elementColor[resonator.elementType] ?? Colors.black,
                   )
-                : Container(width: imageSize?.width ?? 100,),
+                : Container(width: imageSize?.width ?? 100),
           ],
         ),
       ),
@@ -80,9 +80,17 @@ class ResonatorImage extends StatelessWidget {
 }
 
 class WeaponImage extends StatelessWidget {
-  const WeaponImage(this.weapon, {super.key, this.onClick});
+  const WeaponImage(
+    this.weapon, {
+    super.key,
+    this.onClick,
+    this.imageSize,
+    this.showName = false,
+  });
 
   final Weapon weapon;
+  final Size? imageSize;
+  final bool showName;
   final void Function(Weapon)? onClick;
 
   @override
@@ -93,7 +101,11 @@ class WeaponImage extends StatelessWidget {
       borderRadius: BorderRadius.circular(10),
     );
     return GestureDetector(
-      onTap: () => onClick != null ? (weapon) : null,
+      onTap: () {
+        if (onClick != null) {
+          onClick!(weapon);
+        }
+      },
       child: Container(
         decoration: _boxDecor,
         child: Stack(
@@ -109,10 +121,18 @@ class WeaponImage extends StatelessWidget {
 }
 
 class EchoImage extends StatelessWidget {
-  const EchoImage(this.echo, {super.key, this.onClick});
+  const EchoImage(
+    this.echo, {
+    super.key,
+    this.onClick,
+    this.imageSize,
+    this.showName = true,
+  });
 
   final Echo echo;
-  final void Function(Echo)? onClick;
+  final void Function(Echo echo)? onClick;
+  final Size? imageSize;
+  final bool showName;
 
   @override
   Widget build(BuildContext context) {
@@ -122,14 +142,24 @@ class EchoImage extends StatelessWidget {
       borderRadius: BorderRadius.circular(10),
     );
     return GestureDetector(
-      onTap: () => onClick != null ? (echo) : null,
+      onTap: () {
+        if (onClick != null) {
+          onClick!(echo);
+        }
+      },
       child: Container(
         decoration: _boxDecor,
         child: Stack(
           alignment: .bottomCenter,
           children: [
-            imagePath != null ? Image.file(File(imagePath)) : Placeholder(),
-            OutlinedText(echo.name, fontSize: 18),
+            imagePath != null
+                ? Image.file(
+                    File(imagePath),
+                    height: imageSize?.height,
+                    width: imageSize?.width,
+                  )
+                : Placeholder(),
+            showName ? OutlinedText(echo.name, fontSize: 18) : Container(),
           ],
         ),
       ),
