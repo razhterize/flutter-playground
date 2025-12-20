@@ -1,11 +1,12 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:mix/mix.dart';
-import 'package:ww_optimizer/logger.dart';
-import 'package:ww_optimizer/ui/style.dart';
-import 'package:ww_optimizer/ui/widgets/common.dart';
-import 'package:ww_optimizer/ui/widgets/stat_picker.dart';
-import 'package:ww_optimizer/wuthering/wuthering.dart';
+
+import '../style.dart';
+import '../widgets/common.dart';
+import '../widgets/stat_picker.dart';
+import '../../core/wuthering.dart';
+import '../../logger.dart';
 
 class BuffPicker extends StatefulWidget {
   const BuffPicker({
@@ -137,7 +138,7 @@ class __BuffPopupState extends State<_BuffPopup> {
     return Box(
       style: cardStyle.add(
         $box.constraints.maxHeight(200 + (_buff.stats.length * 50)),
-        $box.margin.all(0)
+        $box.margin.all(0),
       ),
       child: VBox(
         style: vboxStyle,
@@ -201,7 +202,12 @@ class __BuffPopupState extends State<_BuffPopup> {
   }
 
   void _addBuff() {
-    _buff = _buff.copyWith(stats: [..._buff.stats, StatValue(name: .ATK,value: 0)]);
+    _buff = _buff.copyWith(
+      stats: [
+        ..._buff.stats,
+        StatValue(name: .ATK, value: 0),
+      ],
+    );
     setState(() {});
     widget.onChange(_buff);
   }

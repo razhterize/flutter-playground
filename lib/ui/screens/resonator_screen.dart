@@ -3,17 +3,19 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mix/mix.dart';
-import 'package:ww_optimizer/core/types.dart';
-import 'package:ww_optimizer/paths.dart';
-import 'package:ww_optimizer/ui/style.dart';
-import 'package:ww_optimizer/ui/widgets/buff_editor.dart';
-import 'package:ww_optimizer/ui/widgets/expandable_box.dart';
-import 'package:ww_optimizer/ui/widgets/images.dart';
-import 'package:ww_optimizer/ui/widgets/skill_editor.dart';
-import 'package:ww_optimizer/ui/widgets/stat_picker.dart';
-import 'package:ww_optimizer/cubit/resonator_cubit.dart';
-import 'package:ww_optimizer/ui/widgets/common.dart';
-import 'package:ww_optimizer/wuthering/wuthering.dart';
+
+import '../style.dart';
+import '../widgets/buff_editor.dart';
+import '../widgets/common.dart';
+import '../widgets/expandable_box.dart';
+import '../widgets/images.dart';
+import '../widgets/stat_picker.dart';
+import '../widgets/skill_editor.dart';
+import '../../core/types.dart';
+import '../../assets.dart';
+import '../../paths.dart';
+import '../../core/wuthering.dart';
+import '../../cubit/resonator_cubit.dart';
 
 class ResonatorScreen extends StatefulWidget {
   const ResonatorScreen({super.key});

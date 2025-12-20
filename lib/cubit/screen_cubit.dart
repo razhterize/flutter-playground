@@ -1,7 +1,8 @@
-import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ww_optimizer/logger.dart';
+
+import '../logger.dart';
 
 class ScreenCubit extends Cubit<ScreenState> {
   ScreenCubit(Widget initialScreen) : super(ScreenState(screen: initialScreen));

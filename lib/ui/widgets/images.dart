@@ -1,11 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:ww_optimizer/assets.dart';
-import 'package:ww_optimizer/ui/widgets/outline_text.dart';
-import 'package:ww_optimizer/wuthering/echo.dart';
-import 'package:ww_optimizer/wuthering/resonator.dart';
-import 'package:ww_optimizer/wuthering/stat.dart';
-import 'package:ww_optimizer/wuthering/weapon.dart';
+
+import 'outline_text.dart';
+import '../../assets.dart';
+import '../../core/wuthering.dart';
 
 class ResonatorImage extends StatelessWidget {
   const ResonatorImage(

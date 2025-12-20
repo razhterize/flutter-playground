@@ -2,7 +2,8 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ww_optimizer/cubit/saved_cubit.dart';
+
+import '../../cubit/saved_cubit.dart';
 
 class SavedDataPreview extends StatelessWidget {
   const SavedDataPreview({super.key});

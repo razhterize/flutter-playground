@@ -1,12 +1,4 @@
-// ignore_for_file: non_constant_identifier_names, constant_identifier_names
-import 'package:json_annotation/json_annotation.dart';
-import 'package:ww_optimizer/core/types.dart';
-import 'package:ww_optimizer/utils.dart';
-import 'package:ww_optimizer/wuthering/buff.dart';
-import 'package:ww_optimizer/wuthering/sonata.dart';
-import 'package:ww_optimizer/wuthering/stat.dart';
-
-part 'echo.g.dart';
+part of '../wuthering.dart';
 
 @JsonSerializable()
 class Echo {

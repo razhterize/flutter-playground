@@ -1,17 +1,18 @@
-import 'dart:convert';
+import 'dart:convert' show jsonDecode;
 import 'dart:io' show Directory, File;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mix/mix.dart';
-import 'package:ww_optimizer/assets.dart';
-import 'package:ww_optimizer/core/types.dart';
-import 'package:ww_optimizer/cubit/echoes_cubit.dart';
-import 'package:ww_optimizer/paths.dart';
-import 'package:ww_optimizer/ui/style.dart';
-import 'package:ww_optimizer/ui/widgets/images.dart';
-import 'package:ww_optimizer/ui/widgets/stat_picker.dart';
-import 'package:ww_optimizer/wuthering/wuthering.dart';
+
+import '../style.dart';
+import '../widgets/images.dart';
+import '../widgets/stat_picker.dart';
+import '../../assets.dart';
+import '../../paths.dart';
+import '../../core/types.dart';
+import '../../cubit/echoes_cubit.dart';
+import '../../core/wuthering.dart';
 
 class EchoScreen extends StatefulWidget {
   const EchoScreen({super.key});

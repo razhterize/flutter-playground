@@ -2,11 +2,10 @@ import 'dart:async';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ww_optimizer/core/types.dart';
-import 'package:ww_optimizer/repository/saved_repository.dart';
-import 'package:ww_optimizer/wuthering/echo.dart';
-import 'package:ww_optimizer/wuthering/resonator.dart';
-import 'package:ww_optimizer/wuthering/weapon.dart';
+
+import '../repository/saved_repository.dart';
+import '../core/types.dart';
+import '../core/wuthering.dart';
 
 class SavedDataCubit extends Cubit<SavedState> {
   SavedDataCubit() : super(const SavedState()) {

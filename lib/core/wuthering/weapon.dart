@@ -1,17 +1,12 @@
-import 'package:json_annotation/json_annotation.dart';
-import 'package:ww_optimizer/core/types.dart';
-import 'package:ww_optimizer/wuthering/buff.dart';
-import 'package:ww_optimizer/wuthering/stat.dart';
-
-part 'weapon.g.dart';
+part of '../wuthering.dart';
 
 @JsonSerializable()
 class Weapon {
-  int id;
+  final int id;
   final String name;
   final WeaponType type;
-  StatList stats;
-  BuffList buffs;
+  final StatList stats;
+  final BuffList buffs;
 
   Weapon({
     this.id = 0,

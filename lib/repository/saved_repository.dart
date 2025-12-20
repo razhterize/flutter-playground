@@ -1,11 +1,10 @@
 import 'dart:io';
 import 'dart:convert';
-import 'package:ww_optimizer/core/types.dart';
-import 'package:ww_optimizer/wuthering/stat.dart';
-import 'package:ww_optimizer/wuthering/weapon.dart';
-import 'package:ww_optimizer/wuthering/resonator.dart';
-import 'package:ww_optimizer/logger.dart';
-import 'package:ww_optimizer/paths.dart';
+
+import '../logger.dart';
+import '../paths.dart';
+import '../core/types.dart';
+import '../core/wuthering.dart';
 
 class SavedRepository {
   SavedRepository({String? path}) {

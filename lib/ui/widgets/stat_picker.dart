@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mix/mix.dart';
-import 'package:ww_optimizer/ui/style.dart';
-import 'package:ww_optimizer/ui/widgets/common.dart';
-import 'package:ww_optimizer/wuthering/stat.dart';
+
+import '../style.dart';
+import '../widgets/common.dart';
+import '../../core/wuthering.dart';
 
 class StatNamePicker extends StatefulWidget {
   const StatNamePicker({

@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ww_optimizer/logger.dart';
+
+import '../logger.dart';
 
 typedef StatusBuilder = BlocBuilder<StatusCubit, StatusState>;
 
@@ -27,7 +28,10 @@ class StatusState extends Equatable {
   const StatusState({this.message, this.progress});
 
   StatusState copyWith({String? message, ProgressData? progress}) {
-    return StatusState(message: message ?? this.message, progress: progress ?? this.progress);
+    return StatusState(
+      message: message ?? this.message,
+      progress: progress ?? this.progress,
+    );
   }
 
   @override

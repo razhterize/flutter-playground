@@ -1,10 +1,4 @@
-// ignore_for_file: constant_identifier_names, non_constant_identifier_names
-import 'package:quiver/core.dart';
-import 'package:json_annotation/json_annotation.dart';
-import 'package:ww_optimizer/core/types.dart';
-import 'package:ww_optimizer/wuthering/damage.dart';
-
-part 'stat.g.dart';
+part of '../wuthering.dart';
 
 typedef StatList = List<StatValue>;
 typedef StatMap = Map<StatName, double>;
@@ -56,6 +50,16 @@ class StatValue {
 
   @override
   int get hashCode => hash2(name, value);
+}
+
+mixin HasStats {
+  late final StatList _stats;
+  bool Function()? statCondition;
+  StatList get stats => statCondition != null
+      ? statCondition!()
+            ? _stats
+            : []
+      : _stats;
 }
 
 enum ElementType { None, Glacio, Fusion, Electro, Aero, Spectro, Havoc }

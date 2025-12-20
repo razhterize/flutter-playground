@@ -1,9 +1,4 @@
-import 'package:equatable/equatable.dart';
-import 'package:json_annotation/json_annotation.dart';
-import 'package:ww_optimizer/wuthering/damage.dart';
-import 'package:ww_optimizer/core/types.dart';
-
-part 'attack.g.dart';
+part of '../wuthering.dart';
 
 @JsonSerializable()
 class Attack extends Equatable {
@@ -11,7 +6,11 @@ class Attack extends Equatable {
   final List<Damage> damages;
   final List<DamageType> damageType;
 
-  const Attack({this.name = "", this.damages = const [], this.damageType = const []});
+  const Attack({
+    this.name = "",
+    this.damages = const [],
+    this.damageType = const [],
+  });
 
   Attack copyWith({
     String? name,

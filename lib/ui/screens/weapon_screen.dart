@@ -1,11 +1,11 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:ww_optimizer/assets.dart';
-import 'package:ww_optimizer/cubit/weapons_cubit.dart';
-import 'package:ww_optimizer/ui/widgets/images.dart';
-import 'package:ww_optimizer/ui/widgets/common.dart';
-import 'package:ww_optimizer/wuthering/weapon.dart';
+
+import '../widgets/images.dart';
+import '../widgets/common.dart';
+import '../../assets.dart';
+import '../../cubit/weapons_cubit.dart';
+import '../../core/wuthering.dart';
 
 class WeaponScreen extends StatefulWidget {
   const WeaponScreen({super.key});

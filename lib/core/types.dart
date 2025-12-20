@@ -1,5 +1,3 @@
-import 'package:ww_optimizer/wuthering/stat.dart';
-
 typedef JsonType = Map<String, dynamic>;
 
 class Pair<T1, T2> {

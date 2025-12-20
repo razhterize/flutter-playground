@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mix/mix.dart';
-import 'package:ww_optimizer/assets.dart';
-import 'package:ww_optimizer/cubit/saved_cubit.dart';
-import 'package:ww_optimizer/ui/style.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../style.dart';
+import '../../assets.dart';
+import '../../cubit/saved_cubit.dart';
 
 class MenuEntry {
   const MenuEntry({

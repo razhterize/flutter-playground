@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ww_optimizer/ui/widgets/status_bar.dart';
+
+import '../widgets/status_bar.dart';
 
 class BuildScreen extends StatelessWidget {
   const BuildScreen({super.key});

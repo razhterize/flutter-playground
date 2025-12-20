@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ww_optimizer/cubit/status_cubit.dart';
+import '../../cubit/status_cubit.dart';
 
 class StatusBar extends StatelessWidget {
   const StatusBar({super.key});

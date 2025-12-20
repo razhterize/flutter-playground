@@ -1,4 +1,4 @@
-import 'package:ww_optimizer/wuthering/stat.dart';
+part of '../wuthering.dart';
 
 class EffectiveStats {
   EffectiveStats() {

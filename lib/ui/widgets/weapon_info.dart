@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ww_optimizer/wuthering/weapon.dart';
+import '../../core/wuthering.dart';
 
 class WeaponInfoWidget extends StatelessWidget {
   const WeaponInfoWidget(this.weapon, {super.key});

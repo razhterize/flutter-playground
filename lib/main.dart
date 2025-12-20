@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mix/mix.dart';
-import 'package:ww_optimizer/cubit/echoes_cubit.dart';
-import 'package:ww_optimizer/cubit/resonator_cubit.dart';
-import 'package:ww_optimizer/cubit/saved_cubit.dart';
-import 'package:ww_optimizer/cubit/screen_cubit.dart';
-import 'package:ww_optimizer/cubit/status_cubit.dart';
-import 'package:ww_optimizer/cubit/weapons_cubit.dart';
-import 'package:ww_optimizer/paths.dart';
-import 'package:ww_optimizer/ui/screens/data_preview.dart';
-import 'package:ww_optimizer/ui/screens/echo_screen.dart';
-import 'package:ww_optimizer/ui/screens/main_screen.dart';
-import 'package:ww_optimizer/ui/screens/resonator_screen.dart';
-import 'package:ww_optimizer/ui/screens/weapon_screen.dart';
-import 'package:ww_optimizer/ui/style.dart';
-import 'package:ww_optimizer/ui/widgets/menu_bar.dart';
+
+import 'cubit/echoes_cubit.dart';
+import 'cubit/resonator_cubit.dart';
+import 'cubit/saved_cubit.dart';
+import 'cubit/screen_cubit.dart';
+import 'cubit/status_cubit.dart';
+import 'cubit/weapons_cubit.dart';
+import 'paths.dart';
+import 'ui/screens/data_preview.dart';
+import 'ui/screens/echo_screen.dart';
+import 'ui/screens/main_screen.dart';
+import 'ui/screens/resonator_screen.dart';
+import 'ui/screens/weapon_screen.dart';
+import 'ui/style.dart';
+import 'ui/widgets/menu_bar.dart';
 
 void main() async {
   await initDirectories();

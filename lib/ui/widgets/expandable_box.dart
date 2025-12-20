@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mix/mix.dart';
-import 'package:ww_optimizer/ui/style.dart';
-import 'package:ww_optimizer/ui/widgets/common.dart';
+
+import 'common.dart';
+import '../style.dart';
 
 class ExpandableBox extends StatefulWidget {
   const ExpandableBox({

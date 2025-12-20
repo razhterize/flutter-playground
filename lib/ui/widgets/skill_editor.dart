@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:mix/mix.dart';
-import 'package:ww_optimizer/core/enum_flag.dart';
-import 'package:ww_optimizer/ui/style.dart';
-import 'package:ww_optimizer/ui/widgets/common.dart';
-import 'package:ww_optimizer/ui/widgets/damage_type_selector.dart';
-import 'package:ww_optimizer/ui/widgets/expandable_box.dart';
-import 'package:ww_optimizer/ui/widgets/stat_picker.dart';
-import 'package:ww_optimizer/wuthering/wuthering.dart';
+
+import 'common.dart';
+import 'damage_type_selector.dart';
+import 'expandable_box.dart';
+import 'stat_picker.dart';
+import '../style.dart';
+import '../../core/enum_flag.dart';
+import '../../core/wuthering.dart';
 
 class SkillEditor extends StatefulWidget {
   const SkillEditor({

@@ -1,10 +1,10 @@
 import 'dart:async';
-
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ww_optimizer/wuthering/echo.dart';
-import 'package:ww_optimizer/cubit/saved_cubit.dart';
-import 'package:ww_optimizer/logger.dart';
+
+import '../logger.dart';
+import 'saved_cubit.dart';
+import '../core/wuthering.dart';
 
 typedef EchoBuilder = BlocBuilder<EchoesCubit, EchoState>;
 

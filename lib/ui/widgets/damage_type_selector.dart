@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:mix/mix.dart';
-import 'package:ww_optimizer/core/enum_flag.dart';
-import 'package:ww_optimizer/logger.dart';
-import 'package:ww_optimizer/ui/style.dart';
-import 'package:ww_optimizer/wuthering/damage.dart';
+
+import '../style.dart';
+import '../../logger.dart';
+import '../../core/enum_flag.dart';
+import '../../core/wuthering.dart';
 
 class DamageTypeSelector extends StatefulWidget {
   const DamageTypeSelector({
