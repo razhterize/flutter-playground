@@ -195,8 +195,6 @@ class __EchoCreatorState extends State<_EchoCreator> {
   }
 
   Widget _mainStatSelector() {
-    // Set Default values
-
     return Box(
       child: VBox(
         style: vboxStyle.merge(Style($box.constraints.maxHeight(150))),
