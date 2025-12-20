@@ -43,11 +43,15 @@ class WutheringAssets {
 
   Future<void> updateAssets() async {
     final indexes = await _fetchIndexes();
-    await _fetchCharacters(indexes["character"]);
-    await _fetchWeapons(indexes["weapon"]);
-    await _fetchEchoes(indexes["echo"]);
+    Future.wait([
+      _fetchCharacters(indexes["character"]),
+      _fetchWeapons(indexes["weapon"]),
+      _fetchEchoes(indexes["echo"]),
+    ]);
     // Update images after assets
+    final String imagePath = "${assetDir.path}/images";
     final imageDir = Directory("${assetDir.path}/images");
+    if (!imageDir.existsSync()) imageDir.createSync(recursive: true);
     _imageList = imageDir
         .listSync()
         .whereType<File>()
@@ -198,16 +202,20 @@ class WutheringAssets {
           message: path,
         ),
       );
+      // Sanitize some weird names with quotes and HTML tags
+      // Fucking kuroware
+      name = name.replaceAll(RegExp(r'(<[^>]*>)|(\")'), "");
       try {
-        // Sanitize some weird names with quotes and HTML tags
-        // Fucking kuroware
-        name = name.replaceAll(RegExp(r'(<[^>]*>)|(\")'), "");
         // Only download if file doesnt already exist
         if (!File("${imageDir.path}/$name.webp").existsSync()) {
           await client.download(path, "${imageDir.path}/$name.webp");
         }
       } on DioException catch (e) {
-        _log.error("${e.message}", st: e.stackTrace);
+        _log.error(
+          "Error when downloading $name"
+          "\n${e.message}",
+          st: e.stackTrace,
+        );
       }
     });
   }
