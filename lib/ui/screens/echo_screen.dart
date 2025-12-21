@@ -4,6 +4,8 @@ import 'dart:io' show Directory, File;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mix/mix.dart';
+import 'package:ww_optimizer/ui/widgets/buff_editor.dart';
+import 'package:ww_optimizer/ui/widgets/expandable_box.dart';
 import 'package:ww_optimizer/utils.dart';
 
 import '../style.dart';
@@ -26,14 +28,22 @@ class EchoScreen extends StatefulWidget {
 class _EchoScreenState extends State<EchoScreen> {
   @override
   Widget build(BuildContext context) {
-    return VBox(
-      style: vboxStyle.merge(Style($box.margin.all(10))),
-      children: [
-        // TODO: Echo creator (substat, level, sonata, etc)
-        Expanded(child: _EchoCreator()),
-        // TODO: Echo Inventory, show saved echoes. edit when clicked
-        Expanded(child: _EchoInventory()),
-      ],
+    return SingleChildScrollView(
+      child: VBox(
+        style: vboxStyle.merge(Style($box.margin.all(10))),
+        children: [
+          ExpandableBox(
+            expandedHeight: 800,
+            header: const Text("Echo Builder"),
+            child: _EchoCreator(),
+          ),
+          ExpandableBox(
+            expandedHeight: 800,
+            header: const Text("Inventory"),
+            child: _EchoInventory(),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -110,44 +120,59 @@ class __EchoCreatorState extends State<_EchoCreator> {
   Widget _buildEchoEditor() {
     return Box(
       style: cardStyle,
-      child: HBox(
-        style: hboxStyle.merge(Style($flex.crossAxisAlignment.center())),
+      child: VBox(
+        style: vboxStyle.merge(Style($flex.mainAxisAlignment.start())),
         children: [
-          SizedBox(
-            height: 150,
-            width: 150,
-            child: EchoImage(
-              _cubit.editedEcho!,
-              imageSize: Size(150, 150),
-              showName: false,
-            ),
-          ),
-          Expanded(
-            child: VBox(
-              style: vboxStyle
-                  .applyVariant(flexNoGap)
-                  .merge(
-                    Style(
-                      $flex.mainAxisAlignment.start(),
-                      $flex.crossAxisAlignment.start(),
-                    ),
-                  ),
-              children: [
-                DropdownMenu<String>(
-                  onSelected: _newEcho,
-                  enableFilter: true,
-                  menuHeight: MediaQuery.sizeOf(context).height * 0.4,
-                  dropdownMenuEntries: echoNames.map((name) {
-                    return DropdownMenuEntry(value: name, label: name);
-                  }).toList(),
+          HBox(
+            style: hboxStyle.merge(Style($flex.crossAxisAlignment.center())),
+            children: [
+              SizedBox(
+                height: 150,
+                width: 150,
+                child: EchoImage(
+                  _cubit.editedEcho!,
+                  imageSize: Size(150, 150),
+                  showName: false,
                 ),
-                _sonataSelector(),
-                _levelSlider(),
-                _mainStatSelector(),
-              ],
-            ),
+              ),
+              Expanded(
+                child: VBox(
+                  style: vboxStyle
+                      .applyVariant(flexNoGap)
+                      .merge(
+                        Style(
+                          $flex.mainAxisAlignment.start(),
+                          $flex.crossAxisAlignment.start(),
+                        ),
+                      ),
+                  children: [
+                    DropdownMenu<String>(
+                      onSelected: _newEcho,
+                      enableFilter: true,
+                      menuHeight: MediaQuery.sizeOf(context).height * 0.4,
+                      dropdownMenuEntries: echoNames.map((name) {
+                        return DropdownMenuEntry(value: name, label: name);
+                      }).toList(),
+                    ),
+                    _sonataSelector(),
+                    _levelSlider(),
+                    _mainStatSelector(),
+                  ],
+                ),
+              ),
+            ],
           ),
-          Expanded(child: _substatEditor()),
+          HBox(
+            style: hboxStyle,
+            children: [
+              Expanded(
+                child: Box(style: cardStyle, child: _substatEditor()),
+              ),
+              Expanded(
+                child: Box(style: cardStyle, child: _buffsEditor()),
+              ),
+            ],
+          ),
         ],
       ),
     );
@@ -341,21 +366,51 @@ class __EchoCreatorState extends State<_EchoCreator> {
             ],
           );
         }),
-        _echo.substats.length < 5
-            ? FilledButton(
-                onPressed: () {
-                  if (_echo.substats.length < 5) {
-                    _updateEcho(
-                      substats: [
-                        ..._echo.substats,
-                        StatValue(name: substatValues.keys.first),
-                      ],
-                    );
-                  }
-                },
-                child: Icon(Icons.add),
-              )
-            : Container(),
+        Tooltip(
+          message: "Add Substat",
+          child: _echo.substats.length < 5
+              ? FilledButton(
+                  onPressed: () {
+                    if (_echo.substats.length < 5) {
+                      _updateEcho(
+                        substats: [
+                          ..._echo.substats,
+                          StatValue(name: substatValues.keys.first),
+                        ],
+                      );
+                    }
+                  },
+                  child: Icon(Icons.add),
+                )
+              : Container(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buffsEditor() {
+    return VBox(
+      style: vboxStyle,
+      children: [
+        ..._echo.buffs.map((buff) {
+          return BuffPicker(
+            buff: buff,
+            onChange: (newBuff) {
+              var currentBuffs = _echo.buffs;
+              currentBuffs[currentBuffs.indexOf(buff)] = newBuff;
+              _updateEcho(buffs: currentBuffs);
+            },
+          );
+        }),
+        Tooltip(
+          message: "Add Buff",
+          child: FilledButton(
+            onPressed: () {
+              _updateEcho(buffs: [..._echo.buffs, Buff()]);
+            },
+            child: Icon(Icons.add),
+          ),
+        ),
       ],
     );
   }
