@@ -42,6 +42,14 @@ class _StatNamePickerState extends State<StatNamePicker> {
       textStyle: TextStyle(color: Colors.white),
       enabled: widget.enabled,
       label: Text("Stat Name"),
+      inputDecorationTheme: InputDecorationTheme(
+        isDense: true,
+        contentPadding: EdgeInsets.symmetric(horizontal: 10),
+        constraints: BoxConstraints.tight(const Size.fromHeight(40)),
+        border: OutlineInputBorder(
+          borderRadius: .circular(10)
+        ),
+      ),
       onSelected: (value) {
         if (value != null) {
           _statName = value;
@@ -54,7 +62,6 @@ class _StatNamePickerState extends State<StatNamePicker> {
               return DropdownMenuEntry(
                 label: e.value,
                 value: e.key,
-
                 // child: Text(e.value),
               );
             }).toList()
