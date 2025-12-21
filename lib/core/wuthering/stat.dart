@@ -4,7 +4,7 @@ typedef StatList = List<StatValue>;
 typedef StatMap = Map<StatName, double>;
 
 @JsonSerializable()
-class StatValue {
+class StatValue extends Equatable {
   final StatName name;
   final double value;
   final List<DamageType> appliesOnlyTo;
@@ -50,6 +50,10 @@ class StatValue {
 
   @override
   int get hashCode => hash2(name, value);
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [name, value, appliesOnlyTo];
 }
 
 mixin HasStats {
