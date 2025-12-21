@@ -49,7 +49,7 @@ class EchoesCubit extends Cubit<EchoState> {
     editEcho(echo);
   }
 
-  void editEcho(Echo echo) {
+  void editEcho(Echo? echo) {
     emit(state.copyWith(editedEcho: echo));
   }
 
