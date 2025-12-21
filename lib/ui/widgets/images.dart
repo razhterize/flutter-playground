@@ -135,6 +135,9 @@ class EchoImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final String? imagePath = localAssets.getImagePath(echo.name);
+    final String? sonataImage = localAssets.getImagePath(
+      sonataNames[echo.sonata] ?? "",
+    );
     final _boxDecor = BoxDecoration(
       border: BoxBorder.all(color: Colors.white, width: 2),
       borderRadius: BorderRadius.circular(10),
@@ -158,6 +161,14 @@ class EchoImage extends StatelessWidget {
                   )
                 : Placeholder(),
             showName ? OutlinedText(echo.name, fontSize: 18) : Container(),
+            Positioned(
+              top: 4,
+              right: 4,
+              // bottom: 100,
+              child: sonataImage != null
+                  ? Image.file(File(sonataImage), height: 20, width: 20)
+                  : Container(height: 32, width: 32),
+            ),
           ],
         ),
       ),
