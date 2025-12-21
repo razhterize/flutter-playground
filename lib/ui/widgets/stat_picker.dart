@@ -46,9 +46,7 @@ class _StatNamePickerState extends State<StatNamePicker> {
         isDense: true,
         contentPadding: EdgeInsets.symmetric(horizontal: 10),
         constraints: BoxConstraints.tight(const Size.fromHeight(40)),
-        border: OutlineInputBorder(
-          borderRadius: .circular(10)
-        ),
+        border: OutlineInputBorder(borderRadius: .circular(10)),
       ),
       onSelected: (value) {
         if (value != null) {
@@ -103,10 +101,22 @@ class _StatValuePickerState extends State<StatValuePicker> {
   late StatValue _statValue;
 
   @override
-  Widget build(BuildContext context) {
+  void initState() {
     _statValue = widget.statValue;
     _valueController.text =
         "${widget.statValue.value}${widget.statValue.isPercent ? '%' : ''}";
+    _valueController.addListener(() {
+      _statValue = _statValue.copyWith(
+        value: double.tryParse(_valueController.text),
+      );
+      widget.onChange(_statValue);
+      setState(() {});
+    });
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return HBox(
       style: flexStyle.applyVariant(flexH),
       children: [
@@ -136,7 +146,7 @@ class _StatValuePickerState extends State<StatValuePicker> {
             ],
             controller: _valueController,
             keyboardType: .number,
-            onChanged: (value) => _valueChange(double.tryParse(value)),
+            // onChanged: (value) => _valueChange(double.tryParse(value)),
           ),
         ),
       ],

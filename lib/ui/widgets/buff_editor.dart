@@ -45,14 +45,13 @@ class _BuffPickerState extends State<BuffPicker> {
         onSecondaryTap: () => _openBuffDialog(context),
         child: Box(
           style: cardStyle,
-          child: CommonUI.padding4(
-            child: Row(
-              children: [
-                Expanded(child: Text(_buff.name)),
-                Expanded(child: _buildStatList()),
-                Expanded(child: Text("Max Stack: ${_buff.maxStack}")),
-              ],
-            ),
+          child: HBox(
+            style: hboxStyle,
+            children: [
+              Expanded(child: Text(_buff.name)),
+              Expanded(child: _buildStatList()),
+              Expanded(child: Text("Max Stack: ${_buff.maxStack}")),
+            ],
           ),
         ),
       ),
@@ -69,10 +68,11 @@ class _BuffPickerState extends State<BuffPicker> {
     );
   }
 
+  final _nameController = TextEditingController();
+  final _stakController = TextEditingController();
+
   // Buff Flyout. Where actual buff configuration happens
   void _openBuffDialog(BuildContext context) async {
-    final _nameController = TextEditingController();
-    final _stakController = TextEditingController();
     _nameController.text = _buff.name;
     _stakController.text = "${_buff.maxStack}";
     await showDialog<Buff>(
@@ -127,14 +127,23 @@ class __BuffPopupState extends State<_BuffPopup> {
   @override
   void initState() {
     _buff = widget.buff;
+    _nameController.text = widget.buff.name;
+    _stackController.text = "${widget.buff.maxStack}";
+    _nameController.addListener(() {
+      _buff = _buff.copyWith(name: _nameController.text);
+      widget.onChange(_buff);
+      setState(() {});
+    });
+    _stackController.addListener(() {
+      _buff = _buff.copyWith(maxStack: int.tryParse(_stackController.text));
+      widget.onChange(_buff);
+      setState(() {});
+    });
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    _nameController.text = widget.buff.name;
-    _stackController.text = "${widget.buff.maxStack}";
-
     return Box(
       style: cardStyle.add(
         $box.constraints.maxHeight(200 + (_buff.stats.length * 50)),
@@ -151,14 +160,12 @@ class __BuffPopupState extends State<_BuffPopup> {
                 child: TextField(
                   decoration: const InputDecoration(label: Text("Buff Name")),
                   controller: _nameController,
-                  onChanged: _nameChange,
                 ),
               ),
               Expanded(
                 child: TextField(
                   controller: _stackController,
                   decoration: const InputDecoration(label: Text("Max Stack")),
-                  onChanged: _stackChange,
                 ),
               ),
             ],
@@ -185,18 +192,6 @@ class __BuffPopupState extends State<_BuffPopup> {
 
   void _removeBuff(StatValue toRemove) {
     _buff = _buff.copyWith(stats: _buff.stats..remove(toRemove));
-    widget.onChange(_buff);
-    setState(() {});
-  }
-
-  void _nameChange(String name) {
-    _buff = _buff.copyWith(name: name);
-    widget.onChange(_buff);
-    setState(() {});
-  }
-
-  void _stackChange(String stack) {
-    _buff = _buff.copyWith(maxStack: int.tryParse(stack));
     widget.onChange(_buff);
     setState(() {});
   }
