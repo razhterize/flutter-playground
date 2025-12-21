@@ -4,8 +4,10 @@ import 'dart:io' show Directory, File;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mix/mix.dart';
+import 'package:ww_optimizer/utils.dart';
 
 import '../style.dart';
+import '../widgets/common.dart';
 import '../widgets/images.dart';
 import '../widgets/stat_picker.dart';
 import '../../assets.dart';
@@ -46,7 +48,7 @@ class _EchoCreator extends StatefulWidget {
 class __EchoCreatorState extends State<_EchoCreator> {
   Echo _echo = Echo();
   final _echoNameController = TextEditingController();
-  JsonType _rawJson = {};
+  late final JsonType _rawJson;
   late EchoesCubit _cubit;
 
   final List<String> echoNames = Directory(assetDir.join("echoes"))
@@ -57,40 +59,50 @@ class __EchoCreatorState extends State<_EchoCreator> {
       .toList();
 
   @override
+  void initState() {
+    // Add all echoes json files into _rawJson
+    _rawJson = getAllJson(Directory(assetDir.join('echoes')));
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     _cubit = context.read<EchoesCubit>();
     if (_cubit.editedEcho != null) {
       _echoNameController.text = _cubit.editedEcho?.name ?? "Invalid Echo";
-      final rawFile = File("${assetDir.path}/echoes/${_echo.name}.json");
-      _rawJson = jsonDecode(rawFile.readAsStringSync());
     }
-    return Box(
-      style: cardStyle,
-      child: VBox(
-        style: vboxStyle,
-        children: [
-          HBox(
-            style: hboxStyle,
-            children: [
-              FilledButton(onPressed: _newEcho, child: Icon(Icons.add)),
-              FilledButton(onPressed: _saveEcho, child: Icon(Icons.save)),
-            ],
-          ),
-          Expanded(
-            child: EchoBuilder(
-              builder: (_, state) {
-                if (state.editedEcho == null) {
-                  return Center(
-                    child: Text(
-                      "No Echo Edited. Add new one or select from Inventory below",
-                    ),
-                  );
-                }
-                return _buildEchoEditor();
-              },
+    return BlocListener<EchoesCubit, EchoState>(
+      listener: (_, state) {
+        _echo = state.editedEcho!;
+      },
+      child: Box(
+        style: cardStyle,
+        child: VBox(
+          style: vboxStyle,
+          children: [
+            HBox(
+              style: hboxStyle,
+              children: [
+                FilledButton(onPressed: _newEcho, child: Icon(Icons.add)),
+                FilledButton(onPressed: _saveEcho, child: Icon(Icons.save)),
+              ],
             ),
-          ),
-        ],
+            Expanded(
+              child: EchoBuilder(
+                builder: (_, state) {
+                  if (state.editedEcho == null) {
+                    return Center(
+                      child: Text(
+                        "No Echo Edited. Add new one or select from Inventory below",
+                      ),
+                    );
+                  }
+                  return _buildEchoEditor();
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -99,12 +111,16 @@ class __EchoCreatorState extends State<_EchoCreator> {
     return Box(
       style: cardStyle,
       child: HBox(
-        style: hboxStyle,
+        style: hboxStyle.merge(Style($flex.crossAxisAlignment.center())),
         children: [
-          EchoImage(
-            _cubit.editedEcho!,
-            imageSize: Size(150, 150),
-            showName: false,
+          SizedBox(
+            height: 150,
+            width: 150,
+            child: EchoImage(
+              _cubit.editedEcho!,
+              imageSize: Size(150, 150),
+              showName: false,
+            ),
           ),
           Expanded(
             child: VBox(
@@ -119,17 +135,19 @@ class __EchoCreatorState extends State<_EchoCreator> {
               children: [
                 DropdownMenu<String>(
                   onSelected: _newEcho,
+                  enableFilter: true,
+                  menuHeight: MediaQuery.sizeOf(context).height * 0.4,
                   dropdownMenuEntries: echoNames.map((name) {
                     return DropdownMenuEntry(value: name, label: name);
                   }).toList(),
                 ),
-                // Sonata Selection
                 _sonataSelector(),
                 _levelSlider(),
                 _mainStatSelector(),
               ],
             ),
           ),
+          Expanded(child: _substatEditor()),
         ],
       ),
     );
@@ -138,56 +156,62 @@ class __EchoCreatorState extends State<_EchoCreator> {
   void _newEcho([String? name]) {
     String _name = echoNames.first;
     if (name != null) _name = name;
-    File rawFile = File("${assetDir.path}/echoes/$_name.json");
-    _rawJson = jsonDecode(rawFile.readAsStringSync());
-    int cost = _rawJson["cost"] ?? 1;
-    StatValue topMainStat = echoTopMainStats.getTopMainStat(
-      cost,
-      25,
-      StatName.ATKPercent,
+    int cost = _rawJson[_name]["cost"] ?? 1;
+    final sonatas = _getSonata(_name);
+    final statNames = echoTopMainStats.getStatNames(cost);
+    assert(sonatas.isNotEmpty, "Sonata is empty");
+    final mainStats = Pair(
+      first: echoTopMainStats.getTopMainStat(
+        cost,
+        25,
+        echoTopMainStats.getStatNames(cost).first,
+      ),
+      second: echoBotMainStats.getBottomMainStat(cost, 25),
     );
-    StatValue botMainStat = echoBotMainStats.getBottomMainStat(cost, 25);
-    _echo = _echo.copyWith(
+    _echo = Echo(
       id: _cubit.echoes.length + 1,
       name: _name,
       level: 25,
-      cost: _rawJson["cost"],
-      mainStats: Pair(first: topMainStat, second: botMainStat),
+      cost: cost,
+      mainStats: mainStats,
       buffs: [],
       substats: [],
-      sonata: _getSonata().keys.first,
+      sonata: sonatas.keys.first,
     );
     _cubit.editEcho(_echo);
   }
 
   void _saveEcho() {
     _cubit.addEcho(_echo);
+    // Remove edited
+    _cubit.editEcho(null);
   }
 
   Widget _levelSlider() {
     return HBox(
+      style: hboxStyle,
       children: [
-        Text("${_echo.level}"),
+        SizedBox(width: 20, child: Text("${_echo.level}")),
         Expanded(
           child: Slider(
             max: 25,
             min: 0,
             value: _echo.level.toDouble(),
             onChanged: (v) {
-              StatValue topStat = echoTopMainStats.getTopMainStat(
-                _echo.cost,
-                v.toInt(),
-                _echo.mainStats.first.name,
-              );
-              StatValue botStat = echoBotMainStats.getBottomMainStat(
-                _echo.cost,
-                v.toInt(),
-              );
-              _echo = _echo.copyWith(
+              _updateEcho(
                 level: v.toInt(),
-                mainStats: Pair(first: topStat, second: botStat),
+                mainStats: Pair(
+                  first: echoTopMainStats.getTopMainStat(
+                    _echo.cost,
+                    v.toInt(),
+                    _echo.mainStats.first.name,
+                  ),
+                  second: echoBotMainStats.getBottomMainStat(
+                    _echo.cost,
+                    v.toInt(),
+                  ),
+                ),
               );
-              _cubit.editEcho(_echo);
             },
           ),
         ),
@@ -196,47 +220,53 @@ class __EchoCreatorState extends State<_EchoCreator> {
   }
 
   Widget _mainStatSelector() {
-    return Box(
-      child: VBox(
-        style: vboxStyle.merge(Style($box.constraints.maxHeight(150))),
-        children: [
-          StatValuePicker(
-            statValue: _echo.mainStats.first,
-            onChange: (statValue) {
-              var mainStats = _echo.mainStats;
-              StatValue topStat = echoTopMainStats.getTopMainStat(
-                _echo.cost,
-                _echo.level,
-                statValue.name,
-              );
-              StatValue botStat = echoBotMainStats.getBottomMainStat(
-                _echo.cost,
-                _echo.level,
-              );
-              _echo = _echo.copyWith(
-                mainStats: mainStats.copyWith(first: topStat, second: botStat),
-              );
-              _cubit.editEcho(_echo);
-            },
-            only: echoTopMainStats.getStatNames(_echo.cost),
-          ),
-          StatValuePicker(
-            statValue: _echo.mainStats.second,
-            onChange: (_) {},
-            only: echoBotMainStats.getStatNames(_echo.cost),
-            enable: false,
-          ),
-        ],
-      ),
+    return VBox(
+      style: vboxStyle,
+      children: [
+        StatValuePicker(
+          statValue: _echo.mainStats.first,
+          onChange: (statValue) {
+            var mainStats = _echo.mainStats;
+            StatValue topStat = echoTopMainStats.getTopMainStat(
+              _echo.cost,
+              _echo.level,
+              statValue.name,
+            );
+            StatValue botStat = echoBotMainStats.getBottomMainStat(
+              _echo.cost,
+              _echo.level,
+            );
+            _updateEcho(
+              mainStats: Pair(first: topStat, second: botStat),
+            );
+          },
+          only: echoTopMainStats.getStatNames(_echo.cost),
+        ),
+        // FIXME: Seems like only HP is registered on bottom main stat?
+        StatValuePicker(
+          statValue: _echo.mainStats.second,
+          onChange: (_) {},
+          only: echoBotMainStats.getStatNames(_echo.cost),
+          enable: false,
+        ),
+      ],
     );
   }
 
-  Map<Sonata, String> _getSonata() {
+  Map<Sonata, String> _getSonata([String? echoName]) {
+    var _echoName = _echo.name;
+    if (echoName != null) _echoName = echoName;
+    assert(
+      _echoName.isNotEmpty && _rawJson.containsKey(_echoName),
+      "echoName used to search Sonata is empty, or data does not exist"
+      "key used $_echoName. is in _rawJson: ${_rawJson.containsKey(_echoName)}",
+    );
+
     bool predicate(MapEntry<Sonata, String> e) {
-      return (_rawJson["sonatas"] as List).contains(e.value);
+      return (_rawJson[_echoName]["sonatas"] as List).contains(e.value);
     }
 
-    if (_rawJson.containsKey("sonatas")) {
+    if (_rawJson[_echoName].containsKey("sonatas")) {
       Map<Sonata, String> sonatas = {};
       final entries = sonataNames.entries.where(predicate);
       sonatas.addEntries(entries);
@@ -246,24 +276,111 @@ class __EchoCreatorState extends State<_EchoCreator> {
   }
 
   Widget _sonataSelector() {
-    final sonatas = _getSonata();
+    final sonatas = _getSonata(_echo.name);
     return HBox(
       style: hboxStyle,
       children: sonatas.entries.map((e) {
         String? imagePath = localAssets.getImagePath(e.value);
         if (imagePath != null) {
           // return Image.file(File(imagePath), width: 32, height: 32);
-          return IconButton(
-            icon: Image.file(File(imagePath), width: 32, height: 32),
-            onPressed: () {
-              _echo = _echo.copyWith(sonata: e.key);
-              _cubit.editEcho(_echo);
-            },
+          return Tooltip(
+            message: e.value,
+            child: IconButton(
+              icon: Image.file(File(imagePath), width: 32, height: 32),
+              onPressed: () => _updateEcho(sonata: e.key),
+            ),
           );
         }
         return SizedBox(height: 32, width: 32, child: Placeholder());
       }).toList(),
     );
+  }
+
+  Widget _substatEditor() {
+    return VBox(
+      style: vboxStyle,
+      children: [
+        ..._echo.substats.map((sv) {
+          assert(substatValues.containsKey(sv.name));
+          return HBox(
+            style: hboxStyle,
+            children: [
+              StatNamePicker(
+                statName: sv.name,
+                onChange: (statName) {
+                  var substats = _echo.substats;
+                  assert(substatValues.containsKey(statName));
+                  substats[_echo.substats.indexOf(sv)] = sv.copyWith(
+                    name: statName,
+                    value: substatValues[statName]!.first,
+                  );
+                  _updateEcho(substats: substats);
+                },
+                only: [...substatValues.keys],
+              ),
+              DropdownMenu<double>(
+                // Max 40% Height
+                menuHeight: MediaQuery.sizeOf(context).height * .4,
+                initialSelection: sv.value,
+                onSelected: (value) {
+                  var substats = _echo.substats;
+                  substats[_echo.substats.indexOf(sv)] = sv.copyWith(
+                    value: value,
+                  );
+                  _updateEcho(substats: substats);
+                },
+                dropdownMenuEntries: [
+                  ...substatValues[sv.name]!.map((substatValue) {
+                    return DropdownMenuEntry(
+                      value: substatValue,
+                      label: "$substatValue${sv.isPercent ? ' %' : ''}",
+                    );
+                  }),
+                ],
+              ),
+            ],
+          );
+        }),
+        _echo.substats.length < 5
+            ? FilledButton(
+                onPressed: () {
+                  if (_echo.substats.length < 5) {
+                    _updateEcho(
+                      substats: [
+                        ..._echo.substats,
+                        StatValue(name: substatValues.keys.first),
+                      ],
+                    );
+                  }
+                },
+                child: Icon(Icons.add),
+              )
+            : Container(),
+      ],
+    );
+  }
+
+  void _updateEcho({
+    int? id,
+    String? name,
+    BuffList? buffs,
+    StatList? substats,
+    Sonata? sonata,
+    int? cost,
+    int? level,
+    Pair<StatValue, StatValue>? mainStats,
+  }) {
+    _echo = _echo.copyWith(
+      id: id,
+      name: name,
+      buffs: buffs,
+      substats: substats,
+      sonata: sonata,
+      cost: cost,
+      level: level,
+      mainStats: mainStats,
+    );
+    _cubit.editEcho(_echo);
   }
 }
 
@@ -291,7 +408,7 @@ class __EchoInventoryState extends State<_EchoInventory> {
           if (state.echoes.isEmpty) {
             return const Center(child: Text("No Echo Saved"));
           }
-          const imageSize = 200;
+          const imageSize = 125;
           final size = MediaQuery.of(context).size;
           final numCols = (size.width / imageSize).floor();
           return GridView.builder(
@@ -300,12 +417,12 @@ class __EchoInventoryState extends State<_EchoInventory> {
               crossAxisCount: numCols,
             ),
             itemBuilder: (_, index) {
-              return Box(
-                style: Style(
-                  $box.border.width(1),
-                  $box.border.color(Colors.white),
+              return CommonUI.padding4(
+                child: EchoImage(
+                  state.echoes[index],
+                  onClick: _cubit.editEcho,
+                  showName: false,
                 ),
-                child: EchoImage(state.echoes[index], onClick: _cubit.editEcho),
               );
             },
           );
