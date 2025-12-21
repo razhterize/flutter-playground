@@ -18,7 +18,10 @@ class Echo {
     this.id = 0,
     this.name = "",
     this.buffs = const [],
-    this.mainStats = const Pair(first: StatValue(), second: StatValue()),
+    this.mainStats = const Pair(
+      first: StatValue(name: .ATKPercent),
+      second: StatValue(name: .ATK),
+    ),
     this.cost = Echo.Cost1,
     this.substats = const [],
     this.sonata = Sonata.None,
