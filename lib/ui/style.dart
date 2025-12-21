@@ -10,15 +10,9 @@ Style get cardStyle => Style(
   $box.borderRadius.all.circular(5),
   $box.padding.all(10),
   $text.color(Colors.white),
-  verticalMargin(
-    $box.margin.vertical(10),
-  ),
-  horizontalMargin(
-    $box.margin.horizontal(10),
-  ),
-  allMargin(
-    $box.margin.all(10),
-  )
+  verticalMargin($box.margin.vertical(10)),
+  horizontalMargin($box.margin.horizontal(10)),
+  allMargin($box.margin.all(10)),
 );
 
 const flexNoGap = Variant("no_gap");
@@ -29,14 +23,9 @@ Style get flexStyle => Style(
   $flex.crossAxisAlignment.center(),
   $flex.mainAxisAlignment.start(),
   $flex.gap(10),
-  flexV(
-    $flex.direction.vertical(),
-    $flex.mainAxisAlignment.center()
-  ),
+  flexV($flex.direction.vertical()),
   flexH($flex.direction.horizontal()),
-  flexNoGap(
-    $flex.gap(0)
-  )
+  flexNoGap($flex.gap(0)),
 );
 
 Style get vboxStyle => flexStyle.applyVariant(flexV);
