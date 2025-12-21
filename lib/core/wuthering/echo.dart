@@ -158,24 +158,23 @@ Map<int, Map<StatName, List<double>>> echoTopMainStats = {
 Map<int, Map<StatName, List<double>>> echoBotMainStats = {
   1: {.HP: _generateMainStats(456, _levelModifiers)},
   3: {.ATK: _generateMainStats(20, _levelModifiers)},
-  4: {.HP: _generateMainStats(30, _levelModifiers)},
+  4: {.ATK: _generateMainStats(30, _levelModifiers)},
 };
 
 Map<StatName, List<double>> substatValues = {
+  StatName.ATKPercent: _generateMainStats(6, _nonSubstatCritModifiers),
+  StatName.HPPercent: _generateMainStats(6, _nonSubstatCritModifiers),
+  StatName.DEFPercent: _generateMainStats(8.1, _nonSubstatCritModifiers),
+  StatName.FlatATK: const [30, 40, 50, 60],
   StatName.CritRate: _generateMainStats(6.3, _critSubstatModifiers),
   StatName.CritDamage: _generateMainStats(12.6, _critSubstatModifiers),
-  StatName.ATKPercent: _generateMainStats(6, _nonSubstatCritModifiers),
   StatName.EnergyRegen: _generateMainStats(6.8, _nonSubstatCritModifiers),
   StatName.BasicAttackDamage: _generateMainStats(6, _nonSubstatCritModifiers),
   StatName.HeavyAttackDamage: _generateMainStats(6, _nonSubstatCritModifiers),
   StatName.ResonanceDamage: _generateMainStats(6, _nonSubstatCritModifiers),
   StatName.LiberationDamage: _generateMainStats(6, _nonSubstatCritModifiers),
-  StatName.HPPercent: _generateMainStats(6, _nonSubstatCritModifiers),
-  StatName.DEFPercent: _generateMainStats(8.1, _nonSubstatCritModifiers),
-  StatName.ATK: const [30, 40, 50, 60],
   StatName.DEF: const [40, 50, 60, 70],
   StatName.HP: _generateMainStats(320, _nonSubstatCritModifiers),
-  StatName.None: [0],
 };
 
 extension GetMainStat on Map<int, Map<StatName, List<double>>> {
