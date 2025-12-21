@@ -6,7 +6,7 @@ const verticalMargin = Variant("v_margin");
 const horizontalMargin = Variant("h_margin");
 
 Style get cardStyle => Style(
-  $box.color(Colors.white24),
+  $box.color(const Color.fromARGB(122, 65, 65, 65)),
   $box.borderRadius.all.circular(5),
   $box.padding.all(10),
   $text.color(Colors.white),
