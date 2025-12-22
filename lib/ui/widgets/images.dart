@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:mix/mix.dart';
 
+import 'common.dart';
 import 'outline_text.dart';
 import '../../assets.dart';
 import '../../core/wuthering.dart';
@@ -22,10 +24,10 @@ class ResonatorImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final String? imagePath = localAssets.getImagePath(resonator.name);
-    final _boxDecor = BoxDecoration(
-      border: BoxBorder.all(color: Colors.white, width: 2),
-      borderRadius: BorderRadius.circular(10),
-      gradient: LinearGradient(
+    final _coloredStyle = Style(
+      $box.border.all(color: Colors.white, width: 2),
+      $box.borderRadius.circular(10),
+      $box.linearGradient(
         begin: .bottomCenter,
         end: .topCenter,
         colors: [
@@ -40,8 +42,8 @@ class ResonatorImage extends StatelessWidget {
           onClick!(resonator);
         }
       },
-      child: Container(
-        decoration: _boxDecor,
+      child: Box(
+        style: _coloredStyle,
         child: Stack(
           alignment: .bottomCenter,
           children: [
@@ -104,14 +106,19 @@ class WeaponImage extends StatelessWidget {
           onClick!(weapon);
         }
       },
-      child: Container(
-        decoration: _boxDecor,
-        child: Stack(
-          alignment: .bottomCenter,
-          children: [
-            imagePath != null ? Image.file(File(imagePath)) : Placeholder(),
-            OutlinedText(weapon.name, fontSize: 18),
-          ],
+      child: Box(
+        style: Style(
+          $box.border.all(width: 2, color: Colors.white),
+          $box.borderRadius.circular(10),
+        ),
+        child: CommonUI.padding4(
+          child: Stack(
+            alignment: .bottomCenter,
+            children: [
+              imagePath != null ? Image.file(File(imagePath)) : Placeholder(),
+              OutlinedText(weapon.name, fontSize: 12),
+            ],
+          ),
         ),
       ),
     );
@@ -138,38 +145,39 @@ class EchoImage extends StatelessWidget {
     final String? sonataImage = localAssets.getImagePath(
       sonataNames[echo.sonata] ?? "",
     );
-    final _boxDecor = BoxDecoration(
-      border: BoxBorder.all(color: Colors.white, width: 2),
-      borderRadius: BorderRadius.circular(10),
-    );
     return GestureDetector(
       onTap: () {
         if (onClick != null) {
           onClick!(echo);
         }
       },
-      child: Container(
-        decoration: _boxDecor,
-        child: Stack(
-          alignment: .bottomCenter,
-          children: [
-            imagePath != null
-                ? Image.file(
-                    File(imagePath),
-                    height: imageSize?.height,
-                    width: imageSize?.width,
-                  )
-                : Placeholder(),
-            showName ? OutlinedText(echo.name, fontSize: 18) : Container(),
-            Positioned(
-              top: 4,
-              right: 4,
-              // bottom: 100,
-              child: sonataImage != null
-                  ? Image.file(File(sonataImage), height: 20, width: 20)
-                  : Container(height: 32, width: 32),
-            ),
-          ],
+      child: Box(
+        style: Style(
+          $box.border.all(width: 2, color: Colors.white),
+          $box.borderRadius.circular(10),
+        ),
+        child: CommonUI.padding4(
+          child: Stack(
+            alignment: .bottomCenter,
+            children: [
+              imagePath != null
+                  ? Image.file(
+                      File(imagePath),
+                      height: imageSize?.height,
+                      width: imageSize?.width,
+                    )
+                  : Placeholder(),
+              showName ? OutlinedText(echo.name, fontSize: 18) : Container(),
+              Positioned(
+                top: 4,
+                right: 4,
+                // bottom: 100,
+                child: sonataImage != null
+                    ? Image.file(File(sonataImage), height: 20, width: 20)
+                    : SizedBox(height: 20, width: 20),
+              ),
+            ],
+          ),
         ),
       ),
     );
