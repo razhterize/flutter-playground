@@ -71,6 +71,24 @@ JsonType _statPairToJson(Pair<StatValue, StatValue> instance) {
   return {'first': instance.first.toJson(), 'second': instance.second.toJson()};
 }
 
+extension UniqueSubstat on StatList {
+  Iterable<StatName> statNames() {
+    return map((sv) => sv.name);
+  }
+
+  Iterable<double> values() {
+    return map((sv) => sv.value);
+  }
+
+  bool nameIsNotExist(StatName name) {
+    return !statNames().contains(name);
+  }
+
+  bool statNameExist(StatName name) {
+    return statNames().contains(name);
+  }
+}
+
 Set<double> _critSubstatModifiers = {
   1,
   1.09524,
