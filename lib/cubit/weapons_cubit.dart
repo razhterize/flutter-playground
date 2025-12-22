@@ -9,7 +9,7 @@ import '../core/wuthering.dart';
 typedef WeaponBuilder = BlocBuilder<WeaponCubit, WeaponState>;
 
 class WeaponCubit extends Cubit<WeaponState> {
-  WeaponCubit(this.savedCubit) : super(WeaponState(true)) {
+  WeaponCubit(this.savedCubit) : super(WeaponState()) {
     _initPriv();
   }
 
@@ -25,10 +25,10 @@ class WeaponCubit extends Cubit<WeaponState> {
     // Listen for saved state change
     _subs = savedCubit.stream.listen((s) {
       _log.debug("Received saved cubit state");
-      emit(state.copyWith(true));
+      emit(state.copyWith(processing: true));
       final weaponList = s.weapons.map((w) => Weapon.fromJson(w)).toList();
       weaponList.sort(sortWeapon);
-      emit(state.copyWith(false, weaponList));
+      emit(state.copyWith(processing: false, weapons: weaponList));
     });
 
     // Automagically save weapons
@@ -42,7 +42,11 @@ class WeaponCubit extends Cubit<WeaponState> {
         .map((w) => Weapon.fromJson(w))
         .toList();
     weaponList.sort(sortWeapon);
-    emit(state.copyWith(false, weaponList));
+    emit(state.copyWith(processing: false, weapons: weaponList));
+  }
+
+  void editWeapon(Weapon? weapon) {
+    emit(state.copyWith(editedWeapon: weapon));
   }
 
   @override
@@ -58,14 +62,22 @@ class WeaponState extends Equatable {
   final List<Weapon> weapons;
   final Weapon? editedWeapon;
   final bool processing;
-  const WeaponState([
+  const WeaponState({
     this.processing = false,
     this.weapons = const [],
     this.editedWeapon,
-  ]);
+  });
 
-  WeaponState copyWith([bool? processing, List<Weapon>? weapons]) {
-    return WeaponState(processing ?? this.processing, weapons ?? this.weapons);
+  WeaponState copyWith({
+    bool? processing,
+    List<Weapon>? weapons,
+    Weapon? editedWeapon,
+  }) {
+    return WeaponState(
+      processing: processing ?? this.processing,
+      weapons: weapons ?? this.weapons,
+      editedWeapon: editedWeapon,
+    );
   }
 
   @override
