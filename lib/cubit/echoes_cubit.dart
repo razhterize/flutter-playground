@@ -81,7 +81,7 @@ class EchoState extends Equatable {
     return EchoState(
       processing: processing ?? this.processing,
       echoes: echoes ?? this.echoes,
-      editedEcho: editedEcho ?? this.editedEcho,
+      editedEcho: editedEcho,
     );
   }
 
