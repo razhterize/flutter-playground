@@ -11,8 +11,9 @@ class EchoSet {
 
   void addEcho(Echo echo) {
     if (echoes.length >= 5) return rootLogger.error("Too many echoes");
-    if (_totalCost + echo.cost > 12)
+    if (_totalCost + echo.cost > 12) {
       return rootLogger.error("EchoSet cost exceeded");
+    }
     echoes.add(echo);
     _totalCost += echo.cost;
     _updateEffects();
