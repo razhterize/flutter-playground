@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mix/mix.dart';
 
+import 'paths.dart';
 import 'cubit/echoes_cubit.dart';
 import 'cubit/resonator_cubit.dart';
 import 'cubit/saved_cubit.dart';
 import 'cubit/screen_cubit.dart';
 import 'cubit/status_cubit.dart';
 import 'cubit/weapons_cubit.dart';
-import 'paths.dart';
 import 'ui/screens/data_preview.dart';
 import 'ui/screens/echo_screen.dart';
 import 'ui/screens/main_screen.dart';
