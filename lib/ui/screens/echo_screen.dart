@@ -34,14 +34,9 @@ class _EchoScreenState extends State<EchoScreen> {
           Style($box.margin.all(10), $flex.mainAxisAlignment.start()),
         ),
         children: [
-          ExpandableBox(
-            expandedHeight: 800,
-            header: const Text("Echo Builder"),
-            child: _EchoCreator(),
-          ),
-          ExpandableBox(
-            expandedHeight: 800,
-            header: const Text("Inventory"),
+          Box(style: cardStyle.add($box.maxHeight(600)), child: _EchoCreator()),
+          Box(
+            style: cardStyle.add($box.maxHeight(800)),
             child: _EchoInventory(),
           ),
         ],
@@ -151,7 +146,9 @@ class __EchoCreatorState extends State<_EchoCreator> {
                     DropdownMenu<String>(
                       onSelected: _newEcho,
                       enableFilter: true,
-                      enabled: !_cubit.echoes.any((echo) => echo.id == _echo.id),
+                      enabled: !_cubit.echoes.any(
+                        (echo) => echo.id == _echo.id,
+                      ),
                       menuHeight: MediaQuery.sizeOf(context).height * 0.4,
                       dropdownMenuEntries: echoNames.map((name) {
                         return DropdownMenuEntry(value: name, label: name);
