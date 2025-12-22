@@ -18,7 +18,7 @@ class StatNamePicker extends StatefulWidget {
 
   final StatName statName;
   final bool enabled;
-  final void Function(StatName name) onChange;
+  final ValueChanged<StatName> onChange;
   final List<StatName> except;
   final List<StatName> only;
 
@@ -86,8 +86,8 @@ class StatValuePicker extends StatefulWidget {
   });
 
   final StatValue statValue;
-  final void Function()? buttonPress;
-  final void Function(StatValue statValue) onChange;
+  final VoidCallback? buttonPress;
+  final ValueChanged<StatValue> onChange;
   final bool enable;
   final List<StatName> except;
   final List<StatName> only;
@@ -156,14 +156,6 @@ class _StatValuePickerState extends State<StatValuePicker> {
   void _nameChange(StatName name) {
     _statValue = _statValue.copyWith(name: name);
     widget.onChange(_statValue);
-    setState(() {});
-  }
-
-  void _valueChange(double? val) {
-    _statValue = _statValue.copyWith(value: val);
-    widget.onChange(_statValue);
-    _valueController.text =
-        "${_statValue.value}${_statValue.isPercent ? '%' : ''}";
     setState(() {});
   }
 }

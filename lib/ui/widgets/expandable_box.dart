@@ -16,7 +16,7 @@ class ExpandableBox extends StatefulWidget {
 
   final Widget child;
   final Widget? header;
-  final Function()? onExpandChange;
+  final ValueGetter? onExpandChange;
   final double expandedHeight;
   final Style? style;
 
@@ -30,11 +30,10 @@ class _ExpandableBoxState extends State<ExpandableBox> {
   @override
   Widget build(BuildContext context) {
     return PressableBox(
-      style: cardStyle
-          .applyVariant(horizontalMargin)
-          .merge(widget.style),
+      style: cardStyle.applyVariant(horizontalMargin).merge(widget.style),
       onPress: () {
         _expanded = !_expanded;
+        if (widget.onExpandChange != null) widget.onExpandChange!();
         setState(() {});
       },
       child: VBox(

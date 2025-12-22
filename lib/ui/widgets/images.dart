@@ -17,7 +17,7 @@ class ResonatorImage extends StatelessWidget {
   final Resonator resonator;
   final Size? imageSize;
   final bool showName;
-  final void Function(Resonator resonator)? onClick;
+  final ValueChanged<Resonator>? onClick;
 
   @override
   Widget build(BuildContext context) {
@@ -89,7 +89,7 @@ class WeaponImage extends StatelessWidget {
   final Weapon weapon;
   final Size? imageSize;
   final bool showName;
-  final void Function(Weapon)? onClick;
+  final ValueChanged<Weapon>? onClick;
 
   @override
   Widget build(BuildContext context) {
@@ -128,7 +128,7 @@ class EchoImage extends StatelessWidget {
   });
 
   final Echo echo;
-  final void Function(Echo echo)? onClick;
+  final ValueChanged<Echo>? onClick;
   final Size? imageSize;
   final bool showName;
 

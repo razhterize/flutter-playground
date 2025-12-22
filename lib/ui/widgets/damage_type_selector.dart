@@ -14,7 +14,7 @@ class DamageTypeSelector extends StatefulWidget {
   });
 
   final List<DamageType> initialValue;
-  final Function(List<DamageType> damagetypes) onChange;
+  final ValueChanged<List<DamageType>> onChange;
 
   @override
   State<DamageTypeSelector> createState() => _DamageTypeSelectorState();
@@ -87,7 +87,8 @@ class _DamageTypePopup extends StatefulWidget {
   });
 
   final List<DamageType> types;
-  final Function(List<DamageType> types) onChange;
+  final ValueChanged<List<DamageType>> onChange;
+  // final Function(List<DamageType> types) onChange;
 
   @override
   State<_DamageTypePopup> createState() => __DamageTypePopupState();

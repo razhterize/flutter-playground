@@ -20,7 +20,7 @@ class MenuEntry {
 
   final String label;
   final MenuSerializableShortcut? shortcut;
-  final void Function()? onPressed;
+  final VoidCallback? onPressed;
   final List<MenuEntry>? menuChildren;
 
   static List<Widget> build(List<MenuEntry> menuEntries) {
@@ -108,7 +108,7 @@ class _WutheringMenuBarState extends State<WutheringMenuBar> {
         label: "Assets",
         menuChildren: [
           MenuEntry(label: "Update", onPressed: localAssets.updateAssets),
-          MenuEntry(label: "Clear", onPressed: localAssets.removeAssets,)
+          MenuEntry(label: "Clear", onPressed: localAssets.removeAssets),
         ],
       ),
       MenuEntry(label: "About", onPressed: () {}),

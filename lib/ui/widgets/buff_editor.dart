@@ -19,7 +19,7 @@ class BuffPicker extends StatefulWidget {
 
   final bool enabled;
   final Buff buff;
-  final Function(Buff buff)? onChange;
+  final ValueChanged<Buff>? onChange;
   final Function()? buttonPress;
 
   @override
@@ -113,7 +113,7 @@ class _BuffPopup extends StatefulWidget {
   const _BuffPopup({super.key, required this.buff, required this.onChange});
 
   final Buff buff;
-  final Function(Buff buff) onChange;
+  final ValueChanged<Buff> onChange;
 
   @override
   State<_BuffPopup> createState() => __BuffPopupState();

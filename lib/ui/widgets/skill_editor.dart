@@ -20,8 +20,8 @@ class SkillEditor extends StatefulWidget {
 
   final Skill skill;
   final bool enabled;
-  final void Function(Skill skill) onChange;
-  final void Function()? buttonPress;
+  final ValueChanged<Skill> onChange;
+  final VoidCallback? buttonPress;
 
   @override
   State<SkillEditor> createState() => _SkillEditorState();
@@ -132,8 +132,8 @@ class AttackEditor extends StatefulWidget {
   });
 
   final Attack attack;
-  final Function(Attack attack) onChange;
-  final Function()? buttonPress;
+  final VoidCallback? buttonPress;
+  final ValueChanged<Attack> onChange;
 
   @override
   State<AttackEditor> createState() => _AttackEditorState();
@@ -236,10 +236,16 @@ class _AttackEditorState extends State<AttackEditor> {
 }
 
 class DamageEditor extends StatefulWidget {
-  const DamageEditor({super.key, required this.damage, required this.onChange});
+  const DamageEditor({
+    super.key,
+    required this.damage,
+    required this.onChange,
+    this.buttonPress,
+  });
 
   final Damage damage;
-  final Function(Damage damage) onChange;
+  final ValueChanged<Damage> onChange;
+  final VoidCallback? buttonPress;
 
   @override
   State<DamageEditor> createState() => _DamageEditorState();
@@ -269,6 +275,13 @@ class _DamageEditorState extends State<DamageEditor> {
       child: HBox(
         style: hboxStyle,
         children: [
+          Tooltip(
+            message: "Remove Damage",
+            child: FilledButton(
+              onPressed: widget.buttonPress,
+              child: const Icon(Icons.remove),
+            ),
+          ),
           Tooltip(
             message: "Flat Damage",
             child: Checkbox(
