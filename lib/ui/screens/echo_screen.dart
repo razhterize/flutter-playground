@@ -30,7 +30,9 @@ class _EchoScreenState extends State<EchoScreen> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: VBox(
-        style: vboxStyle.merge(Style($box.margin.all(10))),
+        style: vboxStyle.merge(
+          Style($box.margin.all(10), $flex.mainAxisAlignment.start()),
+        ),
         children: [
           ExpandableBox(
             expandedHeight: 800,
@@ -149,6 +151,7 @@ class __EchoCreatorState extends State<_EchoCreator> {
                     DropdownMenu<String>(
                       onSelected: _newEcho,
                       enableFilter: true,
+                      enabled: !_cubit.echoes.any((echo) => echo.id == _echo.id),
                       menuHeight: MediaQuery.sizeOf(context).height * 0.4,
                       dropdownMenuEntries: echoNames.map((name) {
                         return DropdownMenuEntry(value: name, label: name);
@@ -341,7 +344,8 @@ class __EchoCreatorState extends State<_EchoCreator> {
                   );
                   _updateEcho(substats: substats);
                 },
-                only: [...substatValues.keys],
+                only: substatValues.keys.toList(),
+                except: _echo.substats.statNames().toList(),
               ),
               DropdownMenu<double>(
                 // Max 40% Height
@@ -372,10 +376,16 @@ class __EchoCreatorState extends State<_EchoCreator> {
               ? FilledButton(
                   onPressed: () {
                     if (_echo.substats.length < 5) {
+                      StatName validKey = substatValues.keys
+                          .where(_echo.substats.nameIsNotExist)
+                          .first;
                       _updateEcho(
                         substats: [
                           ..._echo.substats,
-                          StatValue(name: substatValues.keys.first),
+                          StatValue(
+                            name: validKey,
+                            value: substatValues[validKey]!.first,
+                          ),
                         ],
                       );
                     }
