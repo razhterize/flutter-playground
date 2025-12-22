@@ -184,7 +184,6 @@ Map<Sonata, List<SonataEffect>> presetSonataEffects = {
       ],
     ),
   ],
-  // TODO: Finish sonata
   Sonata.FrostyResolve: [
     SonataEffect(
       sonata: .FrostyResolve,
@@ -241,7 +240,6 @@ Map<Sonata, List<SonataEffect>> presetSonataEffects = {
     SonataEffect(
       sonata: .TidebreakingCourage,
       stats: [StatValue(name: .EnergyRegen, value: 10)],
-      //   TODO: Figure out something with conditional buff
       buffs: [
         Buff(
           stats: [

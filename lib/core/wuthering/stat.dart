@@ -52,7 +52,6 @@ class StatValue extends Equatable {
   int get hashCode => hash2(name, value);
 
   @override
-  // TODO: implement props
   List<Object?> get props => [name, value, appliesOnlyTo];
 }
 
