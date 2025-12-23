@@ -49,6 +49,10 @@ class WeaponCubit extends Cubit<WeaponState> {
     emit(state.copyWith(editedWeapon: weapon));
   }
 
+  void addWeapon(Weapon weapon) {
+    emit(state.copyWith(weapons: [weapon, ...state.weapons]));
+  }
+
   @override
   Future<void> close() {
     _log.debug("WeaponCubit close");
