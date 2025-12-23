@@ -78,38 +78,33 @@ class __EchoCreatorState extends State<_EchoCreator> {
     if (_cubit.editedEcho != null) {
       _echoNameController.text = _cubit.editedEcho?.name ?? "Invalid Echo";
     }
-    return BlocListener<EchoesCubit, EchoState>(
-      listener: (_, state) {
-        _echo = state.editedEcho!;
-      },
-      child: Box(
-        style: cardStyle,
-        child: VBox(
-          style: vboxStyle,
-          children: [
-            HBox(
-              style: hboxStyle,
-              children: [
-                FilledButton(onPressed: _newEcho, child: Icon(Icons.add)),
-                FilledButton(onPressed: _saveEcho, child: Icon(Icons.save)),
-              ],
+    return Box(
+      style: cardStyle,
+      child: VBox(
+        style: vboxStyle,
+        children: [
+          HBox(
+            style: hboxStyle,
+            children: [
+              FilledButton(onPressed: _newEcho, child: Icon(Icons.add)),
+              FilledButton(onPressed: _saveEcho, child: Icon(Icons.save)),
+            ],
+          ),
+          Expanded(
+            child: EchoBuilder(
+              builder: (_, state) {
+                if (state.editedEcho == null) {
+                  return Center(
+                    child: Text(
+                      "No Echo Edited. Add new one or select from Inventory below",
+                    ),
+                  );
+                }
+                return _buildEchoEditor();
+              },
             ),
-            Expanded(
-              child: EchoBuilder(
-                builder: (_, state) {
-                  if (state.editedEcho == null) {
-                    return Center(
-                      child: Text(
-                        "No Echo Edited. Add new one or select from Inventory below",
-                      ),
-                    );
-                  }
-                  return _buildEchoEditor();
-                },
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -223,20 +218,17 @@ class __EchoCreatorState extends State<_EchoCreator> {
             min: 0,
             value: _echo.level.toDouble(),
             onChanged: (v) {
-              _updateEcho(
-                level: v.toInt(),
-                mainStats: Pair(
-                  first: echoTopMainStats.getTopMainStat(
-                    _echo.cost,
-                    v.toInt(),
-                    _echo.mainStats.first.name,
-                  ),
-                  second: echoBotMainStats.getBottomMainStat(
-                    _echo.cost,
-                    v.toInt(),
-                  ),
-                ),
+              final topStat = echoTopMainStats.getTopMainStat(
+                _echo.cost,
+                v.toInt(),
+                _echo.mainStats.first.name,
               );
+              final botStat = echoBotMainStats.getBottomMainStat(
+                _echo.cost,
+                v.toInt(),
+              );
+              final mainstat = Pair(first: topStat, second: botStat);
+              _updateEcho(level: v.toInt(), mainStats: mainstat);
             },
           ),
         ),
@@ -250,6 +242,7 @@ class __EchoCreatorState extends State<_EchoCreator> {
       children: [
         StatValuePicker(
           statValue: _echo.mainStats.first,
+          valueEditable: false,
           onChange: (statValue) {
             var mainStats = _echo.mainStats;
             StatValue topStat = echoTopMainStats.getTopMainStat(
@@ -272,7 +265,8 @@ class __EchoCreatorState extends State<_EchoCreator> {
           statValue: _echo.mainStats.second,
           onChange: (_) {},
           only: echoBotMainStats.getStatNames(_echo.cost),
-          enable: false,
+          nameEditable: false,
+          valueEditable: false,
         ),
       ],
     );
