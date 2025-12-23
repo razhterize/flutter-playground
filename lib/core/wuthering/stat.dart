@@ -42,6 +42,8 @@ class StatValue extends Equatable {
     return "${StatName.strNames[name]}:  $value${isPercent ? '%' : ''}";
   }
 
+  String valueStr() => "$value${isPercent ? '%' : ''}";
+
   factory StatValue.fromJson(JsonType json) => _$StatValueFromJson(json);
   JsonType toJson() => _$StatValueToJson(this);
 
