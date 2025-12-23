@@ -58,23 +58,25 @@ class __EchoCreatorState extends State<_EchoCreator> {
   late final JsonType _rawJson;
   late EchoesCubit _cubit;
 
-  final List<String> echoNames = Directory(assetDir.join("echoes"))
-      .listSync()
-      .whereType<File>()
-      .where((e) => e.path.endsWith("json"))
-      .map((f) => f.path.split('/').last.replaceAll(".json", ""))
-      .toList();
+  late final List<String> echoNames;
 
   @override
   void initState() {
     // Add all echoes json files into _rawJson
     _rawJson = getAllJson(Directory(assetDir.join('echoes')));
+    echoNames = Directory(assetDir.join("echoes"))
+        .listSync()
+        .whereType<File>()
+        .where((e) => e.path.endsWith("json"))
+        .map((f) => f.path.split('/').last.replaceAll(".json", ""))
+        .toList();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     _cubit = context.read<EchoesCubit>();
+    _echo = _cubit.editedEcho ?? Echo();
     if (_cubit.editedEcho != null) {
       _echoNameController.text = _cubit.editedEcho?.name ?? "Invalid Echo";
     }
@@ -140,6 +142,7 @@ class __EchoCreatorState extends State<_EchoCreator> {
                   children: [
                     DropdownMenu<String>(
                       onSelected: _newEcho,
+                      initialSelection: _echo.name,
                       enableFilter: true,
                       enabled: !_cubit.echoes.any(
                         (echo) => echo.id == _echo.id,
@@ -277,7 +280,7 @@ class __EchoCreatorState extends State<_EchoCreator> {
     if (echoName != null) _echoName = echoName;
     assert(
       _echoName.isNotEmpty && _rawJson.containsKey(_echoName),
-      "echoName used to search Sonata is empty, or data does not exist"
+      "echoName used to search Sonata is empty, or data does not exist "
       "key used $_echoName. is in _rawJson: ${_rawJson.containsKey(_echoName)}",
     );
 
