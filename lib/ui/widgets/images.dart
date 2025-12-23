@@ -85,7 +85,7 @@ class WeaponImage extends StatelessWidget {
     super.key,
     this.onClick,
     this.imageSize,
-    this.showName = false,
+    this.showName = true,
   });
 
   final Weapon weapon;
