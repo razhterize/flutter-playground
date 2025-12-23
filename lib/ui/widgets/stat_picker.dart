@@ -80,7 +80,8 @@ class StatValuePicker extends StatefulWidget {
     required this.statValue,
     required this.onChange,
     this.buttonPress,
-    this.enable = true,
+    this.nameEditable = true,
+    this.valueEditable = true,
     this.except = const [],
     this.only = const [],
   });
@@ -88,7 +89,8 @@ class StatValuePicker extends StatefulWidget {
   final StatValue statValue;
   final VoidCallback? buttonPress;
   final ValueChanged<StatValue> onChange;
-  final bool enable;
+  final bool nameEditable;
+  final bool valueEditable;
   final List<StatName> except;
   final List<StatName> only;
 
@@ -98,25 +100,30 @@ class StatValuePicker extends StatefulWidget {
 
 class _StatValuePickerState extends State<StatValuePicker> {
   final _valueController = TextEditingController();
+  var _valueFocus = FocusNode();
+  bool _valueFocused = false;
   late StatValue _statValue;
 
   @override
   void initState() {
     _statValue = widget.statValue;
-    _valueController.text =
-        "${widget.statValue.value}${widget.statValue.isPercent ? '%' : ''}";
-    _valueController.addListener(() {
-      _statValue = _statValue.copyWith(
-        value: double.tryParse(_valueController.text),
-      );
-      widget.onChange(_statValue);
-      setState(() {});
-    });
+    if (widget.valueEditable) {
+      _valueController.addListener(() {
+        _statValue = _statValue.copyWith(
+          value: double.tryParse(_valueController.text),
+        );
+        setState(() {});
+      });
+    }
+    _valueFocus.addListener(_focusChange);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    if (!_valueFocused) {
+      _valueController.text = widget.statValue.valueStr();
+    }
     return HBox(
       style: flexStyle.applyVariant(flexH),
       children: [
@@ -124,7 +131,7 @@ class _StatValuePickerState extends State<StatValuePicker> {
           message: "Remove Stats",
           child: widget.buttonPress != null
               ? IconButton.filled(
-                  onPressed: widget.enable ? widget.buttonPress : null,
+                  onPressed: widget.buttonPress,
                   icon: Icon(Icons.remove),
                 )
               : IconButton(onPressed: () {}, icon: Icon(Icons.remove)),
@@ -133,7 +140,7 @@ class _StatValuePickerState extends State<StatValuePicker> {
           child: StatNamePicker(
             statName: _statValue.name,
             onChange: _nameChange,
-            enabled: widget.enable,
+            enabled: widget.nameEditable,
             except: widget.except,
             only: widget.only,
           ),
@@ -144,7 +151,10 @@ class _StatValuePickerState extends State<StatValuePicker> {
             inputFormatters: [
               FilteringTextInputFormatter.allow(RegExp(r"[\d\,\.\%]")),
             ],
+            onEditingComplete: () => widget.onChange(_statValue),
             controller: _valueController,
+            focusNode: _valueFocus,
+            enabled: widget.valueEditable,
             keyboardType: .number,
             // onChanged: (value) => _valueChange(double.tryParse(value)),
           ),
@@ -157,5 +167,9 @@ class _StatValuePickerState extends State<StatValuePicker> {
     _statValue = _statValue.copyWith(name: name);
     widget.onChange(_statValue);
     setState(() {});
+  }
+
+  void _focusChange() {
+    _valueFocused = !_valueFocused;
   }
 }
