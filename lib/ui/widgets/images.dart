@@ -115,12 +115,26 @@ class WeaponImage extends StatelessWidget {
           child: Stack(
             alignment: .bottomCenter,
             children: [
-              imagePath != null ? Image.file(File(imagePath)) : Placeholder(),
-              OutlinedText(weapon.name, fontSize: 12),
+              imagePath != null
+                  ? Image.file(
+                      File(imagePath),
+                      height: imageSize?.height,
+                      width: imageSize?.width,
+                    )
+                  : _noImage(),
+              showName ? OutlinedText(weapon.name, fontSize: 12) : Container(),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  SizedBox _noImage() {
+    return SizedBox(
+      height: imageSize?.height ?? 100,
+      width: imageSize?.width ?? 100,
+      child: Center(child: Text("No Image")),
     );
   }
 }
